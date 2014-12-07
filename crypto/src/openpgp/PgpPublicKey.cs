@@ -1,7 +1,8 @@
 using System;
-using System.Collections;
 using System.IO;
 using System.Linq;
+using System.Collections;
+using System.Collections.Generic;
 
 using Org.BouncyCastle.Crypto;
 using Org.BouncyCastle.Crypto.IO;
@@ -9,7 +10,6 @@ using Org.BouncyCastle.Crypto.Parameters;
 using Org.BouncyCastle.Security;
 using Org.BouncyCastle.Utilities;
 using Org.BouncyCastle.Utilities.Collections;
-using System.Collections.Generic;
 
 namespace Org.BouncyCastle.Bcpg.OpenPgp
 {
@@ -536,78 +536,75 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
 
         /// <summary>Allows enumeration of any user IDs associated with the key.</summary>
         /// <returns>An <c>IEnumerable</c> of <c>string</c> objects.</returns>
-        public IEnumerable GetUserIds()
+        public IEnumerable<String> GetUserIds()
         {
 
-            IList temp = Platform.CreateArrayList();
+            var temp = new List<String>();
 
             foreach (object o in ids)
             {
-                if (o is string)
-                {
-                    temp.Add(o);
-                }
+                if (o is String)
+                    temp.Add(o as String);
             }
 
-            return new EnumerableProxy(temp);
+            return temp;
+
         }
 
         /// <summary>Allows enumeration of any user attribute vectors associated with the key.</summary>
         /// <returns>An <c>IEnumerable</c> of <c>PgpUserAttributeSubpacketVector</c> objects.</returns>
-        public IEnumerable GetUserAttributes()
+        public IEnumerable<PgpUserAttributeSubpacketVector> GetUserAttributes()
         {
-            IList temp = Platform.CreateArrayList();
+
+            var temp = new List<PgpUserAttributeSubpacketVector>();
 
             foreach (object o in ids)
             {
                 if (o is PgpUserAttributeSubpacketVector)
-                {
-                    temp.Add(o);
-                }
+                    temp.Add(o as PgpUserAttributeSubpacketVector);
             }
 
-            return new EnumerableProxy(temp);
+            return temp;
+
         }
 
         /// <summary>Allows enumeration of any signatures associated with the passed in id.</summary>
         /// <param name="id">The ID to be matched.</param>
         /// <returns>An <c>IEnumerable</c> of <c>PgpSignature</c> objects.</returns>
-        public IEnumerable GetSignaturesForId(
-            string id)
+        public IEnumerable<PgpSignature> GetSignaturesForId(String id)
         {
+
             if (id == null)
                 throw new ArgumentNullException("id");
 
             for (int i = 0; i != ids.Count; i++)
             {
                 if (id.Equals(ids[i]))
-                {
-                    return new EnumerableProxy((IList)idSigs[i]);
-                }
+                    return idSigs[i];
             }
 
             return null;
+
         }
 
         /// <summary>Allows enumeration of signatures associated with the passed in user attributes.</summary>
         /// <param name="userAttributes">The vector of user attributes to be matched.</param>
         /// <returns>An <c>IEnumerable</c> of <c>PgpSignature</c> objects.</returns>
-        public IEnumerable GetSignaturesForUserAttribute(
-            PgpUserAttributeSubpacketVector userAttributes)
+        public IEnumerable<PgpSignature> GetSignaturesForUserAttribute(PgpUserAttributeSubpacketVector userAttributes)
         {
+
             for (int i = 0; i != ids.Count; i++)
             {
                 if (userAttributes.Equals(ids[i]))
-                {
-                    return new EnumerableProxy((IList) idSigs[i]);
-                }
+                    return idSigs[i];
             }
 
             return null;
+
         }
 
         /// <summary>Allows enumeration of signatures of the passed in type that are on this key.</summary>
-        /// <param name="signatureType">The type of the signature to be returned.</param>
+        /// <param name="SignatureType">The type of the signature to be returned.</param>
         /// <returns>An <c>IEnumerable</c> of <c>PgpSignature</c> objects.</returns>
         public IEnumerable<PgpSignature> GetSignaturesOfType(Int32 SignatureType)
         {

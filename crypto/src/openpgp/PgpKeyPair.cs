@@ -4,6 +4,7 @@ using Org.BouncyCastle.Crypto;
 
 namespace Org.BouncyCastle.Bcpg.OpenPgp
 {
+
     /// <remarks>
     /// General class to handle JCA key pairs and convert them into OpenPGP ones.
     /// <p>
@@ -16,51 +17,93 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
     /// </remarks>
     public class PgpKeyPair
     {
-        private readonly PgpPublicKey    pub;
-        private readonly PgpPrivateKey    priv;
 
-        public PgpKeyPair(
-            PublicKeyAlgorithmTag    algorithm,
-            AsymmetricCipherKeyPair    keyPair,
-            DateTime                time)
-            : this(algorithm, keyPair.Public, keyPair.Private, time)
+        #region Properties
+
+        #region KeyId
+
+        /// <summary>
+        /// The keyId associated with this key pair.
+        /// </summary>
+        public UInt64 KeyId
         {
+            get
+            {
+                return _PublicKey.KeyId;
+            }
         }
+
+        #endregion
+
+        #region PublicKey
+
+        private readonly PgpPublicKey _PublicKey;
+
+        /// <summary>
+        /// The public key associated with this key pair.
+        /// </summary>
+        public PgpPublicKey PublicKey
+        {
+            get
+            {
+                return _PublicKey;
+            }
+        }
+
+        #endregion
+
+        #region PrivateKey
+
+        private readonly PgpPrivateKey _PrivateKey;
+
+        /// <summary>
+        /// The private key associated with this key pair.
+        /// </summary>
+        public PgpPrivateKey PrivateKey
+        {
+            get
+            {
+                return _PrivateKey;
+            }
+        }
+
+        #endregion
+
+        #endregion
+
+        #region Constructor(s)
+
+        public PgpKeyPair(PublicKeyAlgorithmTag    algorithm,
+                          AsymmetricCipherKeyPair  keyPair,
+                          DateTime                 time)
+
+            : this(algorithm, keyPair.Public, keyPair.Private, time)
+
+        { }
 
         public PgpKeyPair(PublicKeyAlgorithmTag   algorithm,
                           AsymmetricKeyParameter  pubKey,
                           AsymmetricKeyParameter  privKey,
                           DateTime                time)
         {
-            this.pub  = new PgpPublicKey(algorithm, pubKey, time);
-            this.priv = new PgpPrivateKey(privKey, pub.KeyId);
+            this._PublicKey   = new PgpPublicKey(algorithm, pubKey, time);
+            this._PrivateKey  = new PgpPrivateKey(privKey, _PublicKey.KeyId);
         }
 
-        /// <summary>Create a key pair from a PgpPrivateKey and a PgpPublicKey.</summary>
+        /// <summary>
+        /// Create a key pair from a PgpPrivateKey and a PgpPublicKey.
+        /// </summary>
         /// <param name="pub">The public key.</param>
         /// <param name="priv">The private key.</param>
-        public PgpKeyPair(
-            PgpPublicKey    pub,
-            PgpPrivateKey    priv)
+        public PgpKeyPair(PgpPublicKey   pub,
+                          PgpPrivateKey  priv)
         {
-            this.pub = pub;
-            this.priv = priv;
+            this._PublicKey  = pub;
+            this._PrivateKey = priv;
         }
 
-        /// <summary>The keyId associated with this key pair.</summary>
-        public UInt64 KeyId
-        {
-            get { return pub.KeyId; }
-        }
+        #endregion
 
-        public PgpPublicKey PublicKey
-        {
-            get { return pub; }
-        }
-
-        public PgpPrivateKey PrivateKey
-        {
-            get { return priv; }
-        }
     }
+
 }

@@ -79,12 +79,12 @@ namespace Org.BouncyCastle.Utilities
         }
 
 
-        internal static string ToLowerInvariant(string s)
+        internal static String ToLowerInvariant(String s)
         {
             return s.ToLower(CultureInfo.InvariantCulture);
         }
 
-        internal static string ToUpperInvariant(string s)
+        internal static String ToUpperInvariant(String s)
         {
             return s.ToUpper(CultureInfo.InvariantCulture);
         }

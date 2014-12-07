@@ -2,6 +2,8 @@ using System;
 using System.Collections;
 using System.Globalization;
 using System.IO;
+using System.Linq;
+using System.Collections.Generic;
 
 using Org.BouncyCastle.Utilities;
 using Org.BouncyCastle.Utilities.Collections;
@@ -14,58 +16,56 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
     /// </remarks>
     public class PgpSecretKeyRingBundle
     {
-        private readonly IDictionary secretRings;
-        private readonly IList order;
 
-        private PgpSecretKeyRingBundle(
-            IDictionary    secretRings,
-            IList       order)
+        private readonly Dictionary<UInt64, PgpSecretKeyRing>  secretRings;
+        private readonly List<UInt64>                          order;
+
+        private PgpSecretKeyRingBundle(Dictionary<UInt64, PgpSecretKeyRing>  secretRings,
+                                       List<UInt64>                          order)
         {
-            this.secretRings = secretRings;
-            this.order = order;
+
+            this.secretRings  = secretRings;
+            this.order        = order;
+
         }
 
-        public PgpSecretKeyRingBundle(
-            byte[] encoding)
+        public PgpSecretKeyRingBundle(Byte[] encoding)
             : this(new MemoryStream(encoding, false))
-        {
-        }
+        { }
 
         /// <summary>Build a PgpSecretKeyRingBundle from the passed in input stream.</summary>
         /// <param name="inputStream">Input stream containing data.</param>
         /// <exception cref="IOException">If a problem parsing the stream occurs.</exception>
         /// <exception cref="PgpException">If an object is encountered which isn't a PgpSecretKeyRing.</exception>
-        public PgpSecretKeyRingBundle(
-            Stream inputStream)
-            : this(new PgpObjectFactory(inputStream).AllPgpObjects())
-        {
-        }
+        public PgpSecretKeyRingBundle(Stream inputStream)
+            : this(new PgpObjectFactory(inputStream).
+                       AllPgpObjects().
+                       Select(po => po as PgpSecretKeyRing).
+                       Where(po => po != null))
+        { }
 
-        public PgpSecretKeyRingBundle(
-            IEnumerable e)
+        public PgpSecretKeyRingBundle(IEnumerable<PgpSecretKeyRing> e)
         {
-            this.secretRings = Platform.CreateHashtable();
-            this.order = Platform.CreateArrayList();
 
-            foreach (object obj in e)
+            this.secretRings  = new Dictionary<UInt64, PgpSecretKeyRing>();
+            this.order        = new List<UInt64>();
+
+            foreach (var SecretKeyRing in e)
             {
-                PgpSecretKeyRing pgpSecret = obj as PgpSecretKeyRing;
+
+                var pgpSecret = SecretKeyRing;
 
                 if (pgpSecret == null)
                 {
-                    throw new PgpException(obj.GetType().FullName + " found where PgpSecretKeyRing expected");
+                    throw new PgpException(SecretKeyRing.GetType().FullName + " found where PgpSecretKeyRing expected");
                 }
 
                 var key = pgpSecret.GetPublicKey().KeyId;
                 secretRings.Add(key, pgpSecret);
                 order.Add(key);
-            }
-        }
 
-        [Obsolete("Use 'Count' property instead")]
-        public int Size
-        {
-            get { return order.Count; }
+            }
+
         }
 
         /// <summary>Return the number of rings in this collection.</summary>
@@ -75,16 +75,15 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
         }
 
         /// <summary>Allow enumeration of the secret key rings making up this collection.</summary>
-        public IEnumerable GetKeyRings()
+        public IEnumerable<PgpSecretKeyRing> GetKeyRings()
         {
-            return new EnumerableProxy(secretRings.Values);
+            return secretRings.Values;
         }
 
         /// <summary>Allow enumeration of the key rings associated with the passed in userId.</summary>
         /// <param name="userId">The user ID to be matched.</param>
         /// <returns>An <c>IEnumerable</c> of key rings which matched (possibly none).</returns>
-        public IEnumerable GetKeyRings(
-            string userId)
+        public IEnumerable<PgpSecretKeyRing> GetKeyRings(String userId)
         {
             return GetKeyRings(userId, false, false);
         }
@@ -93,9 +92,8 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
         /// <param name="userId">The user ID to be matched.</param>
         /// <param name="matchPartial">If true, userId need only be a substring of an actual ID string to match.</param>
         /// <returns>An <c>IEnumerable</c> of key rings which matched (possibly none).</returns>
-        public IEnumerable GetKeyRings(
-            string    userId,
-            bool    matchPartial)
+        public IEnumerable<PgpSecretKeyRing> GetKeyRings(String   userId,
+                                                         Boolean  matchPartial)
         {
             return GetKeyRings(userId, matchPartial, false);
         }
@@ -105,23 +103,23 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
         /// <param name="matchPartial">If true, userId need only be a substring of an actual ID string to match.</param>
         /// <param name="ignoreCase">If true, case is ignored in user ID comparisons.</param>
         /// <returns>An <c>IEnumerable</c> of key rings which matched (possibly none).</returns>
-        public IEnumerable GetKeyRings(
-            string    userId,
-            bool    matchPartial,
-            bool    ignoreCase)
+        public IEnumerable<PgpSecretKeyRing> GetKeyRings(String   userId,
+                                                         Boolean  matchPartial,
+                                                         Boolean  ignoreCase)
         {
-            IList rings = Platform.CreateArrayList();
+
+            var rings = new List<PgpSecretKeyRing>();
 
             if (ignoreCase)
-            {
                 userId = Platform.ToLowerInvariant(userId);
-            }
 
-            foreach (PgpSecretKeyRing secRing in GetKeyRings())
+            foreach (var secRing in GetKeyRings())
             {
-                foreach (string nextUserID in secRing.GetSecretKey().UserIds)
+
+                foreach (var nextUserID in secRing.GetSecretKey().UserIds)
                 {
-                    string next = nextUserID;
+
+                    var next = nextUserID;
                     if (ignoreCase)
                     {
                         next = Platform.ToLowerInvariant(next);
@@ -144,24 +142,27 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
                 }
             }
 
-            return new EnumerableProxy(rings);
+            return rings;
+
         }
 
         /// <summary>Return the PGP secret key associated with the given key id.</summary>
         /// <param name="keyId">The ID of the secret key to return.</param>
         public PgpSecretKey GetSecretKey(UInt64 keyId)
         {
-            foreach (PgpSecretKeyRing secRing in GetKeyRings())
+
+            foreach (var secRing in GetKeyRings())
             {
-                PgpSecretKey sec = secRing.GetSecretKey(keyId);
+
+                var sec = secRing.GetSecretKey(keyId);
 
                 if (sec != null)
-                {
                     return sec;
-                }
+
             }
 
             return null;
+
         }
 
         /// <summary>Return the secret key ring which contains the key referred to by keyId</summary>
@@ -169,24 +170,23 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
         public PgpSecretKeyRing GetSecretKeyRing(UInt64 keyId)
         {
 
-            UInt64 id = keyId;
+            var id = keyId;
 
-            if (secretRings.Contains(id))
-            {
-                return (PgpSecretKeyRing) secretRings[id];
-            }
+            if (secretRings.ContainsKey(id))
+                return secretRings[id];
 
-            foreach (PgpSecretKeyRing secretRing in GetKeyRings())
+            foreach (var secretRing in GetKeyRings())
             {
-                PgpSecretKey secret = secretRing.GetSecretKey(keyId);
+
+                var secret = secretRing.GetSecretKey(keyId);
 
                 if (secret != null)
-                {
                     return secretRing;
-                }
+
             }
 
             return null;
+
         }
 
         /// <summary>
@@ -200,23 +200,25 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
 
         public byte[] GetEncoded()
         {
-            MemoryStream bOut = new MemoryStream();
 
+            var bOut = new MemoryStream();
             Encode(bOut);
 
             return bOut.ToArray();
+
         }
 
         public void Encode(Stream outStr)
         {
-            BcpgOutputStream bcpgOut = BcpgOutputStream.Wrap(outStr);
 
-            foreach (long key in order)
+            var bcpgOut = BcpgOutputStream.Wrap(outStr);
+
+            foreach (var key in order)
             {
-                PgpSecretKeyRing pub = (PgpSecretKeyRing) secretRings[key];
-
+                var pub = secretRings[key];
                 pub.Encode(bcpgOut);
             }
+
         }
 
         /// <summary>
@@ -227,25 +229,23 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
         /// <param name="secretKeyRing">The key ring to be added.</param>
         /// <returns>A new <c>PgpSecretKeyRingBundle</c> merging the current one with the passed in key ring.</returns>
         /// <exception cref="ArgumentException">If the keyId for the passed in key ring is already present.</exception>
-        public static PgpSecretKeyRingBundle AddSecretKeyRing(
-            PgpSecretKeyRingBundle  bundle,
-            PgpSecretKeyRing        secretKeyRing)
+        public static PgpSecretKeyRingBundle AddSecretKeyRing(PgpSecretKeyRingBundle  bundle,
+                                                              PgpSecretKeyRing        secretKeyRing)
         {
 
-            UInt64 key = secretKeyRing.GetPublicKey().KeyId;
+            var key = secretKeyRing.GetPublicKey().KeyId;
 
-            if (bundle.secretRings.Contains(key))
-            {
+            if (bundle.secretRings.ContainsKey(key))
                 throw new ArgumentException("Collection already contains a key with a keyId for the passed in ring.");
-            }
 
-            IDictionary newSecretRings = Platform.CreateHashtable(bundle.secretRings);
-            IList newOrder = Platform.CreateArrayList(bundle.order);
+            var newSecretRings  = new Dictionary<UInt64, PgpSecretKeyRing>(bundle.secretRings);
+            var newOrder        = new List<UInt64>(bundle.order);
 
             newSecretRings[key] = secretKeyRing;
             newOrder.Add(key);
 
             return new PgpSecretKeyRingBundle(newSecretRings, newOrder);
+
         }
 
         /// <summary>
@@ -256,24 +256,25 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
         /// <param name="secretKeyRing">The key ring to be removed.</param>
         /// <returns>A new <c>PgpSecretKeyRingBundle</c> not containing the passed in key ring.</returns>
         /// <exception cref="ArgumentException">If the keyId for the passed in key ring is not present.</exception>
-        public static PgpSecretKeyRingBundle RemoveSecretKeyRing(
-            PgpSecretKeyRingBundle  bundle,
-            PgpSecretKeyRing        secretKeyRing)
+        public static PgpSecretKeyRingBundle RemoveSecretKeyRing(PgpSecretKeyRingBundle  bundle,
+                                                                 PgpSecretKeyRing        secretKeyRing)
         {
-            UInt64 key = secretKeyRing.GetPublicKey().KeyId;
 
-            if (!bundle.secretRings.Contains(key))
-            {
+            var key = secretKeyRing.GetPublicKey().KeyId;
+
+            if (!bundle.secretRings.ContainsKey(key))
                 throw new ArgumentException("Collection does not contain a key with a keyId for the passed in ring.");
-            }
 
-            IDictionary newSecretRings = Platform.CreateHashtable(bundle.secretRings);
-            IList newOrder = Platform.CreateArrayList(bundle.order);
+            var newSecretRings  = new Dictionary<UInt64, PgpSecretKeyRing>(bundle.secretRings);
+            var newOrder        = new List<UInt64>(bundle.order);
 
             newSecretRings.Remove(key);
             newOrder.Remove(key);
 
             return new PgpSecretKeyRingBundle(newSecretRings, newOrder);
+
         }
+
     }
+
 }

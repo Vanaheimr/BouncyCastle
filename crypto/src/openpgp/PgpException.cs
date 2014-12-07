@@ -2,21 +2,20 @@ using System;
 
 namespace Org.BouncyCastle.Bcpg.OpenPgp
 {
-	/// <remarks>Generic exception class for PGP encoding/decoding problems.</remarks>
-#if !(NETCF_1_0 || NETCF_2_0 || SILVERLIGHT)
-    [Serializable]
-#endif
-    public class PgpException
-		: Exception
-	{
-		public PgpException() : base() {}
-		public PgpException(string message) : base(message) {}
-		public PgpException(string message, Exception exception) : base(message, exception) {}
 
-		[Obsolete("Use InnerException property")]
-		public Exception UnderlyingException
-		{
-			get { return InnerException; }
-		}
-	}
+    /// <summary>
+    /// Generic exception class for PGP encoding/decoding problems.
+    /// </summary>
+    [Serializable]
+    public class PgpException : Exception
+    {
+
+        public PgpException() : base() {}
+
+        public PgpException(String message) : base(message) {}
+
+        public PgpException(String message, Exception exception) : base(message, exception) { }
+
+    }
+
 }

@@ -3,22 +3,24 @@ using System.Collections;
 using System.IO;
 
 using Org.BouncyCastle.Utilities;
+using System.Collections.Generic;
 
 namespace Org.BouncyCastle.Bcpg.OpenPgp
 {
-	/// <remarks>
+    /// <remarks>
     /// General class for reading a PGP object stream.
     /// <p>
     /// Note: if this class finds a PgpPublicKey or a PgpSecretKey it
     /// will create a PgpPublicKeyRing, or a PgpSecretKeyRing for each
     /// key found. If all you are trying to do is read a key ring file use
     /// either PgpPublicKeyRingBundle or PgpSecretKeyRingBundle.</p>
-	/// </remarks>
-	public class PgpObjectFactory
+    /// </remarks>
+    public class PgpObjectFactory
     {
+
         private readonly BcpgInputStream bcpgIn;
 
-		public PgpObjectFactory(
+        public PgpObjectFactory(
             Stream inputStream)
         {
             this.bcpgIn = BcpgInputStream.Wrap(inputStream);
@@ -30,8 +32,8 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
         {
         }
 
-		/// <summary>Return the next object in the stream, or null if the end is reached.</summary>
-		/// <exception cref="IOException">On a parse error</exception>
+        /// <summary>Return the next object in the stream, or null if the end is reached.</summary>
+        /// <exception cref="IOException">On a parse error</exception>
         public PgpObject NextPgpObject()
         {
             PacketTag tag = bcpgIn.NextPacketTag();
@@ -61,7 +63,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
                     {
                         sigs[i] = (PgpSignature)l[i];
                     }
-					return new PgpSignatureList(sigs);
+                    return new PgpSignatureList(sigs);
                 }
                 case PacketTag.SecretKey:
                     try
@@ -74,9 +76,9 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
                     }
                 case PacketTag.PublicKey:
                     return new PgpPublicKeyRing(bcpgIn);
-				// TODO Make PgpPublicKey a PgpObject or return a PgpPublicKeyRing
-//				case PacketTag.PublicSubkey:
-//					return PgpPublicKeyRing.ReadSubkey(bcpgIn);
+                // TODO Make PgpPublicKey a PgpObject or return a PgpPublicKeyRing
+//                case PacketTag.PublicSubkey:
+//                    return PgpPublicKeyRing.ReadSubkey(bcpgIn);
                 case PacketTag.CompressedData:
                     return new PgpCompressedData(bcpgIn);
                 case PacketTag.LiteralData:
@@ -96,8 +98,8 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
                         }
                         catch (PgpException e)
                         {
-							throw new IOException("can't create one pass signature object: " + e);
-						}
+                            throw new IOException("can't create one pass signature object: " + e);
+                        }
                     }
 
                     PgpOnePassSignature[] sigs = new PgpOnePassSignature[l.Count];
@@ -105,7 +107,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
                     {
                         sigs[i] = (PgpOnePassSignature)l[i];
                     }
-					return new PgpOnePassSignatureList(sigs);
+                    return new PgpOnePassSignatureList(sigs);
                 }
                 case PacketTag.Marker:
                     return new PgpMarker(bcpgIn);
@@ -113,31 +115,30 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
                 case PacketTag.Experimental2:
                 case PacketTag.Experimental3:
                 case PacketTag.Experimental4:
-					return new PgpExperimental(bcpgIn);
+                    return new PgpExperimental(bcpgIn);
             }
 
             throw new IOException("unknown object in stream " + bcpgIn.NextPacketTag());
         }
 
-		[Obsolete("Use NextPgpObject() instead")]
-		public object NextObject()
-		{
-			return NextPgpObject();
-		}
+        /// <summary>
+        /// Return all available objects in a list.
+        /// </summary>
+        /// <returns>An <c>IList</c> containing all objects from this factory, in order.</returns>
+        public IEnumerable<PgpObject> AllPgpObjects()
+        {
 
-		/// <summary>
-		/// Return all available objects in a list.
-		/// </summary>
-		/// <returns>An <c>IList</c> containing all objects from this factory, in order.</returns>
-		public IList AllPgpObjects()
-		{
-            IList result = Platform.CreateArrayList();
-			PgpObject pgpObject;
-			while ((pgpObject = NextPgpObject()) != null)
-			{
-				result.Add(pgpObject);
-			}
-			return result;
-		}
-	}
+            var result = new List<PgpObject>();
+            PgpObject pgpObject;
+            while ((pgpObject = NextPgpObject()) != null)
+            {
+                result.Add(pgpObject);
+            }
+
+            return result;
+
+        }
+
+    }
+
 }

@@ -5,12 +5,12 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Examples
 {
     internal class PgpExampleUtilities
     {
-        internal static byte[] CompressFile(string fileName, CompressionAlgorithmTag algorithm)
+
+        internal static byte[] CompressFile(String fileName, CompressionAlgorithmTag algorithm)
         {
-            MemoryStream bOut = new MemoryStream();
-            PgpCompressedDataGenerator comData = new PgpCompressedDataGenerator(algorithm);
-            PgpUtilities.WriteFileToLiteralData(comData.Open(bOut), PgpLiteralData.Binary,
-                new FileInfo(fileName));
+            var bOut     = new MemoryStream();
+            var comData  = new PgpCompressedDataGenerator(algorithm);
+            PgpUtilities.WriteFileToLiteralData(comData.Open(bOut), PgpLiteralData.Binary, new FileInfo(fileName));
             comData.Close();
             return bOut.ToArray();
         }
@@ -26,19 +26,19 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Examples
          * @throws PGPException
          * @throws NoSuchProviderException
          */
-        internal static PgpPrivateKey FindSecretKey(PgpSecretKeyRingBundle pgpSec, UInt64 keyID, char[] pass)
+        internal static PgpPrivateKey FindSecretKey(PgpSecretKeyRingBundle pgpSec, UInt64 keyID, Char[] pass)
         {
-            PgpSecretKey pgpSecKey = pgpSec.GetSecretKey(keyID);
+
+            var pgpSecKey = pgpSec.GetSecretKey(keyID);
 
             if (pgpSecKey == null)
-            {
                 return null;
-            }
 
             return pgpSecKey.ExtractPrivateKey(pass);
+
         }
 
-        internal static PgpPublicKey ReadPublicKey(string fileName)
+        internal static PgpPublicKey ReadPublicKey(String fileName)
         {
             using (Stream keyIn = File.OpenRead(fileName))
             {
@@ -57,14 +57,11 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Examples
          */
         internal static PgpPublicKey ReadPublicKey(Stream input)
         {
-            PgpPublicKeyRingBundle pgpPub = new PgpPublicKeyRingBundle(
-                PgpUtilities.GetDecoderStream(input));
 
-            //
+            var pgpPub = new PgpPublicKeyRingBundle(PgpUtilities.GetDecoderStream(input));
+
             // we just loop through the collection till we find a key suitable for encryption, in the real
             // world you would probably want to be a bit smarter about this.
-            //
-
             foreach (PgpPublicKeyRing keyRing in pgpPub.GetKeyRings())
             {
                 foreach (PgpPublicKey key in keyRing.GetPublicKeys())
@@ -77,9 +74,10 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Examples
             }
 
             throw new ArgumentException("Can't find encryption key in key ring.");
+
         }
 
-        internal static PgpSecretKey ReadSecretKey(string fileName)
+        internal static PgpSecretKey ReadSecretKey(String fileName)
         {
             using (Stream keyIn = File.OpenRead(fileName))
             {
@@ -98,26 +96,24 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Examples
          */
         internal static PgpSecretKey ReadSecretKey(Stream input)
         {
-            PgpSecretKeyRingBundle pgpSec = new PgpSecretKeyRingBundle(
-                PgpUtilities.GetDecoderStream(input));
 
-            //
+            var pgpSec = new PgpSecretKeyRingBundle(PgpUtilities.GetDecoderStream(input));
+
             // we just loop through the collection till we find a key suitable for encryption, in the real
             // world you would probably want to be a bit smarter about this.
-            //
-
-            foreach (PgpSecretKeyRing keyRing in pgpSec.GetKeyRings())
+            foreach (var keyRing in pgpSec.GetKeyRings())
             {
-                foreach (PgpSecretKey key in keyRing.GetSecretKeys())
+                foreach (var key in keyRing.GetSecretKeys())
                 {
                     if (key.IsSigningKey)
-                    {
                         return key;
-                    }
                 }
             }
 
             throw new ArgumentException("Can't find signing key in key ring.");
+
         }
+
     }
+
 }

@@ -49,7 +49,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Examples
             PgpEncryptedDataList enc = null;
             PgpObject o = pgpF.NextPgpObject();
 
-			//
+            //
             // the first object might be a PGP marker packet.
             //
             if (o is PgpEncryptedDataList)
@@ -75,7 +75,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Examples
 
             Stream unc = ld.GetInputStream();
 
-			return Streams.ReadAll(unc);
+            return Streams.ReadAll(unc);
         }
 
         /**
@@ -101,45 +101,45 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Examples
         * @exception PgpException
         */
         public static byte[] Encrypt(
-            byte[]						clearData,
-            char[]						passPhrase,
-            string						fileName,
-            SymmetricKeyAlgorithmTag	algorithm,
-            bool						armor)
+            byte[]                        clearData,
+            char[]                        passPhrase,
+            string                        fileName,
+            SymmetricKeyAlgorithmTag    algorithm,
+            bool                        armor)
         {
             if (fileName == null)
             {
                 fileName = PgpLiteralData.Console;
             }
 
-			byte[] compressedData = Compress(clearData, fileName, CompressionAlgorithmTag.Zip);
+            byte[] compressedData = Compress(clearData, fileName, CompressionAlgorithmTag.Zip);
 
-			MemoryStream bOut = new MemoryStream();
+            MemoryStream bOut = new MemoryStream();
 
-			Stream output = bOut;
-			if (armor)
-			{
-				output = new ArmoredOutputStream(output);
-			}
+            Stream output = bOut;
+            if (armor)
+            {
+                output = new ArmoredOutputStream(output);
+            }
 
-			PgpEncryptedDataGenerator encGen = new PgpEncryptedDataGenerator(algorithm, new SecureRandom());
+            PgpEncryptedDataGenerator encGen = new PgpEncryptedDataGenerator(algorithm, new SecureRandom());
             encGen.AddMethod(passPhrase);
 
-			Stream encOut = encGen.Open(output, compressedData.Length);
+            Stream encOut = encGen.Open(output, compressedData.Length);
 
-			encOut.Write(compressedData, 0, compressedData.Length);
-			encOut.Close();
-			
-			if (armor)
-			{
-				output.Close();
-			}
+            encOut.Write(compressedData, 0, compressedData.Length);
+            encOut.Close();
+            
+            if (armor)
+            {
+                output.Close();
+            }
 
-			return bOut.ToArray();
+            return bOut.ToArray();
         }
 
-		private static byte[] Compress(byte[] clearData, string fileName, CompressionAlgorithmTag algorithm)
-		{
+        private static byte[] Compress(byte[] clearData, string fileName, CompressionAlgorithmTag algorithm)
+        {
             MemoryStream bOut = new MemoryStream();
 
             PgpCompressedDataGenerator comData = new PgpCompressedDataGenerator(algorithm);
@@ -149,28 +149,28 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Examples
             // we want to Generate compressed data. This might be a user option later,
             // in which case we would pass in bOut.
             Stream pOut = lData.Open(
-				cos,					// the compressed output stream
+                cos,                    // the compressed output stream
                 PgpLiteralData.Binary,
-                fileName,				// "filename" to store
-                clearData.Length,		// length of clear data
-                DateTime.UtcNow			// current time
+                fileName,                // "filename" to store
+                clearData.Length,        // length of clear data
+                DateTime.UtcNow            // current time
             );
 
-			pOut.Write(clearData, 0, clearData.Length);
-			pOut.Close();
+            pOut.Write(clearData, 0, clearData.Length);
+            pOut.Close();
 
-			comData.Close();
+            comData.Close();
 
-			return bOut.ToArray();
-		}
+            return bOut.ToArray();
+        }
 
-		private static string GetAsciiString(byte[] bs)
-		{
-			return Encoding.ASCII.GetString(bs, 0, bs.Length);
-		}
+        private static string GetAsciiString(byte[] bs)
+        {
+            return Encoding.ASCII.GetString(bs, 0, bs.Length);
+        }
 
         public static void Main(
-			string[] args)
+            string[] args)
         {
             string passPhrase = "Dick Beck";
             char[] passArray = passPhrase.ToCharArray();
