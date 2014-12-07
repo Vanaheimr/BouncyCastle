@@ -116,7 +116,7 @@ namespace Org.BouncyCastle.Pkix
 			buf.Append(indent);
 			buf.Append(mValidPolicy);
 			buf.Append(" {");
-			buf.Append(Platform.NewLine);
+			buf.Append(Environment.NewLine);
 
 			foreach (PkixPolicyNode child in mChildren)
 			{
@@ -125,7 +125,7 @@ namespace Org.BouncyCastle.Pkix
 
 			buf.Append(indent);
 			buf.Append("}");
-			buf.Append(Platform.NewLine);
+			buf.Append(Environment.NewLine);
 			return buf.ToString();
 		}
 

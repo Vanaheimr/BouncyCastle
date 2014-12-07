@@ -119,15 +119,15 @@ namespace Org.BouncyCastle.Tests
 
             if (!r.Equals(sig[0]))
             {
-                Fail("r component wrong." + SimpleTest.NewLine
-                    + " expecting: " + r + SimpleTest.NewLine
+                Fail("r component wrong." + Environment.NewLine
+                    + " expecting: " + r + Environment.NewLine
                     + " got      : " + sig[0]);
             }
 
             if (!s.Equals(sig[1]))
             {
-                Fail("s component wrong." + SimpleTest.NewLine
-                    + " expecting: " + s + SimpleTest.NewLine
+                Fail("s component wrong." + Environment.NewLine
+                    + " expecting: " + s + Environment.NewLine
                     + " got      : " + sig[1]);
             }
         }
@@ -201,15 +201,15 @@ namespace Org.BouncyCastle.Tests
 
             if (!r.Equals(sig[0]))
             {
-                Fail("r component wrong." + SimpleTest.NewLine
-                    + " expecting: " + r + SimpleTest.NewLine
+                Fail("r component wrong." + Environment.NewLine
+                    + " expecting: " + r + Environment.NewLine
                     + " got      : " + sig[0]);
             }
 
             if (!s.Equals(sig[1]))
             {
-                Fail("s component wrong." + SimpleTest.NewLine
-                    + " expecting: " + s + SimpleTest.NewLine
+                Fail("s component wrong." + Environment.NewLine
+                    + " expecting: " + s + Environment.NewLine
                     + " got      : " + sig[1]);
             }
         }

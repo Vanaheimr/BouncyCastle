@@ -451,7 +451,7 @@ namespace Org.BouncyCastle.X509
 		public override string ToString()
 		{
 			StringBuilder buf = new StringBuilder();
-			string nl = Platform.NewLine;
+			string nl = Environment.NewLine;
 
 			buf.Append("  [0]         Version: ").Append(this.Version).Append(nl);
 			buf.Append("         SerialNumber: ").Append(this.SerialNumber).Append(nl);

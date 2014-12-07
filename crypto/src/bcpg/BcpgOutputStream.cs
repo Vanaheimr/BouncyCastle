@@ -5,123 +5,128 @@ using Org.BouncyCastle.Utilities.IO;
 
 namespace Org.BouncyCastle.Bcpg
 {
-	/// <remarks>Basic output stream.</remarks>
-    public class BcpgOutputStream
-        : BaseOutputStream
+
+    /// <summary>
+    /// Basic output stream.
+    /// </summary>
+    public class BcpgOutputStream : BaseOutputStream
     {
-		internal static BcpgOutputStream Wrap(
-			Stream outStr)
-		{
-			if (outStr is BcpgOutputStream)
-			{
-				return (BcpgOutputStream) outStr;
-			}
 
-			return new BcpgOutputStream(outStr);
-		}
-
-		private Stream outStr;
-        private byte[] partialBuffer;
-        private int partialBufferLength;
-        private int partialPower;
-        private int partialOffset;
-        private const int BufferSizePower = 16; // 2^16 size buffer on long files
-
-		/// <summary>Create a stream representing a general packet.</summary>
-		/// <param name="outStr">Output stream to write to.</param>
-		public BcpgOutputStream(
-            Stream outStr)
+        internal static BcpgOutputStream Wrap(Stream outStr)
         {
-			if (outStr == null)
-				throw new ArgumentNullException("outStr");
 
-			this.outStr = outStr;
+            if (outStr is BcpgOutputStream)
+                return (BcpgOutputStream) outStr;
+
+            return new BcpgOutputStream(outStr);
+
         }
 
-		/// <summary>Create a stream representing an old style partial object.</summary>
-		/// <param name="outStr">Output stream to write to.</param>
-		/// <param name="tag">The packet tag for the object.</param>
-        public BcpgOutputStream(
-            Stream		outStr,
-            PacketTag	tag)
-        {
-			if (outStr == null)
-				throw new ArgumentNullException("outStr");
+        private Stream      outStr;
+        private byte[]      partialBuffer;
+        private int         partialBufferLength;
+        private int         partialPower;
+        private int         partialOffset;
+        private const int   BufferSizePower = 16; // 2^16 size buffer on long files
 
-			this.outStr = outStr;
+        /// <summary>Create a stream representing a general packet.</summary>
+        /// <param name="outStr">Output stream to write to.</param>
+        public BcpgOutputStream(Stream outStr)
+        {
+
+            if (outStr == null)
+                throw new ArgumentNullException("outStr");
+
+            this.outStr = outStr;
+
+        }
+
+        /// <summary>Create a stream representing an old style partial object.</summary>
+        /// <param name="outStr">Output stream to write to.</param>
+        /// <param name="tag">The packet tag for the object.</param>
+        public BcpgOutputStream(Stream     outStr,
+                                PacketTag  tag)
+        {
+
+            if (outStr == null)
+                throw new ArgumentNullException("outStr");
+
+            this.outStr = outStr;
             this.WriteHeader(tag, true, true, 0);
+
         }
 
-		/// <summary>Create a stream representing a general packet.</summary>
-		/// <param name="outStr">Output stream to write to.</param>
-		/// <param name="tag">Packet tag.</param>
-		/// <param name="length">Size of chunks making up the packet.</param>
-		/// <param name="oldFormat">If true, the header is written out in old format.</param>
-		public BcpgOutputStream(
-            Stream		outStr,
-            PacketTag	tag,
-            long		length,
-            bool		oldFormat)
+        /// <summary>Create a stream representing a general packet.</summary>
+        /// <param name="outStr">Output stream to write to.</param>
+        /// <param name="tag">Packet tag.</param>
+        /// <param name="length">Size of chunks making up the packet.</param>
+        /// <param name="oldFormat">If true, the header is written out in old format.</param>
+        public BcpgOutputStream(Stream      outStr,
+                                PacketTag   tag,
+                                Int64       length,
+                                Boolean     oldFormat)
         {
-			if (outStr == null)
-				throw new ArgumentNullException("outStr");
 
-			this.outStr = outStr;
+            if (outStr == null)
+                throw new ArgumentNullException("outStr");
+
+            this.outStr = outStr;
 
             if (length > 0xFFFFFFFFL)
             {
                 this.WriteHeader(tag, false, true, 0);
-                this.partialBufferLength = 1 << BufferSizePower;
-                this.partialBuffer = new byte[partialBufferLength];
-				this.partialPower = BufferSizePower;
-				this.partialOffset = 0;
+                this.partialBufferLength    = 1 << BufferSizePower;
+                this.partialBuffer          = new byte[partialBufferLength];
+                this.partialPower           = BufferSizePower;
+                this.partialOffset          = 0;
             }
+
             else
-            {
                 this.WriteHeader(tag, oldFormat, false, length);
-            }
+
         }
 
-		/// <summary>Create a new style partial input stream buffered into chunks.</summary>
-		/// <param name="outStr">Output stream to write to.</param>
-		/// <param name="tag">Packet tag.</param>
-		/// <param name="length">Size of chunks making up the packet.</param>
-		public BcpgOutputStream(
-            Stream		outStr,
-            PacketTag	tag,
-            long		length)
+        /// <summary>Create a new style partial input stream buffered into chunks.</summary>
+        /// <param name="outStr">Output stream to write to.</param>
+        /// <param name="tag">Packet tag.</param>
+        /// <param name="length">Size of chunks making up the packet.</param>
+        public BcpgOutputStream(Stream     outStr,
+                                PacketTag  tag,
+                                Int64      length)
         {
-			if (outStr == null)
-				throw new ArgumentNullException("outStr");
+
+            if (outStr == null)
+                throw new ArgumentNullException("outStr");
 
             this.outStr = outStr;
             this.WriteHeader(tag, false, false, length);
+
         }
 
-		/// <summary>Create a new style partial input stream buffered into chunks.</summary>
-		/// <param name="outStr">Output stream to write to.</param>
-		/// <param name="tag">Packet tag.</param>
-		/// <param name="buffer">Buffer to use for collecting chunks.</param>
+        /// <summary>Create a new style partial input stream buffered into chunks.</summary>
+        /// <param name="outStr">Output stream to write to.</param>
+        /// <param name="tag">Packet tag.</param>
+        /// <param name="buffer">Buffer to use for collecting chunks.</param>
         public BcpgOutputStream(
-            Stream		outStr,
-            PacketTag	tag,
-            byte[]		buffer)
+            Stream        outStr,
+            PacketTag    tag,
+            byte[]        buffer)
         {
-			if (outStr == null)
-				throw new ArgumentNullException("outStr");
+            if (outStr == null)
+                throw new ArgumentNullException("outStr");
 
             this.outStr = outStr;
             this.WriteHeader(tag, false, true, 0);
 
-			this.partialBuffer = buffer;
+            this.partialBuffer = buffer;
 
-			uint length = (uint) partialBuffer.Length;
+            uint length = (uint) partialBuffer.Length;
             for (partialPower = 0; length != 1; partialPower++)
             {
                 length >>= 1;
             }
 
-			if (partialPower > 30)
+            if (partialPower > 30)
             {
                 throw new IOException("Buffer cannot be greater than 2^30 in length.");
             }
@@ -129,8 +134,7 @@ namespace Org.BouncyCastle.Bcpg
             this.partialOffset = 0;
         }
 
-		private void WriteNewPacketLength(
-            long bodyLen)
+        private void WriteNewPacketLength(long bodyLen)
         {
             if (bodyLen < 192)
             {
@@ -154,10 +158,10 @@ namespace Org.BouncyCastle.Bcpg
         }
 
         private void WriteHeader(
-            PacketTag	tag,
-            bool		oldPackets,
-            bool		partial,
-            long		bodyLen)
+            PacketTag    tag,
+            bool        oldPackets,
+            bool        partial,
+            long        bodyLen)
         {
             int hdr = 0x80;
 
@@ -214,8 +218,7 @@ namespace Org.BouncyCastle.Bcpg
             }
         }
 
-        private void PartialFlush(
-            bool isLast)
+        private void PartialFlush(bool isLast)
         {
             if (isLast)
             {
@@ -231,7 +234,7 @@ namespace Org.BouncyCastle.Bcpg
             partialOffset = 0;
         }
 
-		private void WritePartial(
+        private void WritePartial(
             byte b)
         {
             if (partialOffset == partialBufferLength)
@@ -239,13 +242,12 @@ namespace Org.BouncyCastle.Bcpg
                 PartialFlush(false);
             }
 
-			partialBuffer[partialOffset++] = b;
+            partialBuffer[partialOffset++] = b;
         }
 
-		private void WritePartial(
-            byte[]	buffer,
-            int		off,
-            int		len)
+        private void WritePartial(byte[]  buffer,
+                                  int     off,
+                                  int     len)
         {
             if (partialOffset == partialBufferLength)
             {
@@ -275,8 +277,8 @@ namespace Org.BouncyCastle.Bcpg
                 partialOffset += len;
             }
         }
-        public override void WriteByte(
-			byte value)
+
+        public override void WriteByte(byte value)
         {
             if (partialBuffer != null)
             {
@@ -287,10 +289,11 @@ namespace Org.BouncyCastle.Bcpg
                 outStr.WriteByte(value);
             }
         }
+
         public override void Write(
-            byte[]	buffer,
-            int		offset,
-            int		count)
+            byte[]    buffer,
+            int        offset,
+            int        count)
         {
             if (partialBuffer != null)
             {
@@ -302,74 +305,85 @@ namespace Org.BouncyCastle.Bcpg
             }
         }
 
-		// Additional helper methods to write primitive types
-		internal virtual void WriteShort(
-			short n)
-		{
-			this.Write(
-				(byte)(n >> 8),
-				(byte)n);
-		}
-		internal virtual void WriteInt(
-			int n)
-		{
-			this.Write(
-				(byte)(n >> 24),
-				(byte)(n >> 16),
-				(byte)(n >> 8),
-				(byte)n);
-		}
-		internal virtual void WriteLong(
-			long n)
-		{
-			this.Write(
-				(byte)(n >> 56),
-				(byte)(n >> 48),
-				(byte)(n >> 40),
-				(byte)(n >> 32),
-				(byte)(n >> 24),
-				(byte)(n >> 16),
-				(byte)(n >> 8),
-				(byte)n);
-		}
+        // Additional helper methods to write primitive types
+        internal virtual void WriteShort(
+            short n)
+        {
+            this.Write(
+                (byte)(n >> 8),
+                (byte)n);
+        }
 
-		public void WritePacket(
-            ContainedPacket p)
+        internal virtual void WriteInt(
+            int n)
+        {
+            this.Write(
+                (byte)(n >> 24),
+                (byte)(n >> 16),
+                (byte)(n >> 8),
+                (byte)n);
+        }
+
+        internal virtual void WriteLong(long n)
+        {
+            this.Write(
+                (byte)(n >> 56),
+                (byte)(n >> 48),
+                (byte)(n >> 40),
+                (byte)(n >> 32),
+                (byte)(n >> 24),
+                (byte)(n >> 16),
+                (byte)(n >> 8),
+                (byte)n);
+        }
+
+        internal virtual void WriteULong(UInt64 n)
+        {
+            this.Write(
+                (byte)(n >> 56),
+                (byte)(n >> 48),
+                (byte)(n >> 40),
+                (byte)(n >> 32),
+                (byte)(n >> 24),
+                (byte)(n >> 16),
+                (byte)(n >> 8),
+                (byte)n);
+        }
+
+        public void WritePacket(ContainedPacket p)
         {
             p.Encode(this);
         }
 
         internal void WritePacket(
-            PacketTag	tag,
-            byte[]		body,
-            bool		oldFormat)
+            PacketTag    tag,
+            byte[]        body,
+            bool        oldFormat)
         {
             this.WriteHeader(tag, oldFormat, false, body.Length);
             this.Write(body);
         }
 
-		public void WriteObject(
-            BcpgObject bcpgObject)
+        public void WriteObject(BcpgObject bcpgObject)
         {
             bcpgObject.Encode(this);
         }
 
-		public void WriteObjects(
-			params BcpgObject[] v)
-		{
-			foreach (BcpgObject o in v)
-			{
-				o.Encode(this);
-			}
-		}
+        public void WriteObjects(params BcpgObject[] v)
+        {
 
-		/// <summary>Flush the underlying stream.</summary>
+            foreach (BcpgObject o in v)
+                o.Encode(this);
+
+        }
+
+        /// <summary>Flush the underlying stream.</summary>
         public override void Flush()
         {
             outStr.Flush();
         }
 
-		/// <summary>Finish writing out the current packet without closing the underlying stream.</summary>
+        /// <summary>Finish writing out the current packet without closing the underlying stream.</summary>
         public void Finish()
         {
             if (partialBuffer != null)
@@ -379,12 +393,14 @@ namespace Org.BouncyCastle.Bcpg
             }
         }
 
-		public override void Close()
+        public override void Close()
         {
-			this.Finish();
-			outStr.Flush();
-			outStr.Close();
-			base.Close();
+            this.Finish();
+            outStr.Flush();
+            outStr.Close();
+            base.Close();
         }
+
     }
+
 }

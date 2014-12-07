@@ -192,7 +192,7 @@ namespace Org.BouncyCastle.Asn1.X509
 
 		public override string ToString()
 		{
-			string sep = Platform.NewLine;
+			string sep = Environment.NewLine;
 			StringBuilder buf = new StringBuilder();
 
 			buf.Append("IssuingDistributionPoint: [");

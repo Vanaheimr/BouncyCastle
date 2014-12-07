@@ -236,7 +236,7 @@ namespace Org.BouncyCastle.Pkix
 		public override string ToString()
 		{
 			// TODO Some of the sub-objects might not implement ToString() properly
-			string nl = Platform.NewLine;
+			string nl = Environment.NewLine;
 			StringBuilder sb = new StringBuilder();
 			sb.Append("[");
 			sb.Append(nl);

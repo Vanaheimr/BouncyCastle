@@ -110,7 +110,7 @@ namespace Org.BouncyCastle.X509.Tests
             //{
             //    foreach (string key in dummySet)
             //    {
-            //        Console.WriteLine("\t{0}:\t{1}", key);
+            //        Console.WriteLine("    {0}:    {1}", key);
             //    }
             //}
 
@@ -121,7 +121,7 @@ namespace Org.BouncyCastle.X509.Tests
             //{
             //    foreach (string key in dummySet)
             //    {
-            //        Console.WriteLine("\t{0}:\t{1}", key);
+            //        Console.WriteLine("    {0}:    {1}", key);
             //    }
             //}
 
@@ -185,7 +185,7 @@ namespace Org.BouncyCastle.X509.Tests
             //{
             //    foreach (string key in dummySet)
             //    {
-            //        Console.WriteLine("\t{0}:\t{1}", key);
+            //        Console.WriteLine("    {0}:    {1}", key);
             //    }
             //}
 
@@ -196,7 +196,7 @@ namespace Org.BouncyCastle.X509.Tests
             //{
             //    foreach (string key in dummySet)
             //    {
-            //        Console.WriteLine("\t{0}:\t{1}", key);
+            //        Console.WriteLine("    {0}:    {1}", key);
             //    }
             //}
 
@@ -273,7 +273,7 @@ namespace Org.BouncyCastle.X509.Tests
             //{
             //    foreach (string key in dummySet)
             //    {
-            //        Console.WriteLine("\t{0}:\t{1}", key);
+            //        Console.WriteLine("    {0}:    {1}", key);
             //    }
             //}
 
@@ -285,7 +285,7 @@ namespace Org.BouncyCastle.X509.Tests
             //{
             //    foreach (string key in dummySet)
             //    {
-            //        Console.WriteLine("\t{0}:\t{1}", key);
+            //        Console.WriteLine("    {0}:    {1}", key);
             //    }
             //}
 

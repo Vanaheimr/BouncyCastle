@@ -1336,7 +1336,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
                     keyCount++;
                     PgpPublicKey pk = k.PublicKey;
 
-                    if (pk.KeyId == -1413891222336124627L)
+                    if (((Int64)pk.KeyId) == -1413891222336124627L)
                     {
                         int sCount = 0;
 
@@ -1358,12 +1358,12 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
 
                     pk.GetSignatures();
 
-                    if (k.KeyId == -4049084404703773049L
-                        || k.KeyId == -1413891222336124627L)
+                    if (((Int64)k.KeyId) == -4049084404703773049L
+                        || ((Int64)k.KeyId) == -1413891222336124627L)
                     {
                         k.ExtractPrivateKey(sec2pass1);
                     }
-                    else if (k.KeyId == -6498553574938125416L
+                    else if (((Int64)k.KeyId) == -6498553574938125416L
                         || k.KeyId == 59034765524361024L)
                     {
                         k.ExtractPrivateKey(sec2pass2);
