@@ -6,115 +6,115 @@ using Org.BouncyCastle.Utilities.Encoders;
 
 namespace Org.BouncyCastle.Utilities.IO.Pem
 {
-	/**
-	* A generic PEM writer, based on RFC 1421
-	*/
-	public class PemWriter
-	{
-		private const int LineLength = 64;
+    /**
+    * A generic PEM writer, based on RFC 1421
+    */
+    public class PemWriter
+    {
+        private const int LineLength = 64;
 
-		private readonly TextWriter	writer;
-		private readonly int		nlLength;
-		private char[]				buf = new char[LineLength];
-		
-		/**
-		 * Base constructor.
-		 *
-		 * @param out output stream to use.
-		 */
-		public PemWriter(TextWriter writer)
-		{
-			if (writer == null)
-				throw new ArgumentNullException("writer");
+        private readonly TextWriter    writer;
+        private readonly int        nlLength;
+        private char[]                buf = new char[LineLength];
 
-			this.writer = writer;
-			this.nlLength = Platform.NewLine.Length;
-		}
+        /**
+         * Base constructor.
+         *
+         * @param out output stream to use.
+         */
+        public PemWriter(TextWriter writer)
+        {
+            if (writer == null)
+                throw new ArgumentNullException("writer");
 
-		public TextWriter Writer
-		{
-			get { return writer; }
-		}
+            this.writer = writer;
+            this.nlLength = Environment.NewLine.Length;
+        }
 
-		/**
-		 * Return the number of bytes or characters required to contain the
-		 * passed in object if it is PEM encoded.
-		 *
-		 * @param obj pem object to be output
-		 * @return an estimate of the number of bytes
-		 */
-		public int GetOutputSize(PemObject obj)
-		{
-			// BEGIN and END boundaries.
-			int size = (2 * (obj.Type.Length + 10 + nlLength)) + 6 + 4;
+        public TextWriter Writer
+        {
+            get { return writer; }
+        }
 
-			if (obj.Headers.Count > 0)
-			{
-				foreach (PemHeader header in obj.Headers)
-				{
-					size += header.Name.Length + ": ".Length + header.Value.Length + nlLength;
-				}
+        /**
+         * Return the number of bytes or characters required to contain the
+         * passed in object if it is PEM encoded.
+         *
+         * @param obj pem object to be output
+         * @return an estimate of the number of bytes
+         */
+        public int GetOutputSize(PemObject obj)
+        {
+            // BEGIN and END boundaries.
+            int size = (2 * (obj.Type.Length + 10 + nlLength)) + 6 + 4;
 
-				size += nlLength;
-			}
+            if (obj.Headers.Count > 0)
+            {
+                foreach (PemHeader header in obj.Headers)
+                {
+                    size += header.Name.Length + ": ".Length + header.Value.Length + nlLength;
+                }
 
-			// base64 encoding
-			int dataLen = ((obj.Content.Length + 2) / 3) * 4;
+                size += nlLength;
+            }
 
-			size += dataLen + (((dataLen + LineLength - 1) / LineLength) * nlLength);
+            // base64 encoding
+            int dataLen = ((obj.Content.Length + 2) / 3) * 4;
 
-			return size;
-		}
+            size += dataLen + (((dataLen + LineLength - 1) / LineLength) * nlLength);
 
-		public void WriteObject(PemObjectGenerator objGen)
-		{
-			PemObject obj = objGen.Generate();
+            return size;
+        }
 
-			WritePreEncapsulationBoundary(obj.Type);
+        public void WriteObject(PemObjectGenerator objGen)
+        {
+            PemObject obj = objGen.Generate();
 
-			if (obj.Headers.Count > 0)
-			{
-				foreach (PemHeader header in obj.Headers)
-				{
-					writer.Write(header.Name);
-					writer.Write(": ");
-					writer.WriteLine(header.Value);
-				}
+            WritePreEncapsulationBoundary(obj.Type);
 
-				writer.WriteLine();
-			}
+            if (obj.Headers.Count > 0)
+            {
+                foreach (PemHeader header in obj.Headers)
+                {
+                    writer.Write(header.Name);
+                    writer.Write(": ");
+                    writer.WriteLine(header.Value);
+                }
 
-			WriteEncoded(obj.Content);
-			WritePostEncapsulationBoundary(obj.Type);
-		}
+                writer.WriteLine();
+            }
 
-		private void WriteEncoded(byte[] bytes)
-		{
-			bytes = Base64.Encode(bytes);
+            WriteEncoded(obj.Content);
+            WritePostEncapsulationBoundary(obj.Type);
+        }
 
-			for (int i = 0; i < bytes.Length; i += buf.Length)
-			{
-				int index = 0;
-				while (index != buf.Length)
-				{
-					if ((i + index) >= bytes.Length)
-						break;
+        private void WriteEncoded(byte[] bytes)
+        {
+            bytes = Base64.Encode(bytes);
 
-					buf[index] = (char)bytes[i + index];
-					index++;
-				}
-				writer.WriteLine(buf, 0, index);
-			}
-		}
+            for (int i = 0; i < bytes.Length; i += buf.Length)
+            {
+                int index = 0;
+                while (index != buf.Length)
+                {
+                    if ((i + index) >= bytes.Length)
+                        break;
 
-		private void WritePreEncapsulationBoundary(string type)
-		{
-			writer.WriteLine("-----BEGIN " + type + "-----");
-		}
+                    buf[index] = (char)bytes[i + index];
+                    index++;
+                }
+                writer.WriteLine(buf, 0, index);
+            }
+        }
 
-		private void WritePostEncapsulationBoundary(string type)
-		{
-			writer.WriteLine("-----END " + type + "-----");
-		}
-	}
+        private void WritePreEncapsulationBoundary(string type)
+        {
+            writer.WriteLine("-----BEGIN " + type + "-----");
+        }
+
+        private void WritePostEncapsulationBoundary(string type)
+        {
+            writer.WriteLine("-----END " + type + "-----");
+        }
+    }
 }

@@ -1,51 +1,69 @@
 using System;
+using System.Collections.Generic;
 
 namespace Org.BouncyCastle.Bcpg.OpenPgp
 {
-	/// <remarks>A list of PGP signatures - normally in the signature block after literal data.</remarks>
-    public class PgpSignatureList
-		: PgpObject
+
+    /// <summary>
+    /// A list of PGP signatures - normally in the signature block after literal data.
+    /// </summary>
+    public class PgpSignatureList : PgpObject
     {
-        private PgpSignature[] sigs;
 
-		public PgpSignatureList(
-            PgpSignature[] sigs)
+        #region Data
+
+        private readonly List<PgpSignature> Signatures;
+
+        #endregion
+
+        #region Properties
+
+        public UInt32 Count
         {
-            this.sigs = (PgpSignature[]) sigs.Clone();
+            get
+            {
+                return (UInt32) Signatures.Count;
+            }
         }
 
-		public PgpSignatureList(
-            PgpSignature sig)
+        public Boolean IsEmpty
         {
-			this.sigs = new PgpSignature[]{ sig };
+            get
+            {
+                return (Signatures.Count == 0);
+            }
         }
 
-		public PgpSignature this[int index]
-		{
-			get { return sigs[index]; }
-		}
+        #endregion
 
-		[Obsolete("Use 'object[index]' syntax instead")]
-		public PgpSignature Get(
-            int index)
+        #region Constructor(s)
+
+        public PgpSignatureList(PgpSignature Signature)
         {
-            return this[index];
+            this.Signatures = new List<PgpSignature>() { Signature };
         }
 
-		[Obsolete("Use 'Count' property instead")]
-		public int Size
+        public PgpSignatureList(IEnumerable<PgpSignature> Signatures)
         {
-			get { return sigs.Length; }
+            this.Signatures = new List<PgpSignature>(Signatures);
         }
 
-		public int Count
-		{
-			get { return sigs.Length; }
-		}
+        #endregion
 
-		public bool IsEmpty
+
+        #region this[Index]
+
+        public PgpSignature this[UInt32 Index]
         {
-			get { return (sigs.Length == 0); }
+            get
+            {
+                return Signatures[(Int32) Index];
+            }
         }
+
+        #endregion
+
+
     }
+
 }

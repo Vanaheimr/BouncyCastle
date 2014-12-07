@@ -127,7 +127,7 @@ namespace Org.BouncyCastle.Pkix
 
 		public override string ToString()
 		{
-			string nl = Platform.NewLine;
+			string nl = Environment.NewLine;
 			StringBuilder s = new StringBuilder();
 			s.Append("PkixBuilderParameters [" + nl);
 			s.Append(base.ToString());

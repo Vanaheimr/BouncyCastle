@@ -104,16 +104,16 @@ namespace Org.BouncyCastle.Crypto.Tests
 				if (!r.Equals(sig[0]))
 				{
 					return new SimpleTestResult(false, Name
-						+ ": r component wrong." + SimpleTest.NewLine
-						+ " expecting: " + r.ToString(16) + SimpleTest.NewLine
+						+ ": r component wrong." + Environment.NewLine
+						+ " expecting: " + r.ToString(16) + Environment.NewLine
 						+ " got      : " + sig[0].ToString(16));
 				}
 
 				if (!s.Equals(sig[1]))
 				{
 					return new SimpleTestResult(false, Name
-						+ ": s component wrong." + SimpleTest.NewLine
-						+ " expecting: " + s.ToString(16) + SimpleTest.NewLine
+						+ ": s component wrong." + Environment.NewLine
+						+ " expecting: " + s.ToString(16) + Environment.NewLine
 						+ " got      : " + sig[1].ToString(16));
 				}
 
@@ -207,16 +207,16 @@ namespace Org.BouncyCastle.Crypto.Tests
 				if (!r.Equals(sig[0]))
 				{
 					return new SimpleTestResult(false, Name
-						+ ": r component wrong." + SimpleTest.NewLine
-						+ " expecting: " + r.ToString(16) + SimpleTest.NewLine
+						+ ": r component wrong." + Environment.NewLine
+						+ " expecting: " + r.ToString(16) + Environment.NewLine
 						+ " got      : " + sig[0].ToString(16));
 				}
 
 				if (!s.Equals(sig[1]))
 				{
 					return new SimpleTestResult(false, Name
-						+ ": s component wrong." + SimpleTest.NewLine
-						+ " expecting: " + s.ToString(16) + SimpleTest.NewLine
+						+ ": s component wrong." + Environment.NewLine
+						+ " expecting: " + s.ToString(16) + Environment.NewLine
 						+ " got      : " + sig[1].ToString(16));
 				}
 
@@ -352,16 +352,16 @@ namespace Org.BouncyCastle.Crypto.Tests
 				if (!r.Equals(sig[0]))
 				{
 					return new SimpleTestResult(false, Name
-						+ ": r component wrong." + SimpleTest.NewLine
-						+ " expecting: " + r.ToString(16) + SimpleTest.NewLine
+						+ ": r component wrong." + Environment.NewLine
+						+ " expecting: " + r.ToString(16) + Environment.NewLine
 						+ " got      : " + sig[0].ToString(16));
 				}
 
 				if (!s.Equals(sig[1]))
 				{
 					return new SimpleTestResult(false, Name
-						+ ": s component wrong." + SimpleTest.NewLine
-						+ " expecting: " + s.ToString(16) + SimpleTest.NewLine
+						+ ": s component wrong." + Environment.NewLine
+						+ " expecting: " + s.ToString(16) + Environment.NewLine
 						+ " got      : " + sig[1].ToString(16));
 				}
 
@@ -499,16 +499,16 @@ namespace Org.BouncyCastle.Crypto.Tests
 				if (!r.Equals(sig[0]))
 				{
 					return new SimpleTestResult(false, Name
-						+ ": r component wrong." + SimpleTest.NewLine
-						+ " expecting: " + r.ToString(16) + SimpleTest.NewLine
+						+ ": r component wrong." + Environment.NewLine
+						+ " expecting: " + r.ToString(16) + Environment.NewLine
 						+ " got      : " + sig[0].ToString(16));
 				}
 
 				if (!s.Equals(sig[1]))
 				{
 					return new SimpleTestResult(false, Name
-						+ ": s component wrong." + SimpleTest.NewLine
-						+ " expecting: " + s.ToString(16) + SimpleTest.NewLine
+						+ ": s component wrong." + Environment.NewLine
+						+ " expecting: " + s.ToString(16) + Environment.NewLine
 						+ " got      : " + sig[1].ToString(16));
 				}
 
@@ -646,16 +646,16 @@ namespace Org.BouncyCastle.Crypto.Tests
 				if (!r.Equals(sig[0]))
 				{
 					return new SimpleTestResult(false, Name
-						+ ": r component wrong." + SimpleTest.NewLine
-						+ " expecting: " + r.ToString(16) + SimpleTest.NewLine
+						+ ": r component wrong." + Environment.NewLine
+						+ " expecting: " + r.ToString(16) + Environment.NewLine
 						+ " got      : " + sig[0].ToString(16));
 				}
 
 				if (!s.Equals(sig[1]))
 				{
 					return new SimpleTestResult(false, Name
-						+ ": s component wrong." + SimpleTest.NewLine
-						+ " expecting: " + s.ToString(16) + SimpleTest.NewLine
+						+ ": s component wrong." + Environment.NewLine
+						+ " expecting: " + s.ToString(16) + Environment.NewLine
 						+ " got      : " + sig[1].ToString(16));
 				}
 
@@ -792,16 +792,16 @@ namespace Org.BouncyCastle.Crypto.Tests
 				if (!r.Equals(sig[0]))
 				{
 					return new SimpleTestResult(false, Name
-						+ ": r component wrong." + SimpleTest.NewLine
-						+ " expecting: " + r.ToString(16) + SimpleTest.NewLine
+						+ ": r component wrong." + Environment.NewLine
+						+ " expecting: " + r.ToString(16) + Environment.NewLine
 						+ " got      : " + sig[0].ToString(16));
 				}
 
 				if (!s.Equals(sig[1]))
 				{
 					return new SimpleTestResult(false, Name
-						+ ": s component wrong." + SimpleTest.NewLine
-						+ " expecting: " + s.ToString(16) + SimpleTest.NewLine
+						+ ": s component wrong." + Environment.NewLine
+						+ " expecting: " + s.ToString(16) + Environment.NewLine
 						+ " got      : " + sig[1].ToString(16));
 				}
 
@@ -938,16 +938,16 @@ namespace Org.BouncyCastle.Crypto.Tests
 				if (!r.Equals(sig[0]))
 				{
 					return new SimpleTestResult(false, Name
-						+ ": r component wrong." + SimpleTest.NewLine
-						+ " expecting: " + r.ToString(16) + SimpleTest.NewLine
+						+ ": r component wrong." + Environment.NewLine
+						+ " expecting: " + r.ToString(16) + Environment.NewLine
 						+ " got      : " + sig[0].ToString(16));
 				}
 
 				if (!s.Equals(sig[1]))
 				{
 					return new SimpleTestResult(false, Name
-						+ ": s component wrong." + SimpleTest.NewLine
-						+ " expecting: " + s.ToString(16) + SimpleTest.NewLine
+						+ ": s component wrong." + Environment.NewLine
+						+ " expecting: " + s.ToString(16) + Environment.NewLine
 						+ " got      : " + sig[1].ToString(16));
 				}
 
@@ -1085,16 +1085,16 @@ namespace Org.BouncyCastle.Crypto.Tests
 				if (!r.Equals(sig[0]))
 				{
 					return new SimpleTestResult(false, Name
-						+ ": r component wrong." + SimpleTest.NewLine
-						+ " expecting: " + r.ToString(16) + SimpleTest.NewLine
+						+ ": r component wrong." + Environment.NewLine
+						+ " expecting: " + r.ToString(16) + Environment.NewLine
 						+ " got      : " + sig[0].ToString(16));
 				}
 
 				if (!s.Equals(sig[1]))
 				{
 					return new SimpleTestResult(false, Name
-						+ ": s component wrong." + SimpleTest.NewLine
-						+ " expecting: " + s.ToString(16) + SimpleTest.NewLine
+						+ ": s component wrong." + Environment.NewLine
+						+ " expecting: " + s.ToString(16) + Environment.NewLine
 						+ " got      : " + sig[1].ToString(16));
 				}
 
@@ -1231,16 +1231,16 @@ namespace Org.BouncyCastle.Crypto.Tests
 				if (!r.Equals(sig[0]))
 				{
 					return new SimpleTestResult(false, Name
-						+ ": r component wrong." + SimpleTest.NewLine
-						+ " expecting: " + r.ToString(16) + SimpleTest.NewLine
+						+ ": r component wrong." + Environment.NewLine
+						+ " expecting: " + r.ToString(16) + Environment.NewLine
 						+ " got      : " + sig[0].ToString(16));
 				}
 
 				if (!s.Equals(sig[1]))
 				{
 					return new SimpleTestResult(false, Name
-						+ ": s component wrong." + SimpleTest.NewLine
-						+ " expecting: " + s.ToString(16) + SimpleTest.NewLine
+						+ ": s component wrong." + Environment.NewLine
+						+ " expecting: " + s.ToString(16) + Environment.NewLine
 						+ " got      : " + sig[1].ToString(16));
 				}
 
@@ -1377,16 +1377,16 @@ namespace Org.BouncyCastle.Crypto.Tests
 				if (!r.Equals(sig[0]))
 				{
 					return new SimpleTestResult(false, Name
-						+ ": r component wrong." + SimpleTest.NewLine
-						+ " expecting: " + r.ToString(16) + SimpleTest.NewLine
+						+ ": r component wrong." + Environment.NewLine
+						+ " expecting: " + r.ToString(16) + Environment.NewLine
 						+ " got      : " + sig[0].ToString(16));
 				}
 
 				if (!s.Equals(sig[1]))
 				{
 					return new SimpleTestResult(false, Name
-						+ ": s component wrong." + SimpleTest.NewLine
-						+ " expecting: " + s.ToString(16) + SimpleTest.NewLine
+						+ ": s component wrong." + Environment.NewLine
+						+ " expecting: " + s.ToString(16) + Environment.NewLine
 						+ " got      : " + sig[1].ToString(16));
 				}
 
@@ -1523,16 +1523,16 @@ namespace Org.BouncyCastle.Crypto.Tests
 				if (!r.Equals(sig[0]))
 				{
 					return new SimpleTestResult(false, Name
-						+ ": r component wrong." + SimpleTest.NewLine
-						+ " expecting: " + r.ToString(16) + SimpleTest.NewLine
+						+ ": r component wrong." + Environment.NewLine
+						+ " expecting: " + r.ToString(16) + Environment.NewLine
 						+ " got      : " + sig[0].ToString(16));
 				}
 
 				if (!s.Equals(sig[1]))
 				{
 					return new SimpleTestResult(false, Name
-						+ ": s component wrong." + SimpleTest.NewLine
-						+ " expecting: " + s.ToString(16) + SimpleTest.NewLine
+						+ ": s component wrong." + Environment.NewLine
+						+ " expecting: " + s.ToString(16) + Environment.NewLine
 						+ " got      : " + sig[1].ToString(16));
 				}
 

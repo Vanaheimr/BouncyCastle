@@ -2,78 +2,88 @@ using System.Collections;
 using System.IO;
 
 using Org.BouncyCastle.Utilities;
+using System.Collections.Generic;
+using System;
 
 namespace Org.BouncyCastle.Bcpg.OpenPgp
 {
-	public abstract class PgpKeyRing
-		: PgpObject
-	{
-		internal PgpKeyRing()
-		{
-		}
 
-		internal static TrustPacket ReadOptionalTrustPacket(
-			BcpgInputStream bcpgInput)
-		{
-			return (bcpgInput.NextPacketTag() == PacketTag.Trust)
-				?	(TrustPacket) bcpgInput.ReadPacket()
-				:	null;
-		}
+    public abstract class PgpKeyRing : PgpObject
+    {
 
-		internal static IList ReadSignaturesAndTrust(
-			BcpgInputStream	bcpgInput)
-		{
-			try
-			{
-				IList sigList = Platform.CreateArrayList();
+        internal PgpKeyRing()
+        { }
 
-				while (bcpgInput.NextPacketTag() == PacketTag.Signature)
-				{
-					SignaturePacket signaturePacket = (SignaturePacket) bcpgInput.ReadPacket();
-					TrustPacket trustPacket = ReadOptionalTrustPacket(bcpgInput);
+        internal static TrustPacket ReadOptionalTrustPacket(BcpgInputStream bcpgInput)
+        {
+            return (bcpgInput.NextPacketTag() == PacketTag.Trust)
+                ?    (TrustPacket) bcpgInput.ReadPacket()
+                :    null;
+        }
 
-					sigList.Add(new PgpSignature(signaturePacket, trustPacket));
-				}
+        internal static List<PgpSignature> ReadSignaturesAndTrust(BcpgInputStream bcpgInput)
+        {
 
-				return sigList;
-			}
-			catch (PgpException e)
-			{
-				throw new IOException("can't create signature object: " + e.Message, e);
-			}
-		}
+            try
+            {
 
-		internal static void ReadUserIDs(
-			BcpgInputStream	bcpgInput,
-			out IList       ids,
-			out IList       idTrusts,
-			out IList       idSigs)
-		{
-			ids = Platform.CreateArrayList();
-            idTrusts = Platform.CreateArrayList();
-            idSigs = Platform.CreateArrayList();
+                var sigList = new List<PgpSignature>();
 
-			while (bcpgInput.NextPacketTag() == PacketTag.UserId
-				|| bcpgInput.NextPacketTag() == PacketTag.UserAttribute)
-			{
-				Packet obj = bcpgInput.ReadPacket();
-				if (obj is UserIdPacket)
-				{
-					UserIdPacket id = (UserIdPacket)obj;
-					ids.Add(id.GetId());
-				}
-				else
-				{
-					UserAttributePacket user = (UserAttributePacket) obj;
-					ids.Add(new PgpUserAttributeSubpacketVector(user.GetSubpackets()));
-				}
+                while (bcpgInput.NextPacketTag() == PacketTag.Signature)
+                {
 
-				idTrusts.Add(
-					ReadOptionalTrustPacket(bcpgInput));
+                    var signaturePacket  = (SignaturePacket) bcpgInput.ReadPacket();
+                    var trustPacket      = ReadOptionalTrustPacket(bcpgInput);
 
-				idSigs.Add(
-					ReadSignaturesAndTrust(bcpgInput));
-			}
-		}
-	}
+                    sigList.Add(new PgpSignature(signaturePacket, trustPacket));
+
+                }
+
+                return sigList;
+
+            }
+
+            catch (PgpException e)
+            {
+                throw new IOException("can't create signature object: " + e.Message, e);
+            }
+
+        }
+
+        internal static void ReadUserIDs(BcpgInputStream               bcpgInput,
+                                         out List<Object>              ids,
+                                         out List<TrustPacket>         idTrusts,
+                                         out List<List<PgpSignature>>  idSigs)
+        {
+
+            ids       = new List<Object>();
+            idTrusts  = new List<TrustPacket>();
+            idSigs    = new List<List<PgpSignature>>();
+
+            while (bcpgInput.NextPacketTag() == PacketTag.UserId
+                || bcpgInput.NextPacketTag() == PacketTag.UserAttribute)
+            {
+
+                Packet obj = bcpgInput.ReadPacket();
+
+                if (obj is UserIdPacket)
+                {
+                    var id = (UserIdPacket) obj;
+                    ids.Add(id.GetId());
+                }
+                else
+                {
+                    UserAttributePacket user = (UserAttributePacket) obj;
+                    ids.Add(new PgpUserAttributeSubpacketVector(user.GetSubpackets()));
+                }
+
+                idTrusts.Add(ReadOptionalTrustPacket(bcpgInput));
+                idSigs.  Add(ReadSignaturesAndTrust (bcpgInput));
+
+            }
+
+        }
+
+    }
+
 }

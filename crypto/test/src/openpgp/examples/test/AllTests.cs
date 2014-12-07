@@ -47,7 +47,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Examples.Tests
 
 		private static readonly string crNlMessageTrailingWhiteSpace =
 			"\r\n"
-			+ " hello world! \t\r\n"
+			+ " hello world!     \r\n"
 			+ "\r\n"
 			+ "\r\n";
 
@@ -116,7 +116,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Examples.Tests
 			+ "Hash: SHA256\r\n"
 			+ "\r\n"
 			+ "\r\n"
-			+ " hello world! \t\r\n"
+			+ " hello world!     \r\n"
 			+ "\r\n"
 			+ "- - dash\r\n"
 			+ "-----BEGIN PGP SIGNATURE-----\r\n"

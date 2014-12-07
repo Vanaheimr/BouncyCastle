@@ -96,8 +96,8 @@ namespace Org.BouncyCastle.Asn1.Tests
                     Asn1Object obj = Asn1Object.FromByteArray(bytes);
 
                     return new SimpleTestResult(false, Name + ": test " + id
-                        + " length mismatch - expected " + sample.Length + SimpleTest.NewLine
-                        + Asn1Dump.DumpAsString(info) + " got " + bytes.Length + SimpleTest.NewLine
+                        + " length mismatch - expected " + sample.Length + Environment.NewLine
+                        + Asn1Dump.DumpAsString(info) + " got " + bytes.Length + Environment.NewLine
                         + Asn1Dump.DumpAsString(obj));
                 }
                 catch (Exception e)

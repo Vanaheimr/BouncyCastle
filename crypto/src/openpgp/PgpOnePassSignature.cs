@@ -6,95 +6,95 @@ using Org.BouncyCastle.Security;
 
 namespace Org.BouncyCastle.Bcpg.OpenPgp
 {
-	/// <remarks>A one pass signature object.</remarks>
+    /// <remarks>A one pass signature object.</remarks>
     public class PgpOnePassSignature
     {
         private OnePassSignaturePacket sigPack;
         private int signatureType;
-		private ISigner sig;
-		private byte lastb;
+        private ISigner sig;
+        private byte lastb;
 
-		internal PgpOnePassSignature(
+        internal PgpOnePassSignature(
             BcpgInputStream bcpgInput)
             : this((OnePassSignaturePacket) bcpgInput.ReadPacket())
         {
         }
 
-		internal PgpOnePassSignature(
+        internal PgpOnePassSignature(
             OnePassSignaturePacket sigPack)
         {
             this.sigPack = sigPack;
             this.signatureType = sigPack.SignatureType;
         }
 
-		/// <summary>Initialise the signature object for verification.</summary>
-        public void InitVerify(
-            PgpPublicKey pubKey)
+        /// <summary>Initialise the signature object for verification.</summary>
+        public void InitVerify(PgpPublicKey pubKey)
         {
-			lastb = 0;
 
-			try
-			{
-				sig = SignerUtilities.GetSigner(
-					PgpUtilities.GetSignatureName(sigPack.KeyAlgorithm, sigPack.HashAlgorithm));
-			}
-			catch (Exception e)
-			{
-				throw new PgpException("can't set up signature object.",  e);
-			}
+            lastb = 0;
 
-			try
+            try
+            {
+                sig = SignerUtilities.GetSigner(PgpUtilities.GetSignatureName(sigPack.KeyAlgorithm, sigPack.HashAlgorithm));
+            }
+            catch (Exception e)
+            {
+                throw new PgpException("can't set up signature object.",  e);
+            }
+
+            try
             {
                 sig.Init(false, pubKey.GetKey());
             }
-			catch (InvalidKeyException e)
+            catch (InvalidKeyException e)
             {
                 throw new PgpException("invalid key.", e);
             }
+
         }
 
-		public void Update(
+        public void Update(
             byte b)
         {
-			if (signatureType == PgpSignature.CanonicalTextDocument)
-			{
-				doCanonicalUpdateByte(b);
-			}
-			else
-			{
-				sig.Update(b);
-			}
+            if (signatureType == PgpSignature.CanonicalTextDocument)
+            {
+                doCanonicalUpdateByte(b);
+            }
+            else
+            {
+                sig.Update(b);
+            }
         }
 
-		private void doCanonicalUpdateByte(
-			byte b)
-		{
-			if (b == '\r')
-			{
-				doUpdateCRLF();
-			}
-			else if (b == '\n')
-			{
-				if (lastb != '\r')
-				{
-					doUpdateCRLF();
-				}
-			}
-			else
-			{
-				sig.Update(b);
-			}
+        private void doCanonicalUpdateByte(
+            byte b)
+        {
+            if (b == '\r')
+            {
+                doUpdateCRLF();
+            }
+            else if (b == '\n')
+            {
+                if (lastb != '\r')
+                {
+                    doUpdateCRLF();
+                }
+            }
+            else
+            {
+                sig.Update(b);
+            }
 
-			lastb = b;
-		}
+            lastb = b;
+        }
 
-		private void doUpdateCRLF()
-		{
-			sig.Update((byte)'\r');
-			sig.Update((byte)'\n');
-		}
+        private void doUpdateCRLF()
+        {
+            sig.Update((byte)'\r');
+            sig.Update((byte)'\n');
+        }
 
-		public void Update(
+        public void Update(
             byte[] bytes)
         {
             if (signatureType == PgpSignature.CanonicalTextDocument)
@@ -130,38 +130,38 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
             }
         }
 
-		/// <summary>Verify the calculated signature against the passed in PgpSignature.</summary>
+        /// <summary>Verify the calculated signature against the passed in PgpSignature.</summary>
         public bool Verify(
             PgpSignature pgpSig)
         {
             byte[] trailer = pgpSig.GetSignatureTrailer();
 
-			sig.BlockUpdate(trailer, 0, trailer.Length);
+            sig.BlockUpdate(trailer, 0, trailer.Length);
 
-			return sig.VerifySignature(pgpSig.GetSignature());
+            return sig.VerifySignature(pgpSig.GetSignature());
         }
 
-        public long KeyId
+        public UInt64 KeyId
         {
-			get { return sigPack.KeyId; }
+            get { return sigPack.KeyId; }
         }
 
-		public int SignatureType
+        public int SignatureType
         {
             get { return sigPack.SignatureType; }
         }
 
-		public HashAlgorithmTag HashAlgorithm
-		{
-			get { return sigPack.HashAlgorithm; }
-		}
+        public HashAlgorithmTag HashAlgorithm
+        {
+            get { return sigPack.HashAlgorithm; }
+        }
 
-		public PublicKeyAlgorithmTag KeyAlgorithm
-		{
-			get { return sigPack.KeyAlgorithm; }
-		}
+        public PublicKeyAlgorithmTag KeyAlgorithm
+        {
+            get { return sigPack.KeyAlgorithm; }
+        }
 
-		public byte[] GetEncoded()
+        public byte[] GetEncoded()
         {
             MemoryStream bOut = new MemoryStream();
 
@@ -170,7 +170,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
             return bOut.ToArray();
         }
 
-		public void Encode(
+        public void Encode(
             Stream outStr)
         {
             BcpgOutputStream.Wrap(outStr).WritePacket(sigPack);

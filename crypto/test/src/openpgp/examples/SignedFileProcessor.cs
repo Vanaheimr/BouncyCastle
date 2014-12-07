@@ -26,40 +26,40 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Examples
     {
         private SignedFileProcessor() {}
 
-		/**
+        /**
         * verify the passed in file as being correctly signed.
         */
         private static void VerifyFile(
-            Stream	inputStream,
-            Stream	keyIn)
+            Stream    inputStream,
+            Stream    keyIn)
         {
             inputStream = PgpUtilities.GetDecoderStream(inputStream);
 
-            PgpObjectFactory			pgpFact = new PgpObjectFactory(inputStream);
-            PgpCompressedData			c1 = (PgpCompressedData) pgpFact.NextPgpObject();
+            PgpObjectFactory            pgpFact = new PgpObjectFactory(inputStream);
+            PgpCompressedData            c1 = (PgpCompressedData) pgpFact.NextPgpObject();
             pgpFact = new PgpObjectFactory(c1.GetDataStream());
 
-            PgpOnePassSignatureList		p1 = (PgpOnePassSignatureList) pgpFact.NextPgpObject();
-            PgpOnePassSignature			ops = p1[0];
+            PgpOnePassSignatureList        p1 = (PgpOnePassSignatureList) pgpFact.NextPgpObject();
+            PgpOnePassSignature            ops = p1[0];
 
-            PgpLiteralData				p2 = (PgpLiteralData) pgpFact.NextPgpObject();
-            Stream						dIn = p2.GetInputStream();
-            PgpPublicKeyRingBundle		pgpRing = new PgpPublicKeyRingBundle(PgpUtilities.GetDecoderStream(keyIn));
-            PgpPublicKey				key = pgpRing.GetPublicKey(ops.KeyId);
-            Stream						fos = File.Create(p2.FileName);
+            PgpLiteralData                p2 = (PgpLiteralData) pgpFact.NextPgpObject();
+            Stream                        dIn = p2.GetInputStream();
+            PgpPublicKeyRingBundle        pgpRing = new PgpPublicKeyRingBundle(PgpUtilities.GetDecoderStream(keyIn));
+            PgpPublicKey                  key = pgpRing.GetPublicKey(ops.KeyId);
+            Stream                        fos = File.Create(p2.FileName);
 
-			ops.InitVerify(key);
+            ops.InitVerify(key);
 
-			int ch;
-			while ((ch = dIn.ReadByte()) >= 0)
+            int ch;
+            while ((ch = dIn.ReadByte()) >= 0)
             {
                 ops.Update((byte)ch);
                 fos.WriteByte((byte) ch);
             }
             fos.Close();
 
-            PgpSignatureList	p3 = (PgpSignatureList)pgpFact.NextPgpObject();
-			PgpSignature		firstSig = p3[0];
+            PgpSignatureList    p3 = (PgpSignatureList)pgpFact.NextPgpObject();
+            PgpSignature        firstSig = p3[0];
             if (ops.Verify(firstSig))
             {
                 Console.Out.WriteLine("signature verified.");
@@ -80,12 +80,12 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Examples
         * @param armor
         */
         private static void SignFile(
-            string	fileName,
-            Stream	keyIn,
-            Stream	outputStream,
-            char[]	pass,
-            bool	armor,
-			bool	compress)
+            string    fileName,
+            Stream    keyIn,
+            Stream    outputStream,
+            char[]    pass,
+            bool    armor,
+            bool    compress)
         {
             if (armor)
             {
@@ -107,78 +107,78 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Examples
             }
 
             Stream cOut = outputStream;
-			PgpCompressedDataGenerator cGen = null;
-			if (compress)
-			{
-				cGen = new PgpCompressedDataGenerator(CompressionAlgorithmTag.ZLib);
+            PgpCompressedDataGenerator cGen = null;
+            if (compress)
+            {
+                cGen = new PgpCompressedDataGenerator(CompressionAlgorithmTag.ZLib);
 
-				cOut = cGen.Open(cOut);
-			}
+                cOut = cGen.Open(cOut);
+            }
 
-			BcpgOutputStream bOut = new BcpgOutputStream(cOut);
+            BcpgOutputStream bOut = new BcpgOutputStream(cOut);
 
             sGen.GenerateOnePassVersion(false).Encode(bOut);
 
-            FileInfo					file = new FileInfo(fileName);
+            FileInfo                    file = new FileInfo(fileName);
             PgpLiteralDataGenerator     lGen = new PgpLiteralDataGenerator();
-            Stream						lOut = lGen.Open(bOut, PgpLiteralData.Binary, file);
-            FileStream					fIn = file.OpenRead();
+            Stream                        lOut = lGen.Open(bOut, PgpLiteralData.Binary, file);
+            FileStream                    fIn = file.OpenRead();
             int                         ch = 0;
 
-			while ((ch = fIn.ReadByte()) >= 0)
+            while ((ch = fIn.ReadByte()) >= 0)
             {
                 lOut.WriteByte((byte) ch);
                 sGen.Update((byte)ch);
             }
 
-			fIn.Close();
-			lGen.Close();
+            fIn.Close();
+            lGen.Close();
 
-			sGen.Generate().Encode(bOut);
+            sGen.Generate().Encode(bOut);
 
-			if (cGen != null)
-			{
-				cGen.Close();
-			}
+            if (cGen != null)
+            {
+                cGen.Close();
+            }
 
-			if (armor)
-			{
-				outputStream.Close();
-			}
+            if (armor)
+            {
+                outputStream.Close();
+            }
         }
 
-		public static void Main(
+        public static void Main(
             string[] args)
         {
-			// TODO provide command-line option to determine whether to use compression in SignFile
+            // TODO provide command-line option to determine whether to use compression in SignFile
             if (args[0].Equals("-s"))
             {
-				Stream keyIn, fos;
+                Stream keyIn, fos;
                 if (args[1].Equals("-a"))
                 {
                     keyIn = File.OpenRead(args[3]);
                     fos = File.Create(args[2] + ".asc");
 
-					SignFile(args[2], keyIn, fos, args[4].ToCharArray(), true, true);
+                    SignFile(args[2], keyIn, fos, args[4].ToCharArray(), true, true);
                 }
                 else
                 {
                     keyIn = File.OpenRead(args[2]);
                     fos = File.Create(args[1] + ".bpg");
 
-					SignFile(args[1], keyIn, fos, args[3].ToCharArray(), false, true);
+                    SignFile(args[1], keyIn, fos, args[3].ToCharArray(), false, true);
                 }
-				keyIn.Close();
-				fos.Close();
+                keyIn.Close();
+                fos.Close();
             }
             else if (args[0].Equals("-v"))
             {
-				using (Stream fis = File.OpenRead(args[1]),
-                	keyIn = File.OpenRead(args[2]))
-				{
-					VerifyFile(fis, keyIn);
-				}
-			}
+                using (Stream fis = File.OpenRead(args[1]),
+                    keyIn = File.OpenRead(args[2]))
+                {
+                    VerifyFile(fis, keyIn);
+                }
+            }
             else
             {
                 Console.Error.WriteLine("usage: SignedFileProcessor -v|-s [-a] file keyfile [passPhrase]");

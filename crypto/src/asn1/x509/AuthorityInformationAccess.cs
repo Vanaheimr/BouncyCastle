@@ -80,7 +80,7 @@ namespace Org.BouncyCastle.Asn1.X509
             //return "AuthorityInformationAccess: Oid(" + this.descriptions[0].AccessMethod.Id + ")";
 
             StringBuilder buf = new StringBuilder();
-            string sep = Platform.NewLine;
+            string sep = Environment.NewLine;
 
             buf.Append("AuthorityInformationAccess:");
             buf.Append(sep);

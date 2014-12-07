@@ -5,9 +5,11 @@ using System.IO;
 using Org.BouncyCastle.Security;
 using Org.BouncyCastle.Utilities;
 using Org.BouncyCastle.Utilities.Collections;
+using System.Collections.Generic;
 
 namespace Org.BouncyCastle.Bcpg.OpenPgp
 {
+
     /// <remarks>
     /// Class to hold a single master secret key and its subkeys.
     /// <p>
@@ -15,24 +17,23 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
     /// or construct one of these you should use the <c>PgpSecretKeyRingBundle</c> class.
     /// </p>
     /// </remarks>
-    public class PgpSecretKeyRing
-        : PgpKeyRing
+    public class PgpSecretKeyRing : PgpKeyRing
     {
+
         private readonly IList keys;
         private readonly IList extraPubKeys;
 
         internal PgpSecretKeyRing(
             IList keys)
             : this(keys, Platform.CreateArrayList())
-        {
-        }
+        { }
 
         private PgpSecretKeyRing(
-            IList	keys,
-            IList	extraPubKeys)
+            IList    keys,
+            IList    extraPubKeys)
         {
-            this.keys = keys;
-            this.extraPubKeys = extraPubKeys;
+            this.keys          = keys;
+            this.extraPubKeys  = extraPubKeys;
         }
 
         public PgpSecretKeyRing(
@@ -56,7 +57,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
                     + "tag 0x" + ((int)initialTag).ToString("X"));
             }
 
-            SecretKeyPacket secret = (SecretKeyPacket) bcpgInput.ReadPacket();
+            var secret = (SecretKeyPacket) bcpgInput.ReadPacket();
 
             //
             // ignore GPG comment packets if found.
@@ -66,12 +67,14 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
                 bcpgInput.ReadPacket();
             }
 
-            TrustPacket trust = ReadOptionalTrustPacket(bcpgInput);
+            var trust = ReadOptionalTrustPacket(bcpgInput);
 
             // revocation and direct signatures
-            IList keySigs = ReadSignaturesAndTrust(bcpgInput);
+            var keySigs = ReadSignaturesAndTrust(bcpgInput);
 
-            IList ids, idTrusts, idSigs;
+            List<Object>              ids;
+            List<TrustPacket>         idTrusts;
+            List<List<PgpSignature>>  idSigs;
             ReadUserIDs(bcpgInput, out ids, out idTrusts, out idSigs);
 
             keys.Add(new PgpSecretKey(secret, new PgpPublicKey(secret.PublicKeyPacket, trust, keySigs, ids, idTrusts, idSigs)));
@@ -83,7 +86,8 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
             {
                 if (bcpgInput.NextPacketTag() == PacketTag.SecretSubkey)
                 {
-                    SecretSubkeyPacket sub = (SecretSubkeyPacket) bcpgInput.ReadPacket();
+
+                    var sub = (SecretSubkeyPacket) bcpgInput.ReadPacket();
 
                     //
                     // ignore GPG comment packets if found.
@@ -93,8 +97,8 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
                         bcpgInput.ReadPacket();
                     }
 
-                    TrustPacket subTrust = ReadOptionalTrustPacket(bcpgInput);
-                    IList sigList = ReadSignaturesAndTrust(bcpgInput);
+                    var subTrust = ReadOptionalTrustPacket(bcpgInput);
+                    var sigList = ReadSignaturesAndTrust(bcpgInput);
 
                     keys.Add(new PgpSecretKey(sub, new PgpPublicKey(sub.PublicKeyPacket, subTrust, sigList)));
                 }
@@ -102,8 +106,8 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
                 {
                     PublicSubkeyPacket sub = (PublicSubkeyPacket) bcpgInput.ReadPacket();
 
-                    TrustPacket subTrust = ReadOptionalTrustPacket(bcpgInput);
-                    IList sigList = ReadSignaturesAndTrust(bcpgInput);
+                    var subTrust = ReadOptionalTrustPacket(bcpgInput);
+                    var sigList = ReadSignaturesAndTrust(bcpgInput);
 
                     extraPubKeys.Add(new PgpPublicKey(sub, subTrust, sigList));
                 }
@@ -129,9 +133,9 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
             return new EnumerableProxy(keys);
         }
 
-        public PgpSecretKey GetSecretKey(
-            long keyId)
+        public PgpSecretKey GetSecretKey(UInt64 keyId)
         {
+
             foreach (PgpSecretKey k in keys)
             {
                 if (keyId == k.KeyId)
@@ -184,20 +188,20 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
         /// </summary>
         /// <param name="secretRing">Secret ring to be changed.</param>
         /// <param name="publicRing">Public ring containing the new public key set.</param>
-        public static PgpSecretKeyRing ReplacePublicKeys(
-            PgpSecretKeyRing	secretRing,
-            PgpPublicKeyRing	publicRing)
+        public static PgpSecretKeyRing ReplacePublicKeys(PgpSecretKeyRing    secretRing,
+                                                         PgpPublicKeyRing    publicRing)
         {
-            IList newList = Platform.CreateArrayList(secretRing.keys.Count);
+
+            var newList = Platform.CreateArrayList(secretRing.keys.Count);
 
             foreach (PgpSecretKey sk in secretRing.keys)
             {
-                PgpPublicKey pk = publicRing.GetPublicKey(sk.KeyId);
-
+                var pk = publicRing.GetPublicKey(sk.KeyId);
                 newList.Add(PgpSecretKey.ReplacePublicKey(sk, pk));
             }
 
             return new PgpSecretKeyRing(newList);
+
         }
 
         /// <summary>
@@ -210,11 +214,11 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
         /// <param name="newEncAlgorithm">The algorithm to be used for the encryption.</param>
         /// <param name="rand">Source of randomness.</param>
         public static PgpSecretKeyRing CopyWithNewPassword(
-            PgpSecretKeyRing			ring,
-            char[]						oldPassPhrase,
-            char[]						newPassPhrase,
-            SymmetricKeyAlgorithmTag	newEncAlgorithm,
-            SecureRandom				rand)
+            PgpSecretKeyRing            ring,
+            char[]                        oldPassPhrase,
+            char[]                        newPassPhrase,
+            SymmetricKeyAlgorithmTag    newEncAlgorithm,
+            SecureRandom                rand)
         {
             IList newKeys = Platform.CreateArrayList(ring.keys.Count);
             foreach (PgpSecretKey secretKey in ring.GetSecretKeys())

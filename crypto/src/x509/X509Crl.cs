@@ -236,7 +236,7 @@ namespace Org.BouncyCastle.X509
 		public override string ToString()
 		{
 			StringBuilder buf = new StringBuilder();
-			string nl = Platform.NewLine;
+			string nl = Environment.NewLine;
 
 			buf.Append("              Version: ").Append(this.Version).Append(nl);
 			buf.Append("             IssuerDN: ").Append(this.IssuerDN).Append(nl);

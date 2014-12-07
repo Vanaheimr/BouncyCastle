@@ -135,7 +135,7 @@ namespace Org.BouncyCastle.X509
 		public override string ToString()
 		{
 			StringBuilder buf = new StringBuilder();
-			string nl = Platform.NewLine;
+			string nl = Environment.NewLine;
 
 			buf.Append("        userCertificate: ").Append(this.SerialNumber).Append(nl);
 			buf.Append("         revocationDate: ").Append(this.RevocationDate).Append(nl);

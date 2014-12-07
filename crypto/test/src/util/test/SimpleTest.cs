@@ -11,12 +11,12 @@ namespace Org.BouncyCastle.Utilities.Test
     public abstract class SimpleTest
         : ITest
     {
-		public abstract string Name
-		{
-			get;
-		}
+        public abstract string Name
+        {
+            get;
+        }
 
-		private ITestResult Success()
+        private ITestResult Success()
         {
             return SimpleTestResult.Successful(this, "Okay");
         }
@@ -28,13 +28,13 @@ namespace Org.BouncyCastle.Utilities.Test
         }
 
         internal void Fail(
-            string		message,
-            Exception	throwable)
+            string        message,
+            Exception    throwable)
         {
             throw new TestFailedException(SimpleTestResult.Failed(this, message, throwable));
         }
 
-		internal void Fail(
+        internal void Fail(
             string message,
             object expected,
             object found)
@@ -42,20 +42,20 @@ namespace Org.BouncyCastle.Utilities.Test
             throw new TestFailedException(SimpleTestResult.Failed(this, message, expected, found));
         }
 
-		internal bool AreEqual(
+        internal bool AreEqual(
             byte[] a,
             byte[] b)
         {
-			return Arrays.AreEqual(a, b);
-		}
+            return Arrays.AreEqual(a, b);
+        }
 
-		public virtual ITestResult Perform()
+        public virtual ITestResult Perform()
         {
             try
             {
                 PerformTest();
 
-				return Success();
+                return Success();
             }
             catch (TestFailedException e)
             {
@@ -67,98 +67,75 @@ namespace Org.BouncyCastle.Utilities.Test
             }
         }
 
-		internal static void RunTest(
+        internal static void RunTest(
             ITest test)
         {
             RunTest(test, Console.Out);
         }
 
-		internal static void RunTest(
-            ITest		test,
-            TextWriter	outStream)
+        internal static void RunTest(
+            ITest        test,
+            TextWriter    outStream)
         {
             ITestResult result = test.Perform();
 
-			outStream.WriteLine(result.ToString());
+            outStream.WriteLine(result.ToString());
             if (result.GetException() != null)
             {
                 outStream.WriteLine(result.GetException().StackTrace);
             }
         }
 
-		internal static Stream GetTestDataAsStream(
-			string name)
-		{
-			string fullName = GetFullName(name);
+        internal static Stream GetTestDataAsStream(
+            string name)
+        {
+            string fullName = GetFullName(name);
 
-			return Assembly.GetExecutingAssembly().GetManifestResourceStream(fullName);
-		}
+            return Assembly.GetExecutingAssembly().GetManifestResourceStream(fullName);
+        }
 
-		internal static string[] GetTestDataEntries(
-			string prefix)
-		{
-			string fullPrefix = GetFullName(prefix);
+        internal static string[] GetTestDataEntries(
+            string prefix)
+        {
+            string fullPrefix = GetFullName(prefix);
 
-			ArrayList result = new ArrayList();
-			string[] fullNames = Assembly.GetExecutingAssembly().GetManifestResourceNames();
-			foreach (string fullName in fullNames)
-			{
-				if (fullName.StartsWith(fullPrefix))
-				{
-					string name = GetShortName(fullName);
-					result.Add(name);
-				}
-			}
-			return (string[])result.ToArray(typeof(String));
-		}
+            ArrayList result = new ArrayList();
+            string[] fullNames = Assembly.GetExecutingAssembly().GetManifestResourceNames();
+            foreach (string fullName in fullNames)
+            {
+                if (fullName.StartsWith(fullPrefix))
+                {
+                    string name = GetShortName(fullName);
+                    result.Add(name);
+                }
+            }
+            return (string[])result.ToArray(typeof(String));
+        }
 
-		private static string GetFullName(
-			string name)
-		{
+        private static string GetFullName(
+            string name)
+        {
 // TODO MonoDevelop/Visual Studio embedded resource ids still inconsistent
 #if BC_BUILD_MONODEVELOP
-			return "test.data." + name;
+            return "test.data." + name;
 #else
-			return "crypto.test.data." + name;
+            return "crypto.test.data." + name;
 #endif
-		}
+        }
 
-		private static string GetShortName(
-			string fullName)
-		{
+        private static string GetShortName(
+            string fullName)
+        {
 // TODO MonoDevelop/Visual Studio embedded resource ids still inconsistent
 #if BC_BUILD_MONODEVELOP
-			return fullName.Substring("test.data.".Length);
+            return fullName.Substring("test.data.".Length);
 #else
-			return fullName.Substring("crypto.test.data.".Length);
+            return fullName.Substring("crypto.test.data.".Length);
 #endif
-		}
+        }
 
-#if NETCF_1_0 || NETCF_2_0
-		private static string GetNewLine()
-		{
-			MemoryStream buf = new MemoryStream();
-			StreamWriter w = new StreamWriter(buf, Encoding.ASCII);
-			w.WriteLine();
-			w.Close();
-			byte[] bs = buf.ToArray();
-			return Encoding.ASCII.GetString(bs, 0, bs.Length);
-		}
+        public abstract void PerformTest();
 
-		internal static string GetEnvironmentVariable(
-			string variable)
-		{
-			return null;
-		}
-#else
-		private static string GetNewLine()
-		{
-			return Environment.NewLine;
-		}
-#endif
-
-		internal static readonly string NewLine = GetNewLine();
-
-		public abstract void PerformTest();
     }
+
 }

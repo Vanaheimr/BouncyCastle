@@ -1022,7 +1022,7 @@ namespace Org.BouncyCastle.Tests
             }
             catch (Exception e)
             {
-                Fail(dump + SimpleTest.NewLine + Name + ": "+ id + " failed - exception " + e.Message, e);
+                Fail(dump + Environment.NewLine + Name + ": "+ id + " failed - exception " + e.Message, e);
             }
         }
 
@@ -1045,7 +1045,7 @@ namespace Org.BouncyCastle.Tests
             }
             catch (Exception e)
             {
-                Fail(dump + SimpleTest.NewLine + Name + ": "+ id + " failed - exception " + e.Message, e);
+                Fail(dump + Environment.NewLine + Name + ": "+ id + " failed - exception " + e.Message, e);
             }
 
         }
@@ -1071,7 +1071,7 @@ namespace Org.BouncyCastle.Tests
             }
             catch (Exception e)
             {
-                Fail(dump + SimpleTest.NewLine + Name + ": "+ id + " failed - exception " + e.Message, e);
+                Fail(dump + Environment.NewLine + Name + ": "+ id + " failed - exception " + e.Message, e);
             }
 
         }
@@ -1093,7 +1093,7 @@ namespace Org.BouncyCastle.Tests
             }
             catch (Exception e)
             {
-                Fail(dump + SimpleTest.NewLine + Name + ": "+ id + " failed - exception " + e.Message, e);
+                Fail(dump + Environment.NewLine + Name + ": "+ id + " failed - exception " + e.Message, e);
             }
         }
 
@@ -1665,7 +1665,7 @@ namespace Org.BouncyCastle.Tests
             }
             catch (Exception e)
             {
-                Fail(dump + SimpleTest.NewLine + Name + ": "+ id + " failed - exception " + e.Message, e);
+                Fail(dump + Environment.NewLine + Name + ": "+ id + " failed - exception " + e.Message, e);
             }
 
         }

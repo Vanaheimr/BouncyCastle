@@ -157,16 +157,16 @@ namespace Org.BouncyCastle.Tests
             if (!r.Equals(sig[0]))
             {
                 Fail(size + "bit"
-                    + ": r component wrong." + SimpleTest.NewLine
-                    + " expecting: " + r + SimpleTest.NewLine
+                    + ": r component wrong." + Environment.NewLine
+                    + " expecting: " + r + Environment.NewLine
                     + " got      : " + sig[0]);
             }
 
             if (!s.Equals(sig[1]))
             {
                 Fail(size + "bit"
-                    + ": s component wrong." + SimpleTest.NewLine
-                    + " expecting: " + s + SimpleTest.NewLine
+                    + ": s component wrong." + Environment.NewLine
+                    + " expecting: " + s + Environment.NewLine
                     + " got      : " + sig[1]);
             }
         }

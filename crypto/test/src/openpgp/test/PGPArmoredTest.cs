@@ -45,7 +45,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
 			  "-----BEGIN PGP MESSAGE-----\n"
 			+ "Version: BCPG v1.32\n"
 			+ "Comment: A dummy message\n"
-			+ " \t \t\n"
+			+ "          \n"
 			+ "SGVsbG8gV29ybGQh\n"
 			+ "=d9Xi\n"
 			+ "-----END PGP MESSAGE-----\n";
