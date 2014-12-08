@@ -8,10 +8,11 @@ using Org.BouncyCastle.Utilities.Test;
 
 namespace Org.BouncyCastle.Bcpg.OpenPgp.Examples
 {
+
     /**
     * A simple utility class that creates clear signed files and verifies them.
     * <p>
-    * To sign a file: ClearSignedFileProcessor -s fileName secretKey passPhrase.
+    * To sign a file: ClearSignedFileProcessor -s fileName secretKey passPhrase HashAlgorithm
     * </p>
     * <p>
     * To decrypt: ClearSignedFileProcessor -v fileName signatureFile publicKeyFile.
@@ -19,14 +20,15 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Examples
     */
     public sealed class ClearSignedFileProcessor
     {
+
         private ClearSignedFileProcessor()
         {
         }
 
-        private static int ReadInputLine(
-            MemoryStream    bOut,
-            Stream            fIn)
+        private static int ReadInputLine(MemoryStream    bOut,
+                                         Stream          fIn)
         {
+
             bOut.SetLength(0);
 
             int lookAhead = -1;
@@ -43,13 +45,14 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Examples
             }
 
             return lookAhead;
+
         }
 
-        private static int ReadInputLine(
-            MemoryStream    bOut,
-            int                lookAhead,
-            Stream            fIn)
+        private static int ReadInputLine(MemoryStream  bOut,
+                                         Int32         lookAhead,
+                                         Stream        fIn)
         {
+
             bOut.SetLength(0);
 
             int ch = lookAhead;
@@ -71,6 +74,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Examples
             }
 
             return lookAhead;
+
         }
 
         private static int ReadPassedEol(
@@ -109,17 +113,16 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Examples
             int lookAhead = ReadInputLine(lineOut, aIn);
             byte[] lineSep = LineSeparator;
 
-            if (lookAhead != -1 && aIn.IsClearText())
+            if (lookAhead != -1 && aIn.IsClearText)
             {
                 byte[] line = lineOut.ToArray();
                 outStr.Write(line, 0, GetLengthWithoutSeparatorOrTrailingWhitespace(line));
                 outStr.Write(lineSep, 0, lineSep.Length);
 
-                while (lookAhead != -1 && aIn.IsClearText())
+                while (lookAhead != -1 && aIn.IsClearText)
                 {
-                    lookAhead = ReadInputLine(lineOut, lookAhead, aIn);
-                
-                    line = lineOut.ToArray();
+                    lookAhead  = ReadInputLine(lineOut, lookAhead, aIn);
+                    line       = lineOut.ToArray();
                     outStr.Write(line, 0, GetLengthWithoutSeparatorOrTrailingWhitespace(line));
                     outStr.Write(lineSep, 0, lineSep.Length);
                 }
@@ -161,13 +164,11 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Examples
             sigIn.Close();
 
             if (sig.Verify())
-            {
                 Console.WriteLine("signature verified.");
-            }
+
             else
-            {
                 Console.WriteLine("signature verification failed.");
-            }
+
         }
 
         private static byte[] LineSeparator
@@ -175,99 +176,93 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Examples
             get { return Encoding.ASCII.GetBytes(Environment.NewLine); }
         }
 
-        /*
-        * create a clear text signed file.
-        */
-        private static void SignFile(
-            string    fileName,
-            Stream    keyIn,
-            Stream    outputStream,
-            char[]    pass,
-            string    digestName)
+
+        private static void SignFile(String  fileName,
+                                     Stream  keyIn,
+                                     Stream  outputStream,
+                                     Char[]  pass,
+                                     String  digestName)
         {
-            HashAlgorithmTag digest;
+
+            HashAlgorithmTag HashAlgorithm;
 
             if (digestName.Equals("SHA256"))
-            {
-                digest = HashAlgorithmTag.Sha256;
-            }
+                HashAlgorithm = HashAlgorithmTag.Sha256;
+
             else if (digestName.Equals("SHA384"))
-            {
-                digest = HashAlgorithmTag.Sha384;
-            }
+                HashAlgorithm = HashAlgorithmTag.Sha384;
+
             else if (digestName.Equals("SHA512"))
-            {
-                digest = HashAlgorithmTag.Sha512;
-            }
+                HashAlgorithm = HashAlgorithmTag.Sha512;
+
             else if (digestName.Equals("MD5"))
-            {
-                digest = HashAlgorithmTag.MD5;
-            }
+                HashAlgorithm = HashAlgorithmTag.MD5;
+
             else if (digestName.Equals("RIPEMD160"))
-            {
-                digest = HashAlgorithmTag.RipeMD160;
-            }
+                HashAlgorithm = HashAlgorithmTag.RipeMD160;
+
             else
+                HashAlgorithm = HashAlgorithmTag.Sha1;
+
+            var SecretKey                    = PgpExampleUtilities.ReadSecretKey(keyIn);
+            var PrivateKey                   = SecretKey.ExtractPrivateKey(pass);
+            var SignatureGenerator           = new PgpSignatureGenerator(SecretKey.PublicKey.Algorithm, HashAlgorithm);
+            var SignatureSubpacketGenerator  = new PgpSignatureSubpacketGenerator();
+
+            SignatureGenerator.InitSign(PgpSignature.CanonicalTextDocument, PrivateKey);
+
+            foreach (var UserId in SecretKey.PublicKey.GetUserIds())
             {
-                digest = HashAlgorithmTag.Sha1;
+                SignatureSubpacketGenerator.SetSignerUserId(false, UserId);
+                SignatureGenerator.SetHashedSubpackets(SignatureSubpacketGenerator.Generate());
             }
 
-            PgpSecretKey                    pgpSecKey = PgpExampleUtilities.ReadSecretKey(keyIn);
-            PgpPrivateKey                   pgpPrivKey = pgpSecKey.ExtractPrivateKey(pass);
-            PgpSignatureGenerator           sGen = new PgpSignatureGenerator(pgpSecKey.PublicKey.Algorithm, digest);
-            PgpSignatureSubpacketGenerator  spGen = new PgpSignatureSubpacketGenerator();
+            var FileToSignStream  = File.OpenRead(fileName);
+            var aOutputStream     = new ArmoredOutputStream(outputStream);
 
-            sGen.InitSign(PgpSignature.CanonicalTextDocument, pgpPrivKey);
+            aOutputStream.BeginClearText(HashAlgorithm);
 
-            IEnumerator enumerator = pgpSecKey.PublicKey.GetUserIds().GetEnumerator();
-            if (enumerator.MoveNext())
-            {
-                spGen.SetSignerUserId(false, (string) enumerator.Current);
-                sGen.SetHashedSubpackets(spGen.Generate());
-            }
-
-            Stream fIn = File.OpenRead(fileName);
-            ArmoredOutputStream aOut = new ArmoredOutputStream(outputStream);
-
-            aOut.BeginClearText(digest);
-
-            //
             // note the last \n/\r/\r\n in the file is ignored
-            //
-            MemoryStream lineOut = new MemoryStream();
-            int lookAhead = ReadInputLine(lineOut, fIn);
+            var lineOut    = new MemoryStream();
+            var lookAhead  = ReadInputLine(lineOut, FileToSignStream);
 
-            ProcessLine(aOut, sGen, lineOut.ToArray());
+            ProcessLine(aOutputStream, SignatureGenerator, lineOut.ToArray());
 
             if (lookAhead != -1)
             {
+
                 do
                 {
-                    lookAhead = ReadInputLine(lineOut, lookAhead, fIn);
 
-                    sGen.Update((byte) '\r');
-                    sGen.Update((byte) '\n');
+                    lookAhead = ReadInputLine(lineOut, lookAhead, FileToSignStream);
 
-                    ProcessLine(aOut, sGen, lineOut.ToArray());
+                    SignatureGenerator.Update((byte) '\r');
+                    SignatureGenerator.Update((byte) '\n');
+
+                    ProcessLine(aOutputStream, SignatureGenerator, lineOut.ToArray());
+
                 }
+
                 while (lookAhead != -1);
+
             }
 
-            fIn.Close();
+            FileToSignStream.Close();
 
-            aOut.EndClearText();
+            aOutputStream.EndClearText();
 
-            BcpgOutputStream bOut = new BcpgOutputStream(aOut);
+            var bOut = new BcpgOutputStream(aOutputStream);
 
-            sGen.Generate().Encode(bOut);
+            SignatureGenerator.Generate().Encode(bOut);
 
-            aOut.Close();
+            aOutputStream.Close();
+
         }
 
-        private static void ProcessLine(
-            PgpSignature    sig,
-            byte[]            line)
+        private static void ProcessLine(PgpSignature  sig,
+                                        byte[]        line)
         {
+
             // note: trailing white space needs to be removed from the end of
             // each line for signature calculation RFC 4880 Section 7.1
             int length = GetLengthWithoutWhiteSpace(line);
@@ -275,43 +270,43 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Examples
             {
                 sig.Update(line, 0, length);
             }
+
         }
 
-        private static void ProcessLine(
-            Stream                    aOut,
-            PgpSignatureGenerator    sGen,
-            byte[]                    line)
+        private static void ProcessLine(Stream                 aOut,
+                                        PgpSignatureGenerator  sGen,
+                                        Byte[]                 line)
         {
-            int length = GetLengthWithoutWhiteSpace(line);
+
+            var length = GetLengthWithoutWhiteSpace(line);
+
             if (length > 0)
-            {
                 sGen.Update(line, 0, length);
-            }
 
             aOut.Write(line, 0, line.Length);
+
         }
 
-        private static int GetLengthWithoutSeparatorOrTrailingWhitespace(byte[] line)
+        private static int GetLengthWithoutSeparatorOrTrailingWhitespace(Byte[] line)
         {
-            int end = line.Length - 1;
+
+            var end = line.Length - 1;
 
             while (end >= 0 && IsWhiteSpace(line[end]))
-            {
                 end--;
-            }
 
             return end + 1;
+
         }
 
-        private static bool IsLineEnding(
-            byte b)
+        private static bool IsLineEnding(Byte b)
         {
             return b == '\r' || b == '\n';
         }
 
-        private static int GetLengthWithoutWhiteSpace(
-            byte[] line)
+        private static int GetLengthWithoutWhiteSpace(byte[] line)
         {
+
             int end = line.Length - 1;
 
             while (end >= 0 && IsWhiteSpace(line[end]))
@@ -320,39 +315,42 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Examples
             }
 
             return end + 1;
+
         }
 
-        private static bool IsWhiteSpace(
-            byte b)
+        private static bool IsWhiteSpace(byte b)
         {
             return IsLineEnding(b) || b == '\t' || b == ' ';
         }
 
-        public static int Main(
-            string[] args)
+        public static void Main(String[] args)
         {
+
+            // ClearSignedFileProcessor -s fileName secretKey passPhrase HashAlgorithm
             if (args[0].Equals("-s"))
             {
-                Stream fis = File.OpenRead(args[2]);
-                Stream fos = File.Create(args[1] + ".asc");
 
-                Stream keyIn = PgpUtilities.GetDecoderStream(fis);
+                var FileToSignName          = args[1];
+                var SecretKeyStream         = File.OpenRead(args[2]);
+                var SignedFileStream        = File.Create(args[1] + ".asc");
+                var SecretKeyDecodedStream  = PgpUtilities.GetDecoderStream(SecretKeyStream);
+                var passPhrase              = args[3];
+                var HashDigestName          = (args.Length == 4) ? "SHA512" : args[4];
 
-                string digestName = (args.Length == 4)
-                    ?    "SHA1"
-                    :    args[4];
+                SignFile(FileToSignName, SecretKeyDecodedStream, SignedFileStream, passPhrase.ToCharArray(), HashDigestName);
 
-                SignFile(args[1], keyIn, fos, args[3].ToCharArray(), digestName);
+                SecretKeyStream.Close();
+                SignedFileStream.Close();
 
-                fis.Close();
-                fos.Close();
             }
+
             else if (args[0].Equals("-v"))
             {
+
                 if (args[1].IndexOf(".asc") < 0)
                 {
                     Console.Error.WriteLine("file needs to end in \".asc\"");
-                    return 1;
+                    Environment.Exit(1);
                 }
 
                 Stream fin = File.OpenRead(args[1]);
@@ -364,12 +362,14 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Examples
 
                 fin.Close();
                 fis.Close();
+
             }
+
             else
-            {
                 Console.Error.WriteLine("usage: ClearSignedFileProcessor [-s file keyfile passPhrase]|[-v sigFile keyFile]");
-            }
-            return 0;
+
         }
+
     }
+
 }

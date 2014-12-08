@@ -931,6 +931,12 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
 
         }
 
+
+        public override string ToString()
+        {
+            return ids.FirstOrDefault().ToString() + " 0x" + keyId.ToString("X") + " " + CreationTime.ToString();
+        }
+
     }
 
 }

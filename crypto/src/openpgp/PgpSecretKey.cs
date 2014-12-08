@@ -442,11 +442,15 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
 
             try
             {
-                var data = ExtractKeyData(passPhrase);
-                BcpgInputStream bcpgIn = BcpgInputStream.Wrap(new MemoryStream(data, false));
+
+                var data   = ExtractKeyData(passPhrase);
+                var bcpgIn = BcpgInputStream.Wrap(new MemoryStream(data, false));
+
                 AsymmetricKeyParameter privateKey;
+
                 switch (pubPk.Algorithm)
                 {
+
                     case PublicKeyAlgorithmTag.RsaEncrypt:
                     case PublicKeyAlgorithmTag.RsaGeneral:
                     case PublicKeyAlgorithmTag.RsaSign:
@@ -463,12 +467,14 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
                             rsaPriv.CrtCoefficient);
                         privateKey = rsaPrivSpec;
                         break;
+
                     case PublicKeyAlgorithmTag.Dsa:
                         DsaPublicBcpgKey dsaPub = (DsaPublicBcpgKey)pubPk.Key;
                         DsaSecretBcpgKey dsaPriv = new DsaSecretBcpgKey(bcpgIn);
                         DsaParameters dsaParams = new DsaParameters(dsaPub.P, dsaPub.Q, dsaPub.G);
                         privateKey = new DsaPrivateKeyParameters(dsaPriv.X, dsaParams);
                         break;
+
                     case PublicKeyAlgorithmTag.ElGamalEncrypt:
                     case PublicKeyAlgorithmTag.ElGamalGeneral:
                         ElGamalPublicBcpgKey elPub = (ElGamalPublicBcpgKey)pubPk.Key;
@@ -476,8 +482,10 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
                         ElGamalParameters elParams = new ElGamalParameters(elPub.P, elPub.G);
                         privateKey = new ElGamalPrivateKeyParameters(elPriv.X, elParams);
                         break;
+
                     default:
                         throw new PgpException("unknown public key algorithm encountered");
+
                 }
 
                 return new PgpPrivateKey(privateKey, KeyId);
@@ -520,6 +528,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
 
                 return new byte[] { (byte)(Checksum >> 8), (byte)Checksum };
             }
+
         }
 
         public Byte[] GetEncoded()

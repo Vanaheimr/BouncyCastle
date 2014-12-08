@@ -17,8 +17,14 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
     public class PgpSecretKeyRingBundle
     {
 
+        #region Data
+
         private readonly Dictionary<UInt64, PgpSecretKeyRing>  secretRings;
         private readonly List<UInt64>                          order;
+
+        #endregion
+
+        #region Constructor(s)
 
         private PgpSecretKeyRingBundle(Dictionary<UInt64, PgpSecretKeyRing>  secretRings,
                                        List<UInt64>                          order)
@@ -41,7 +47,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
             : this(new PgpObjectFactory(inputStream).
                        AllPgpObjects().
                        Select(po => po as PgpSecretKeyRing).
-                       Where(po => po != null))
+                       Where (po => po != null))
         { }
 
         public PgpSecretKeyRingBundle(IEnumerable<PgpSecretKeyRing> e)
@@ -67,6 +73,8 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
             }
 
         }
+
+        #endregion
 
         /// <summary>Return the number of rings in this collection.</summary>
         public int Count
@@ -120,6 +128,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
                 {
 
                     var next = nextUserID;
+
                     if (ignoreCase)
                     {
                         next = Platform.ToLowerInvariant(next);
@@ -128,18 +137,16 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
                     if (matchPartial)
                     {
                         if (next.IndexOf(userId) > -1)
-                        {
                             rings.Add(secRing);
-                        }
                     }
                     else
                     {
                         if (next.Equals(userId))
-                        {
                             rings.Add(secRing);
-                        }
                     }
+
                 }
+
             }
 
             return rings;

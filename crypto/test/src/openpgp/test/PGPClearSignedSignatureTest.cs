@@ -188,7 +188,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
             MemoryStream bOut = new MemoryStream();
             int ch;
 
-            while ((ch = aIn.ReadByte()) >= 0 && aIn.IsClearText())
+            while ((ch = aIn.ReadByte()) >= 0 && aIn.IsClearText)
             {
                 bOut.WriteByte((byte)ch);
             }

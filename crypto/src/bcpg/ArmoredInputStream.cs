@@ -5,6 +5,7 @@ using System.Text;
 
 using Org.BouncyCastle.Utilities;
 using Org.BouncyCastle.Utilities.IO;
+using System.Collections.Generic;
 
 namespace Org.BouncyCastle.Bcpg
 {
@@ -13,31 +14,87 @@ namespace Org.BouncyCastle.Bcpg
     * bytes when the data is reached. An IOException is thrown if the CRC check
     * fails.
     */
-    public class ArmoredInputStream
-        : BaseInputStream
+    public class ArmoredInputStream : BaseInputStream
     {
-        /*
-        * set up the decoding table.
-        */
+
+        #region Data
+
         private readonly static byte[] decodingTable;
+
+        Stream        input;
+        bool          start = true;
+        int[]         outBuf = new int[3];
+        int           bufPtr = 3;
+        Crc24         crc = new Crc24();
+        bool          crcFound = false;
+        bool          hasHeaders = true;
+        string        header = null;
+        bool          NewLineFound = false;
+        bool          clearText = false;
+        bool          restart = false;
+        List<String>  headerList;
+        int           lastC = 0;
+        bool          isEndOfStream;
+
+        #endregion
+
         static ArmoredInputStream()
         {
+
             decodingTable = new byte[128];
+
             for (int i = 'A'; i <= 'Z'; i++)
-            {
                 decodingTable[i] = (byte)(i - 'A');
-            }
+
             for (int i = 'a'; i <= 'z'; i++)
-            {
                 decodingTable[i] = (byte)(i - 'a' + 26);
-            }
+
             for (int i = '0'; i <= '9'; i++)
-            {
                 decodingTable[i] = (byte)(i - '0' + 52);
-            }
+
             decodingTable['+'] = 62;
             decodingTable['/'] = 63;
+
         }
+
+        #region Constructor(s)
+
+        /**
+        * Create a stream for reading a PGP armoured message, parsing up to a header
+        * and then reading the data that follows.
+        *
+        * @param input
+        */
+        public ArmoredInputStream(Stream input)
+            : this(input, true)
+        { }
+
+        /**
+        * Create an armoured input stream which will assume the data starts
+        * straight away, or parse for headers first depending on the value of
+        * hasHeaders.
+        *
+        * @param input
+        * @param hasHeaders true if headers are to be looked for, false otherwise.
+        */
+        public ArmoredInputStream(Stream   input,
+                                  Boolean  hasHeaders)
+        {
+
+            this.input       = input;
+            this.hasHeaders  = hasHeaders;
+            this.headerList  = new List<String>();
+
+            if (hasHeaders)
+                ParseHeaders();
+
+            start       = false;
+
+        }
+
+        #endregion
+
+
 
         /**
         * decode the base 64 encoded input data.
@@ -86,71 +143,20 @@ namespace Org.BouncyCastle.Bcpg
             }
         }
 
-        Stream      input;
-        bool        start = true;
-        int[]       outBuf = new int[3];
-        int         bufPtr = 3;
-        Crc24       crc = new Crc24();
-        bool        crcFound = false;
-        bool        hasHeaders = true;
-        string      header = null;
-        bool        NewLineFound = false;
-        bool        clearText = false;
-        bool        restart = false;
-        IList       headerList= Platform.CreateArrayList();
-        int         lastC = 0;
-        bool        isEndOfStream;
-
-        /**
-        * Create a stream for reading a PGP armoured message, parsing up to a header
-        * and then reading the data that follows.
-        *
-        * @param input
-        */
-        public ArmoredInputStream(Stream input)
-            : this(input, true)
-        { }
-
-        /**
-        * Create an armoured input stream which will assume the data starts
-        * straight away, or parse for headers first depending on the value of
-        * hasHeaders.
-        *
-        * @param input
-        * @param hasHeaders true if headers are to be looked for, false otherwise.
-        */
-        public ArmoredInputStream(
-            Stream    input,
-            bool    hasHeaders)
-        {
-            this.input = input;
-            this.hasHeaders = hasHeaders;
-
-            if (hasHeaders)
-            {
-                ParseHeaders();
-            }
-
-            start = false;
-        }
 
         private bool ParseHeaders()
         {
+
             header = null;
 
-            int        c;
-            int        last = 0;
-            bool    headerFound = false;
+            var c            = 0;
+            var last         = 0;
+            var headerFound  = false;
 
-            headerList = Platform.CreateArrayList();
-
-            //
             // if restart we already have a header
-            //
             if (restart)
-            {
                 headerFound = true;
-            }
+
             else
             {
                 while ((c = input.ReadByte()) >= 0)
@@ -219,34 +225,40 @@ namespace Org.BouncyCastle.Bcpg
                 {
                     input.ReadByte(); // skip last \n
                 }
+
             }
 
             if (headerList.Count > 0)
-            {
-                header = (string) headerList[0];
-            }
+                header = headerList[0];
 
             clearText = "-----BEGIN PGP SIGNED MESSAGE-----".Equals(header);
             NewLineFound = true;
 
             return headerFound;
+
         }
 
         /**
         * @return true if we are inside the clear text section of a PGP
         * signed message.
         */
-        public bool IsClearText()
+        public bool IsClearText
         {
-            return clearText;
+            get
+            {
+                return clearText;
+            }
         }
 
         /**
          * @return true if the stream is actually at end of file.
          */
-        public bool IsEndOfStream()
+        public bool IsEndOfStream
         {
-            return isEndOfStream;
+            get
+            {
+                return isEndOfStream;
+            }
         }
 
         /**
@@ -449,6 +461,7 @@ namespace Org.BouncyCastle.Bcpg
 
                 crc.Reset();
                 start = false;
+                clearText = false;
             }
 
             if (clearText)

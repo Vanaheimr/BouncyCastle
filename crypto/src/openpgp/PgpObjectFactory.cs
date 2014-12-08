@@ -7,6 +7,7 @@ using System.Collections.Generic;
 
 namespace Org.BouncyCastle.Bcpg.OpenPgp
 {
+
     /// <remarks>
     /// General class for reading a PGP object stream.
     /// <p>
@@ -26,25 +27,27 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
             this.bcpgIn = BcpgInputStream.Wrap(inputStream);
         }
 
-        public PgpObjectFactory(
-            byte[] bytes)
+        public PgpObjectFactory(byte[] bytes)
             : this(new MemoryStream(bytes, false))
-        {
-        }
+        { }
 
         /// <summary>Return the next object in the stream, or null if the end is reached.</summary>
         /// <exception cref="IOException">On a parse error</exception>
         public PgpObject NextPgpObject()
         {
-            PacketTag tag = bcpgIn.NextPacketTag();
 
-            if ((int) tag == -1) return null;
+            var tag = bcpgIn.NextPacketTag();
+
+            if ((int) tag == -1)
+                return null;
 
             switch (tag)
             {
+
                 case PacketTag.Signature:
                 {
-                    IList l = Platform.CreateArrayList();
+
+                    var l = new List<PgpSignature>();
 
                     while (bcpgIn.NextPacketTag() == PacketTag.Signature)
                     {
@@ -58,13 +61,10 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
                         }
                     }
 
-                    PgpSignature[] sigs = new PgpSignature[l.Count];
-                    for (int i = 0; i < l.Count; ++i)
-                    {
-                        sigs[i] = (PgpSignature)l[i];
-                    }
-                    return new PgpSignatureList(sigs);
+                    return new PgpSignatureList(l);
+
                 }
+
                 case PacketTag.SecretKey:
                     try
                     {
@@ -74,20 +74,26 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
                     {
                         throw new IOException("can't create secret key object: " + e);
                     }
+
                 case PacketTag.PublicKey:
                     return new PgpPublicKeyRing(bcpgIn);
                 // TODO Make PgpPublicKey a PgpObject or return a PgpPublicKeyRing
 //                case PacketTag.PublicSubkey:
 //                    return PgpPublicKeyRing.ReadSubkey(bcpgIn);
+
                 case PacketTag.CompressedData:
                     return new PgpCompressedData(bcpgIn);
+
                 case PacketTag.LiteralData:
                     return new PgpLiteralData(bcpgIn);
+
                 case PacketTag.PublicKeyEncryptedSession:
                 case PacketTag.SymmetricKeyEncryptedSessionKey:
                     return new PgpEncryptedDataList(bcpgIn);
+
                 case PacketTag.OnePassSignature:
                 {
+
                     IList l = Platform.CreateArrayList();
 
                     while (bcpgIn.NextPacketTag() == PacketTag.OnePassSignature)
@@ -102,23 +108,27 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
                         }
                     }
 
-                    PgpOnePassSignature[] sigs = new PgpOnePassSignature[l.Count];
+                    var sigs = new PgpOnePassSignature[l.Count];
                     for (int i = 0; i < l.Count; ++i)
-                    {
                         sigs[i] = (PgpOnePassSignature)l[i];
-                    }
+
                     return new PgpOnePassSignatureList(sigs);
+
                 }
+
                 case PacketTag.Marker:
                     return new PgpMarker(bcpgIn);
+
                 case PacketTag.Experimental1:
                 case PacketTag.Experimental2:
                 case PacketTag.Experimental3:
                 case PacketTag.Experimental4:
                     return new PgpExperimental(bcpgIn);
+
             }
 
             throw new IOException("unknown object in stream " + bcpgIn.NextPacketTag());
+
         }
 
         /// <summary>
