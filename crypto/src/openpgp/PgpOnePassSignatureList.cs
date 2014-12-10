@@ -1,51 +1,84 @@
 using System;
+using System.Linq;
+using System.Collections.Generic;
 
 namespace Org.BouncyCastle.Bcpg.OpenPgp
 {
-	/// <remarks>Holder for a list of PgpOnePassSignature objects.</remarks>
-    public class PgpOnePassSignatureList
-		: PgpObject
+
+    /// <summary>
+    /// Holder for a list of PgpOnePassSignature objects.
+    /// </summary>
+    public class PgpOnePassSignatureList : PgpObject,
+                                           IEnumerable<PgpOnePassSignature>
     {
-        private readonly PgpOnePassSignature[] sigs;
 
-		public PgpOnePassSignatureList(
-            PgpOnePassSignature[] sigs)
+        #region Data
+
+        private readonly List<PgpOnePassSignature> OnePassSignatures;
+
+        #endregion
+
+        #region Properties
+
+        public UInt64 Count
         {
-			this.sigs = (PgpOnePassSignature[]) sigs.Clone();
+            get
+            {
+                return (UInt64)OnePassSignatures.Count;
+            }
         }
 
-		public PgpOnePassSignatureList(
-            PgpOnePassSignature sig)
+        public Boolean IsEmpty
         {
-			this.sigs = new PgpOnePassSignature[]{ sig };
+            get
+            {
+                return !OnePassSignatures.Any();
+            }
         }
 
-		public PgpOnePassSignature this[int index]
-		{
-			get { return sigs[index]; }
-		}
+        #endregion
 
-		[Obsolete("Use 'object[index]' syntax instead")]
-		public PgpOnePassSignature Get(
-            int index)
+        #region Constructor(s)
+
+        public PgpOnePassSignatureList(IEnumerable<PgpOnePassSignature> OnePassSignatures)
         {
-            return this[index];
+            this.OnePassSignatures = new List<PgpOnePassSignature>(OnePassSignatures);
         }
 
-		[Obsolete("Use 'Count' property instead")]
-		public int Size
+        public PgpOnePassSignatureList(PgpOnePassSignature sig)
         {
-			get { return sigs.Length; }
+            this.OnePassSignatures = new List<PgpOnePassSignature>() { sig };
         }
 
-		public int Count
-		{
-			get { return sigs.Length; }
-		}
+        #endregion
 
-		public bool IsEmpty
+
+        #region this[Index]
+
+        public PgpOnePassSignature this[UInt64 Index]
         {
-			get { return (sigs.Length == 0); }
+            get
+            {
+                return OnePassSignatures[(Int32) Index];
+            }
         }
+
+        #endregion
+
+        #region GetEnumerator()
+
+        public IEnumerator<PgpOnePassSignature> GetEnumerator()
+        {
+            return OnePassSignatures.GetEnumerator();
+        }
+
+        System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
+        {
+            return OnePassSignatures.GetEnumerator();
+        }
+
+        #endregion
+
     }
+
 }

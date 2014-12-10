@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Collections.Generic;
 
 namespace Org.BouncyCastle.Bcpg.OpenPgp
@@ -7,7 +8,8 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
     /// <summary>
     /// A list of PGP signatures - normally in the signature block after literal data.
     /// </summary>
-    public class PgpSignatureList : PgpObject
+    public class PgpSignatureList : PgpObject,
+                                    IEnumerable<PgpSignature>
     {
 
         #region Data
@@ -53,7 +55,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
 
         #region this[Index]
 
-        public PgpSignature this[UInt32 Index]
+        public PgpSignature this[UInt64 Index]
         {
             get
             {
@@ -63,6 +65,19 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
 
         #endregion
 
+        #region GetEnumerator()
+
+        public IEnumerator<PgpSignature> GetEnumerator()
+        {
+            return Signatures.GetEnumerator();
+        }
+
+        System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
+        {
+            return Signatures.GetEnumerator();
+        }
+
+        #endregion
 
     }
 

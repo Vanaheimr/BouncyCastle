@@ -241,7 +241,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
             //
             foreach (PgpSecretKeyRing kRing in pgpSec.GetKeyRings())
             {
-                foreach (PgpSecretKey k in kRing.GetSecretKeys())
+                foreach (var k in kRing.SecretKeys)
                 {
                     if (k.IsSigningKey)
                     {

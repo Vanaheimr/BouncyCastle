@@ -88,47 +88,45 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Examples
 
         }
 
-        private static void CreateSignature(
-            String    inputFileName,
-            String    keyFileName,
-            String    outputFileName,
-            String    pass,
-            bool    armor)
+        private static void CreateSignature(String   inputFileName,
+                                            String   keyFileName,
+                                            String   outputFileName,
+                                            String   passphrase,
+                                            Boolean  armor)
         {
-            using (Stream keyIn = File.OpenRead(keyFileName),
-                output = File.OpenRead(outputFileName))
+            using (var keyIn = File.OpenRead(keyFileName))
             {
-                CreateSignature(inputFileName, keyIn, output, pass, armor);
+                using (var output = File.Open(outputFileName, FileMode.Create, FileAccess.Write))
+                {
+                    CreateSignature(inputFileName, keyIn, output, passphrase, armor);
+                }
             }
         }
 
-        private static void CreateSignature(
-            String    fileName,
-            Stream    keyIn,
-            Stream    outputStream,
-            String    pass,
-            bool    armor)
+        private static void CreateSignature(String   fileName,
+                                            Stream   keyIn,
+                                            Stream   outputStream,
+                                            String   passphrase,
+                                            Boolean  armor)
         {
-            if (armor)
-            {
-                outputStream = new ArmoredOutputStream(outputStream);
-            }
 
-            PgpSecretKey pgpSec = PgpExampleUtilities.ReadSecretKey(keyIn);
-            PgpPrivateKey pgpPrivKey = pgpSec.ExtractPrivateKey(pass);
-            PgpSignatureGenerator sGen = new PgpSignatureGenerator(
-                pgpSec.PublicKey.Algorithm, HashAlgorithmTag.Sha1);
+            if (armor)
+                outputStream = new ArmoredOutputStream(outputStream);
+
+            var pgpSec      = PgpExampleUtilities.ReadSecretKey(keyIn);
+            var pgpPrivKey  = pgpSec.ExtractPrivateKey(passphrase);
+            var sGen        = new PgpSignatureGenerator(pgpSec.PublicKey.Algorithm, HashAlgorithmTag.Sha512);
 
             sGen.InitSign(PgpSignature.BinaryDocument, pgpPrivKey);
 
-            BcpgOutputStream bOut = new BcpgOutputStream(outputStream);
+            var bOut        = new BcpgOutputStream(outputStream);
 
             Stream fIn = File.OpenRead(fileName);
 
             int ch;
             while ((ch = fIn.ReadByte()) >= 0)
             {
-                sGen.Update((byte)ch);
+                sGen.Update((byte) ch);
             }
 
             fIn.Close();
@@ -136,14 +134,13 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Examples
             sGen.Generate().Encode(bOut);
 
             if (armor)
-            {
                 outputStream.Close();
-            }
+
         }
 
-        public static void Main(
-            string[] args)
+        public static void Main(String[] args)
         {
+
             if (args[0].Equals("-s"))
             {
                 if (args[1].Equals("-a"))
@@ -155,14 +152,15 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Examples
                     CreateSignature(args[1], args[2], args[1] + ".bpg", args[3], false);
                 }
             }
+
             else if (args[0].Equals("-v"))
-            {
                 VerifySignature(args[1], args[2], args[3]);
-            }
+
             else
-            {
                 Console.Error.WriteLine("usage: DetachedSignatureProcessor [-s [-a] file keyfile passPhrase]|[-v file sigFile keyFile]");
-            }
+
         }
+
     }
+
 }

@@ -110,11 +110,11 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
         public override void PerformTest()
         {
             PgpSecretKeyRing pgpSecRing = new PgpSecretKeyRing(pgpPrivateFull);
-            PgpSecretKey pgpSecKey = pgpSecRing.GetSecretKey();
+            PgpSecretKey pgpSecKey = pgpSecRing.FirstSecretKey;
             bool isFullEmpty = pgpSecKey.IsPrivateKeyEmpty;
 
             pgpSecRing = new PgpSecretKeyRing(pgpPrivateEmpty);
-            pgpSecKey = pgpSecRing.GetSecretKey();
+            pgpSecKey = pgpSecRing.FirstSecretKey;
             bool isEmptyEmpty = pgpSecKey.IsPrivateKeyEmpty;
 
             //

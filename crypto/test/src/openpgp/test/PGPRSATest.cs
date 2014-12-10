@@ -489,7 +489,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
             PgpSignatureGenerator sGen = new PgpSignatureGenerator(
                 PublicKeyAlgorithmTag.RsaGeneral, HashAlgorithmTag.Sha1);
 
-            sGen.InitSign(PgpSignature.PositiveCertification, pgpSec.GetSecretKey().ExtractPrivateKey(pass));
+            sGen.InitSign(PgpSignature.PositiveCertification, pgpSec.FirstSecretKey.ExtractPrivateKey(pass));
 
             PgpSignature sig = sGen.GenerateCertification(uVec, pubKey);
 
@@ -590,7 +590,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
 
             {
                 PgpSecretKeyRing pgpPriv2 = new PgpSecretKeyRing(testPrivKeyV3);
-                PgpSecretKey pgpPrivSecretKey = pgpPriv2.GetSecretKey();
+                PgpSecretKey pgpPrivSecretKey = pgpPriv2.FirstSecretKey;
                 PgpPrivateKey pgpPrivKey2 = pgpPrivSecretKey.ExtractPrivateKey(passP);
 
                 //
@@ -612,7 +612,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
             // Read the private key
             //
             PgpSecretKeyRing pgpPriv = new PgpSecretKeyRing(testPrivKey);
-            PgpPrivateKey pgpPrivKey = pgpPriv.GetSecretKey().ExtractPrivateKey(pass);
+            PgpPrivateKey pgpPrivKey = pgpPriv.FirstSecretKey.ExtractPrivateKey(pass);
 
             //
             // write a private key
@@ -1112,7 +1112,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
             //
             pgpPriv = new PgpSecretKeyRing(pgp8Key);
 
-            secretKey = pgpPriv.GetSecretKey();
+            secretKey = pgpPriv.FirstSecretKey;
 
             pgpPrivKey = secretKey.ExtractPrivateKey(pgp8Pass);
 

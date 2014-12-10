@@ -398,9 +398,9 @@ namespace Org.BouncyCastle.Bcpg
 
                         crcFound = true;
 
-                        int i = ((outBuf[0] & 0xff) << 16)
-                            | ((outBuf[1] & 0xff) << 8)
-                            | (outBuf[2] & 0xff);
+                        int i = ((outBuf[0] & 0xff) << 16) |
+                                ((outBuf[1] & 0xff) <<  8) |
+                                 (outBuf[2] & 0xff);
 
                         if (i != crc.Value)
                         {

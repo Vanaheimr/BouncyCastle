@@ -289,7 +289,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
 
             PgpSignatureSubpacketGenerator spGen = new PgpSignatureSubpacketGenerator();
 
-            IEnumerator enumerator = sKey.GetSecretKey().PublicKey.GetUserIds().GetEnumerator();
+            IEnumerator enumerator = sKey.FirstSecretKey.PublicKey.GetUserIds().GetEnumerator();
             enumerator.MoveNext();
             string primaryUserId = (string) enumerator.Current;
 
@@ -373,7 +373,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
             // Read the private key
             //
             PgpSecretKeyRing sKey = new PgpSecretKeyRing(testPrivKey);
-            PgpSecretKey secretKey = sKey.GetSecretKey();
+            PgpSecretKey secretKey = sKey.FirstSecretKey;
             PgpPrivateKey pgpPrivKey = secretKey.ExtractPrivateKey(pass);
 
             //
@@ -541,19 +541,19 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
             String passPhrase = "0123456789";
 
             sKey = new PgpSecretKeyRing(testPrivKey2);
-            pgpPrivKey = sKey.GetSecretKey().ExtractPrivateKey(passPhrase);
+            pgpPrivKey = sKey.FirstSecretKey.ExtractPrivateKey(passPhrase);
 
             //
             // reading test - aes256 encrypted passphrase.
             //
             sKey = new PgpSecretKeyRing(aesSecretKey);
-            pgpPrivKey = sKey.GetSecretKey().ExtractPrivateKey(pass);
+            pgpPrivKey = sKey.FirstSecretKey.ExtractPrivateKey(pass);
 
             //
             // reading test - twofish encrypted passphrase.
             //
             sKey = new PgpSecretKeyRing(twofishSecretKey);
-            pgpPrivKey = sKey.GetSecretKey().ExtractPrivateKey(pass);
+            pgpPrivKey = sKey.FirstSecretKey.ExtractPrivateKey(pass);
 
             //
             // use of PgpKeyPair

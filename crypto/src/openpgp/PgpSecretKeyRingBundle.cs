@@ -124,7 +124,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
             foreach (var secRing in GetKeyRings())
             {
 
-                foreach (var nextUserID in secRing.GetSecretKey().UserIds)
+                foreach (var nextUserID in secRing.FirstSecretKey.UserIds)
                 {
 
                     var next = nextUserID;

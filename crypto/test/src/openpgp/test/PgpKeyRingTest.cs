@@ -1,6 +1,7 @@
 using System;
-using System.Collections;
 using System.IO;
+using System.Linq;
+using System.Collections;
 
 using NUnit.Framework;
 
@@ -1180,7 +1181,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
 
                 PgpSecretKeyRing pgpSec2 = new PgpSecretKeyRing(bytes);
 
-                foreach (PgpSecretKey k in pgpSec2.GetSecretKeys())
+                foreach (PgpSecretKey k in pgpSec2.SecretKeys)
                 {
                     keyCount++;
                     PgpPublicKey pk = k.PublicKey;
@@ -1331,7 +1332,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
 
                 PgpSecretKeyRing pgpSec2 = new PgpSecretKeyRing(bytes);
 
-                foreach (PgpSecretKey k in pgpSec2.GetSecretKeys())
+                foreach (PgpSecretKey k in pgpSec2.SecretKeys)
                 {
                     keyCount++;
                     PgpPublicKey pk = k.PublicKey;
@@ -1438,7 +1439,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
 
                 PgpSecretKeyRing pgpSec2 = new PgpSecretKeyRing(bytes);
 
-                foreach (PgpSecretKey k in pgpSec2.GetSecretKeys())
+                foreach (PgpSecretKey k in pgpSec2.SecretKeys)
                 {
                     keyCount++;
                     k.ExtractPrivateKey(sec3pass1);
@@ -1477,7 +1478,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
 
                 PgpSecretKeyRing pgpSec2 = new PgpSecretKeyRing(bytes);
 
-                foreach (PgpSecretKey k in pgpSec2.GetSecretKeys())
+                foreach (PgpSecretKey k in pgpSec2.SecretKeys)
                 {
                     keyCount++;
                     k.ExtractPrivateKey(sec3pass1);
@@ -1553,7 +1554,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
 
                 PgpSecretKeyRing pgpSec2 = new PgpSecretKeyRing(bytes);
 
-                foreach (PgpSecretKey k in pgpSec2.GetSecretKeys())
+                foreach (PgpSecretKey k in pgpSec2.SecretKeys)
                 {
                     keyCount++;
                     k.ExtractPrivateKey(sec5pass1);
@@ -1698,7 +1699,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
 
                 PgpSecretKeyRing pgpSec2 = new PgpSecretKeyRing(bytes);
 
-                foreach (PgpSecretKey k in pgpSec2.GetSecretKeys())
+                foreach (PgpSecretKey k in pgpSec2.SecretKeys)
                 {
                     keyCount++;
                     k.ExtractPrivateKey(sec8pass);
@@ -1737,7 +1738,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
 
                 PgpSecretKeyRing pgpSec2 = new PgpSecretKeyRing(bytes);
 
-                foreach (PgpSecretKey k in pgpSec2.GetSecretKeys())
+                foreach (PgpSecretKey k in pgpSec2.SecretKeys)
                 {
                     keyCount++;
 
@@ -1765,7 +1766,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
         {
             PgpSecretKeyRing secretRing = new PgpSecretKeyRing(sec10);
 
-            foreach (PgpSecretKey secretKey in secretRing.GetSecretKeys())
+            foreach (PgpSecretKey secretKey in secretRing.SecretKeys)
             {
                 PgpPublicKey pubKey = secretKey.PublicKey;
 
@@ -1850,7 +1851,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
 
             PgpSecretKeyRing keyRing = keyRingGen.GenerateSecretKeyRing();
 
-            keyRing.GetSecretKey().ExtractPrivateKey(passPhrase);
+            keyRing.FirstSecretKey.ExtractPrivateKey(passPhrase);
 
             PgpPublicKeyRing pubRing = keyRingGen.GeneratePublicKeyRing();
 
@@ -1928,7 +1929,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
 
             try
             {
-                PgpSecretKeyRing.InsertSecretKey(secRing1, secRing2.GetSecretKey());
+                PgpSecretKeyRing.InsertSecretKey(secRing1, secRing2.FirstSecretKey);
                 Fail("adding second master key (secret) should throw an ArgumentException");
             }
             catch (ArgumentException e)
@@ -1985,7 +1986,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
 
             PgpSecretKeyRing keyRing = keyRingGen.GenerateSecretKeyRing();
 
-            keyRing.GetSecretKey().ExtractPrivateKey(passPhrase);
+            keyRing.FirstSecretKey.ExtractPrivateKey(passPhrase);
 
             PgpPublicKeyRing pubRing = keyRingGen.GeneratePublicKeyRing();
 
@@ -2030,7 +2031,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
 
             foreach (PgpSecretKeyRing pgpPrivEnum in privRings.GetKeyRings())
             {
-                foreach (PgpSecretKey pgpKeyEnum in pgpPrivEnum.GetSecretKeys())
+                foreach (PgpSecretKey pgpKeyEnum in pgpPrivEnum.SecretKeys)
                 {
                     // re-encrypt the key with an empty password
                     PgpSecretKeyRing pgpPriv = PgpSecretKeyRing.RemoveSecretKey(pgpPrivEnum, pgpKeyEnum);
@@ -2066,26 +2067,17 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
             checkSecretKeyRingWithPersonalCertificate(secRing.GetEncoded());
         }
 
-        private void checkSecretKeyRingWithPersonalCertificate(
-            byte[] keyRing)
+        private void checkSecretKeyRingWithPersonalCertificate(Byte[] keyRing)
         {
-            PgpSecretKeyRingBundle secCol = new PgpSecretKeyRingBundle(keyRing);
 
-            int count = 0;
-
-            foreach (PgpSecretKeyRing ring in secCol.GetKeyRings())
+            if (new PgpSecretKeyRingBundle(keyRing).
+                    GetKeyRings().
+                    SelectMany(SecretKeyRing => SecretKeyRing.ExtraPublicKeys).
+                    Count() != 1)
             {
-                IEnumerator e = ring.GetExtraPublicKeys().GetEnumerator();
-                while (e.MoveNext())
-                {
-                    ++count;
-                }
+                Fail("personal certificate data subkey not found!");
             }
 
-            if (count != 1)
-            {
-                Fail("personal certificate data subkey not found - count = " + count);
-            }
         }
 
         private void checkPublicKeyRingWithX509(

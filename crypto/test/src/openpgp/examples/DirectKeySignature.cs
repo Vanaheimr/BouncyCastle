@@ -67,7 +67,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Examples
                 PgpPublicKeyRing sRing = null;
                 sRing = new PgpPublicKeyRing(
                     new MemoryStream(
-                        SignPublicKey(secRing.GetSecretKey(), secretKeyPass,
+                        SignPublicKey(secRing.FirstSecretKey, secretKeyPass,
                             ring.GetPublicKey(), notationName, notationValue, true),
                         false));
                 ring = sRing;

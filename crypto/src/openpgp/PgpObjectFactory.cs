@@ -1,9 +1,9 @@
 using System;
-using System.Collections;
 using System.IO;
+using System.Collections;
+using System.Collections.Generic;
 
 using Org.BouncyCastle.Utilities;
-using System.Collections.Generic;
 
 namespace Org.BouncyCastle.Bcpg.OpenPgp
 {
@@ -19,24 +19,32 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
     public class PgpObjectFactory
     {
 
-        private readonly BcpgInputStream bcpgIn;
+        #region Data
 
-        public PgpObjectFactory(
-            Stream inputStream)
+        private readonly BcpgInputStream _BcpgInputStream;
+
+        #endregion
+
+        #region Constructor(s)
+
+        public PgpObjectFactory(Stream inputStream)
         {
-            this.bcpgIn = BcpgInputStream.Wrap(inputStream);
+            this._BcpgInputStream = BcpgInputStream.Wrap(inputStream);
         }
 
-        public PgpObjectFactory(byte[] bytes)
+        public PgpObjectFactory(Byte[] bytes)
             : this(new MemoryStream(bytes, false))
         { }
+
+        #endregion
+
 
         /// <summary>Return the next object in the stream, or null if the end is reached.</summary>
         /// <exception cref="IOException">On a parse error</exception>
         public PgpObject NextPgpObject()
         {
 
-            var tag = bcpgIn.NextPacketTag();
+            var tag = _BcpgInputStream.NextPacketTag();
 
             if ((int) tag == -1)
                 return null;
@@ -47,13 +55,13 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
                 case PacketTag.Signature:
                 {
 
-                    var l = new List<PgpSignature>();
+                    var Signatures = new List<PgpSignature>();
 
-                    while (bcpgIn.NextPacketTag() == PacketTag.Signature)
+                    while (_BcpgInputStream.NextPacketTag() == PacketTag.Signature)
                     {
                         try
                         {
-                            l.Add(new PgpSignature(bcpgIn));
+                            Signatures.Add(new PgpSignature(_BcpgInputStream));
                         }
                         catch (PgpException e)
                         {
@@ -61,14 +69,14 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
                         }
                     }
 
-                    return new PgpSignatureList(l);
+                    return new PgpSignatureList(Signatures);
 
                 }
 
                 case PacketTag.SecretKey:
                     try
                     {
-                        return new PgpSecretKeyRing(bcpgIn);
+                        return new PgpSecretKeyRing(_BcpgInputStream);
                     }
                     catch (PgpException e)
                     {
@@ -76,31 +84,31 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
                     }
 
                 case PacketTag.PublicKey:
-                    return new PgpPublicKeyRing(bcpgIn);
+                    return new PgpPublicKeyRing(_BcpgInputStream);
                 // TODO Make PgpPublicKey a PgpObject or return a PgpPublicKeyRing
 //                case PacketTag.PublicSubkey:
 //                    return PgpPublicKeyRing.ReadSubkey(bcpgIn);
 
                 case PacketTag.CompressedData:
-                    return new PgpCompressedData(bcpgIn);
+                    return new PgpCompressedData(_BcpgInputStream);
 
                 case PacketTag.LiteralData:
-                    return new PgpLiteralData(bcpgIn);
+                    return new PgpLiteralData(_BcpgInputStream);
 
                 case PacketTag.PublicKeyEncryptedSession:
                 case PacketTag.SymmetricKeyEncryptedSessionKey:
-                    return new PgpEncryptedDataList(bcpgIn);
+                    return new PgpEncryptedDataList(_BcpgInputStream);
 
                 case PacketTag.OnePassSignature:
                 {
 
-                    IList l = Platform.CreateArrayList();
+                    var OnePassSignatures = new List<PgpOnePassSignature>();
 
-                    while (bcpgIn.NextPacketTag() == PacketTag.OnePassSignature)
+                    while (_BcpgInputStream.NextPacketTag() == PacketTag.OnePassSignature)
                     {
                         try
                         {
-                            l.Add(new PgpOnePassSignature(bcpgIn));
+                            OnePassSignatures.Add(new PgpOnePassSignature(_BcpgInputStream));
                         }
                         catch (PgpException e)
                         {
@@ -108,46 +116,44 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
                         }
                     }
 
-                    var sigs = new PgpOnePassSignature[l.Count];
-                    for (int i = 0; i < l.Count; ++i)
-                        sigs[i] = (PgpOnePassSignature)l[i];
-
-                    return new PgpOnePassSignatureList(sigs);
+                    return new PgpOnePassSignatureList(OnePassSignatures);
 
                 }
 
                 case PacketTag.Marker:
-                    return new PgpMarker(bcpgIn);
+                    return new PgpMarker(_BcpgInputStream);
 
                 case PacketTag.Experimental1:
                 case PacketTag.Experimental2:
                 case PacketTag.Experimental3:
                 case PacketTag.Experimental4:
-                    return new PgpExperimental(bcpgIn);
+                    return new PgpExperimental(_BcpgInputStream);
 
             }
 
-            throw new IOException("unknown object in stream " + bcpgIn.NextPacketTag());
+            throw new IOException("unknown object in stream " + _BcpgInputStream.NextPacketTag());
 
         }
 
+
+        #region AllPgpObjects()
+
         /// <summary>
-        /// Return all available objects in a list.
+        /// Return all available objects.
         /// </summary>
-        /// <returns>An <c>IList</c> containing all objects from this factory, in order.</returns>
         public IEnumerable<PgpObject> AllPgpObjects()
         {
 
-            var result = new List<PgpObject>();
             PgpObject pgpObject;
+
             while ((pgpObject = NextPgpObject()) != null)
             {
-                result.Add(pgpObject);
+                yield return pgpObject;
             }
 
-            return result;
-
         }
+
+        #endregion
 
     }
 

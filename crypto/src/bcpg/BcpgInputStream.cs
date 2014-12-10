@@ -6,13 +6,16 @@ using Org.BouncyCastle.Utilities.IO;
 
 namespace Org.BouncyCastle.Bcpg
 {
-    /// <remarks>Reader for PGP objects.</remarks>
+
+    /// <summary>
+    /// Reader for PGP objects.
+    /// </summary>
     public class BcpgInputStream : BaseInputStream
     {
 
-        private Stream m_in;
-        private bool next = false;
-        private int nextB;
+        private Stream   m_in;
+        private Boolean  next = false;
+        private Int32    nextB;
 
         internal static BcpgInputStream Wrap(Stream inStr)
         {
@@ -32,6 +35,7 @@ namespace Org.BouncyCastle.Bcpg
 
         public override int ReadByte()
         {
+
             if (next)
             {
                 next = false;
@@ -39,12 +43,12 @@ namespace Org.BouncyCastle.Bcpg
             }
 
             return m_in.ReadByte();
+
         }
 
-        public override int Read(
-            byte[]    buffer,
-            int        offset,
-            int        count)
+        public override Int32 Read(Byte[]  buffer,
+                                   Int32   offset,
+                                   Int32   count)
         {
 
             // Strangely, when count == 0, we should still attempt to read a byte
@@ -66,24 +70,23 @@ namespace Org.BouncyCastle.Bcpg
             next = false;
 
             return 1;
+
         }
 
-        public byte[] ReadAll()
+        public Byte[] ReadAll()
         {
             return Streams.ReadAll(this);
         }
 
-        public void ReadFully(
-            byte[]    buffer,
-            int        off,
-            int        len)
+        public void ReadFully(Byte[]  buffer,
+                              Int32   off,
+                              Int32   len)
         {
             if (Streams.ReadFully(this, buffer, off, len) < len)
                 throw new EndOfStreamException();
         }
 
-        public void ReadFully(
-            byte[] buffer)
+        public void ReadFully(Byte[] buffer)
         {
             ReadFully(buffer, 0, buffer.Length);
         }

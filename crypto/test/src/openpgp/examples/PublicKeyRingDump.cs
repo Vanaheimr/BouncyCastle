@@ -48,25 +48,25 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Examples
             return "unknown";
         }
 
-		public static void Main(
-			string[] args)
+        public static void Main(
+            string[] args)
         {
-			Stream fs = File.OpenRead(args[0]);
+            Stream fs = File.OpenRead(args[0]);
 
-			//
+            //
             // Read the public key rings
             //
             PgpPublicKeyRingBundle pubRings = new PgpPublicKeyRingBundle(
                 PgpUtilities.GetDecoderStream(fs));
 
-			fs.Close();
+            fs.Close();
 
-			foreach (PgpPublicKeyRing pgpPub in pubRings.GetKeyRings())
+            foreach (PgpPublicKeyRing pgpPub in pubRings.GetKeyRings())
             {
                 try
                 {
-					//PgpPublicKey pubKey =
-					pgpPub.GetPublicKey();
+                    //PgpPublicKey pubKey =
+                    pgpPub.GetPublicKey();
                 }
                 catch (Exception e)
                 {
@@ -75,9 +75,9 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Examples
                     continue;
                 }
 
-				bool first = true;
+                bool first = true;
 
-				foreach (PgpPublicKey pgpKey in pgpPub.GetPublicKeys())
+                foreach (PgpPublicKey pgpKey in pgpPub.GetPublicKeys())
                 {
                     if (first)
                     {
@@ -89,7 +89,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Examples
                         Console.WriteLine("Key ID: " + pgpKey.KeyId.ToString("X") + " (subkey)");
                     }
 
-					Console.WriteLine("            Algorithm: " + GetAlgorithm(pgpKey.Algorithm));
+                    Console.WriteLine("            Algorithm: " + GetAlgorithm(pgpKey.Algorithm));
                     Console.WriteLine("            Fingerprint: " + Hex.ToHexString(pgpKey.GetFingerprint()));
                 }
             }

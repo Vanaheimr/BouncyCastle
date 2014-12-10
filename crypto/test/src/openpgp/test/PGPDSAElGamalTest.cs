@@ -117,7 +117,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
             // Read the private key
             //
             PgpSecretKeyRing    sKey = new PgpSecretKeyRing(testPrivKeyRing);
-            PgpSecretKey        secretKey = sKey.GetSecretKey();
+            PgpSecretKey        secretKey = sKey.FirstSecretKey;
             PgpPrivateKey        pgpPrivKey = secretKey.ExtractPrivateKey(pass);
 
             //

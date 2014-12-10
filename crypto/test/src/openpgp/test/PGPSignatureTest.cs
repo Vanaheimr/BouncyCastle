@@ -332,7 +332,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
             // RSA tests
             //
             PgpSecretKeyRing pgpPriv = new PgpSecretKeyRing(rsaKeyRing);
-            PgpSecretKey secretKey = pgpPriv.GetSecretKey();
+            PgpSecretKey secretKey = pgpPriv.FirstSecretKey;
             PgpPrivateKey pgpPrivKey = secretKey.ExtractPrivateKey(rsaPass);
 
             try
@@ -374,7 +374,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
             }
 
             PgpSecretKeyRing pgpDSAPriv = new PgpSecretKeyRing(dsaKeyRing);
-            PgpSecretKey secretDSAKey = pgpDSAPriv.GetSecretKey();
+            PgpSecretKey secretDSAKey = pgpDSAPriv.FirstSecretKey;
             PgpPrivateKey pgpPrivDSAKey = secretDSAKey.ExtractPrivateKey(dsaPass);
 
             sGen = new PgpSignatureGenerator(PublicKeyAlgorithmTag.Dsa, HashAlgorithmTag.Sha1);
@@ -598,7 +598,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
             // DSA Tests
             //
             pgpPriv = new PgpSecretKeyRing(dsaKeyRing);
-            secretKey = pgpPriv.GetSecretKey();
+            secretKey = pgpPriv.FirstSecretKey;
             pgpPrivKey = secretKey.ExtractPrivateKey(dsaPass);
 
             try

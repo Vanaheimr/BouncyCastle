@@ -103,7 +103,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Examples
             // world you would probably want to be a bit smarter about this.
             foreach (var keyRing in pgpSec.GetKeyRings())
             {
-                foreach (var key in keyRing.GetSecretKeys())
+                foreach (var key in keyRing.SecretKeys)
                 {
                     if (key.IsSigningKey)
                         return key;
