@@ -180,7 +180,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Examples
         private static void SignFile(String  fileName,
                                      Stream  keyIn,
                                      Stream  outputStream,
-                                     Char[]  pass,
+                                     String  pass,
                                      String  digestName)
         {
 
@@ -337,7 +337,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Examples
                 var passPhrase              = args[3];
                 var HashDigestName          = (args.Length == 4) ? "SHA512" : args[4];
 
-                SignFile(FileToSignName, SecretKeyDecodedStream, SignedFileStream, passPhrase.ToCharArray(), HashDigestName);
+                SignFile(FileToSignName, SecretKeyDecodedStream, SignedFileStream, passPhrase, HashDigestName);
 
                 SecretKeyStream.Close();
                 SignedFileStream.Close();

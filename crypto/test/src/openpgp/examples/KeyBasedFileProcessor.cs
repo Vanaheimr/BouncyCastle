@@ -18,12 +18,12 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Examples
     * <p>
     * To decrypt: KeyBasedFileProcessor -d fileName secretKeyFile passPhrase.</p>
     * <p>
-	* Note 1: this example will silently overwrite files, nor does it pay any attention to
-	* the specification of "_CONSOLE" in the filename. It also expects that a single pass phrase
-	* will have been used.</p>
-	* <p>
-	* Note 2: if an empty file name has been specified in the literal data object contained in the
-	* encrypted packet a file with the name filename.out will be generated in the current working directory.</p>
+    * Note 1: this example will silently overwrite files, nor does it pay any attention to
+    * the specification of "_CONSOLE" in the filename. It also expects that a single pass phrase
+    * will have been used.</p>
+    * <p>
+    * Note 2: if an empty file name has been specified in the literal data object contained in the
+    * encrypted packet a file with the name filename.out will be generated in the current working directory.</p>
     */
     public sealed class KeyBasedFileProcessor
     {
@@ -31,28 +31,28 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Examples
         {
         }
 
-		private static void DecryptFile(
-			string	inputFileName,
-			string	keyFileName,
-			char[]	passwd,
-			string	defaultFileName)
-		{
-			using (Stream input = File.OpenRead(inputFileName),
-			       keyIn = File.OpenRead(keyFileName))
-			{
-				DecryptFile(input, keyIn, passwd, defaultFileName);
-			}
-		}
+        private static void DecryptFile(
+            String    inputFileName,
+            String    keyFileName,
+            String    passwd,
+            String    defaultFileName)
+        {
+            using (Stream input = File.OpenRead(inputFileName),
+                   keyIn = File.OpenRead(keyFileName))
+            {
+                DecryptFile(input, keyIn, passwd, defaultFileName);
+            }
+        }
 
-		/**
-		 * decrypt the passed in message stream
-		 */
-		private static void DecryptFile(
-			Stream	inputStream,
-			Stream	keyIn,
-			char[]	passwd,
-			string	defaultFileName)
-		{
+        /**
+         * decrypt the passed in message stream
+         */
+        private static void DecryptFile(
+            Stream    inputStream,
+            Stream    keyIn,
+            String    passwd,
+            String    defaultFileName)
+        {
             inputStream = PgpUtilities.GetDecoderStream(inputStream);
 
             try
@@ -78,10 +78,10 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Examples
                 //
                 PgpPrivateKey sKey = null;
                 PgpPublicKeyEncryptedData pbe = null;
-				PgpSecretKeyRingBundle pgpSec = new PgpSecretKeyRingBundle(
-					PgpUtilities.GetDecoderStream(keyIn));
+                PgpSecretKeyRingBundle pgpSec = new PgpSecretKeyRingBundle(
+                    PgpUtilities.GetDecoderStream(keyIn));
 
-				foreach (PgpPublicKeyEncryptedData pked in enc.GetEncryptedDataObjects())
+                foreach (PgpPublicKeyEncryptedData pked in enc.GetEncryptedDataObjects())
                 {
                     sKey = PgpExampleUtilities.FindSecretKey(pgpSec, pked.KeyId, passwd);
 
@@ -92,7 +92,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Examples
                     }
                 }
 
-				if (sKey == null)
+                if (sKey == null)
                 {
                     throw new ArgumentException("secret key for message not found.");
                 }
@@ -115,16 +115,16 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Examples
                 {
                     PgpLiteralData ld = (PgpLiteralData)message;
 
-					string outFileName = ld.FileName;
-					if (outFileName.Length == 0)
-					{
-						outFileName = defaultFileName;
-					}
+                    string outFileName = ld.FileName;
+                    if (outFileName.Length == 0)
+                    {
+                        outFileName = defaultFileName;
+                    }
 
-					Stream fOut = File.Create(outFileName);
-					Stream unc = ld.GetInputStream();
-					Streams.PipeAll(unc, fOut);
-					fOut.Close();
+                    Stream fOut = File.Create(outFileName);
+                    Stream unc = ld.GetInputStream();
+                    Streams.PipeAll(unc, fOut);
+                    fOut.Close();
                 }
                 else if (message is PgpOnePassSignatureList)
                 {
@@ -163,28 +163,28 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Examples
                 }
             }
         }
-		
-		private static void EncryptFile(
-			string	outputFileName,
-			string	inputFileName,
-			string	encKeyFileName,
-			bool	armor,
-			bool	withIntegrityCheck)
-		{
-			PgpPublicKey encKey = PgpExampleUtilities.ReadPublicKey(encKeyFileName);
+        
+        private static void EncryptFile(
+            string    outputFileName,
+            string    inputFileName,
+            string    encKeyFileName,
+            bool    armor,
+            bool    withIntegrityCheck)
+        {
+            PgpPublicKey encKey = PgpExampleUtilities.ReadPublicKey(encKeyFileName);
 
-			using (Stream output = File.Create(outputFileName))
-			{
-				EncryptFile(output, inputFileName, encKey, armor, withIntegrityCheck);
-			}
-		}
+            using (Stream output = File.Create(outputFileName))
+            {
+                EncryptFile(output, inputFileName, encKey, armor, withIntegrityCheck);
+            }
+        }
 
         private static void EncryptFile(
-            Stream			outputStream,
-            string			fileName,
-            PgpPublicKey	encKey,
-            bool			armor,
-            bool			withIntegrityCheck)
+            Stream            outputStream,
+            string            fileName,
+            PgpPublicKey    encKey,
+            bool            armor,
+            bool            withIntegrityCheck)
         {
             if (armor)
             {
@@ -193,21 +193,21 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Examples
 
             try
             {
-            	byte[] bytes = PgpExampleUtilities.CompressFile(fileName, CompressionAlgorithmTag.Zip);
+                byte[] bytes = PgpExampleUtilities.CompressFile(fileName, CompressionAlgorithmTag.Zip);
 
-				PgpEncryptedDataGenerator encGen = new PgpEncryptedDataGenerator(
-					SymmetricKeyAlgorithmTag.Cast5, withIntegrityCheck, new SecureRandom());
-				encGen.AddMethod(encKey);
+                PgpEncryptedDataGenerator encGen = new PgpEncryptedDataGenerator(
+                    SymmetricKeyAlgorithmTag.Cast5, withIntegrityCheck, new SecureRandom());
+                encGen.AddMethod(encKey);
 
-				Stream cOut = encGen.Open(outputStream, bytes.Length);
+                Stream cOut = encGen.Open(outputStream, bytes.Length);
 
-				cOut.Write(bytes, 0, bytes.Length);
-				cOut.Close();
+                cOut.Write(bytes, 0, bytes.Length);
+                cOut.Close();
 
-				if (armor)
-				{
-					outputStream.Close();
-				}
+                if (armor)
+                {
+                    outputStream.Close();
+                }
             }
             catch (PgpException e)
             {
@@ -235,20 +235,20 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Examples
             {
                 if (args[1].Equals("-a") || args[1].Equals("-ai") || args[1].Equals("-ia"))
                 {
-					EncryptFile(args[2] + ".asc", args[2], args[3], true, (args[1].IndexOf('i') > 0));
+                    EncryptFile(args[2] + ".asc", args[2], args[3], true, (args[1].IndexOf('i') > 0));
                 }
                 else if (args[1].Equals("-i"))
                 {
-					EncryptFile(args[2] + ".bpg", args[2], args[3], false, true);
+                    EncryptFile(args[2] + ".bpg", args[2], args[3], false, true);
                 }
                 else
                 {
-					EncryptFile(args[1] + ".bpg", args[1], args[2], false, false);
+                    EncryptFile(args[1] + ".bpg", args[1], args[2], false, false);
                 }
             }
             else if (args[0].Equals("-d"))
             {
-				DecryptFile(args[1], args[2], args[3].ToCharArray(), new FileInfo(args[1]).Name + ".out");
+                DecryptFile(args[1], args[2], args[3], new FileInfo(args[1]).Name + ".out");
             }
             else
             {

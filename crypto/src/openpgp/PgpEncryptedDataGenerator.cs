@@ -205,14 +205,14 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
         /// Add a PBE encryption method to the encrypted object using the default algorithm (S2K_SHA1).
         /// </summary>
         public void AddMethod(
-            char[] passPhrase) 
+            String passPhrase) 
         {
             AddMethod(passPhrase, HashAlgorithmTag.Sha1);
         }
 
         /// <summary>Add a PBE encryption method to the encrypted object.</summary>
         public void AddMethod(
-             char[]                passPhrase,
+            String passPhrase,
             HashAlgorithmTag    s2kDigest)
         {
             byte[] iv = new byte[8];

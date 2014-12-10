@@ -79,7 +79,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
             + "22n2jo0zo30/TZLo+jDl2vTzIvPeLEsPM3ZUE/1Ytqs4SG2TxIQbH7xf3uzcYXq2"
             + "5Fw9AA==");
 
-//		private static readonly byte[] sig1crc = Base64.Decode("+3i0");
+//        private static readonly byte[] sig1crc = Base64.Decode("+3i0");
 
         private static readonly byte[] subKey = Base64.Decode(
               "lQH8BD89pyQBBADk1aljL6mBOvd6k4Myr/0yaSI94SPC5WDwuptXZNM92wy8FVZP"
@@ -138,14 +138,14 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
             + "AZUqTyDyJ6/OUbJF5fI5uiv76DCsw1zyMWotUIu5/X01q+AVP5Ly3STzI7xkWg/J"
             + "APz4zUHism7kSYz2viAQaJx9/bNnH3AM6qm1Fuyikl4=");
 
-//		private static readonly byte[] enc1crc = Base64.Decode("lv4o");
+//        private static readonly byte[] enc1crc = Base64.Decode("lv4o");
 
 //        private static readonly byte[] enc2 = Base64.Decode(
-//			  "hIwDKwfQexPJboABBAC62jcJH8xKnKb1neDVmiovYON04+7VQ2v4BmeHwJrdag1g"
-//			+ "Ya++6PeBlQ2Q9lSGBwLobVuJmQ7cOnPUJP727JeSGWlMyFtMbBSHekOaTenT5lj7"
-//			+ "Zk7oRHxMp/hByzlMacIDzOn8LPSh515RHM57eDLCOwqnAxGQwk67GRl8f5dFH9JQ"
-//			+ "Aa7xx8rjCqPbiIQW6t5LqCNvPZOiSCmftll6+se1XJhFEuq8WS4nXtPfTiJ3vib4"
-//			+ "3soJdHzGB6AOs+BQ6aKmmNTVAxa5owhtSt1Z/6dfSSk=");
+//              "hIwDKwfQexPJboABBAC62jcJH8xKnKb1neDVmiovYON04+7VQ2v4BmeHwJrdag1g"
+//            + "Ya++6PeBlQ2Q9lSGBwLobVuJmQ7cOnPUJP727JeSGWlMyFtMbBSHekOaTenT5lj7"
+//            + "Zk7oRHxMp/hByzlMacIDzOn8LPSh515RHM57eDLCOwqnAxGQwk67GRl8f5dFH9JQ"
+//            + "Aa7xx8rjCqPbiIQW6t5LqCNvPZOiSCmftll6+se1XJhFEuq8WS4nXtPfTiJ3vib4"
+//            + "3soJdHzGB6AOs+BQ6aKmmNTVAxa5owhtSt1Z/6dfSSk=");
 
         private static readonly byte[] subPubKey = Base64.Decode(
               "mIsEPz2nJAEEAOTVqWMvqYE693qTgzKv/TJpIj3hI8LlYPC6m1dk0z3bDLwVVk9F"
@@ -183,7 +183,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
             + "EQIAGQUCP0cHNQQLBwMCAxUCAwMWAgECHgECF4AACgkQzSP16cTKNEMCXACfauui"
             + "bSwyG59Yrm8hHCDuCPmqwsQAni+dPl08FVuWh+wb6kOgJV4lcYae");
 
-//		private static readonly byte[] subPubCrc = Base64.Decode("rikt");
+//        private static readonly byte[] subPubCrc = Base64.Decode("rikt");
 
         private static readonly byte[] pgp8Key = Base64.Decode(
               "lQIEBEBXUNMBBADScQczBibewnbCzCswc/9ut8R0fwlltBRxMW0NMdKJY2LF"
@@ -204,9 +204,9 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
             + "8D9QvWsPOOso81KU2axUY8zIer64Uzqc4szMIlLw06c8vea27RfgjBpSCryw"
             + "AgAA");
 
-        private static readonly char[] pgp8Pass = "2002 Buffalo Sabres".ToCharArray();
+        private static readonly String pgp8Pass = "2002 Buffalo Sabres";
 
-        private static readonly char[] pass = "hello world".ToCharArray();
+        private static readonly String pass = "hello world";
 
         private static readonly byte[] fingerprintKey = Base64.Decode(
               "mQEPA0CiJdUAAAEIAMI+znDlPd2kQoEcnxqxLcRz56Z7ttFKHpnYp0UkljZdquVc"
@@ -223,7 +223,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
             + "BA4Y9uTHuObHfI+1yxUS2PrlRUX0m48ZjpIX+cEN3QblGBJudI/A1QSd6P0LZeBr"
             + "7F1Z1aF7ZDo0KzgiAIBvgXkeTpw=");
 
-//		private static readonly byte[] fingerprintCheck = Base64.Decode("CTv2");
+//        private static readonly byte[] fingerprintCheck = Base64.Decode("CTv2");
 
         private static readonly byte[] jpegImage = Base64.Decode(
               "/9j/4AAQSkZJRgABAQEASABIAAD/4QAWRXhpZgAATU0AKgAAAAgAAAAAAAD/2wBDAAUDBAQEAwUE"
@@ -346,8 +346,8 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
         }
 
         private void MixedTest(
-            PgpPrivateKey	pgpPrivKey,
-            PgpPublicKey	pgpPubKey)
+            PgpPrivateKey    pgpPrivKey,
+            PgpPublicKey    pgpPubKey)
         {
             byte[] text = Encoding.ASCII.GetBytes("hello world!\n");
 
@@ -381,7 +381,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
 
             encGen.AddMethod(pgpPubKey);
 
-            encGen.AddMethod("password".ToCharArray());
+            encGen.AddMethod("password");
 
             Stream cOut = encGen.Open(bcOut, bytes.Length);
 
@@ -415,7 +415,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
 
             PgpPbeEncryptedData encPbe = (PgpPbeEncryptedData) encList[1];
 
-            clear = encPbe.GetDataStream("password".ToCharArray());
+            clear = encPbe.GetDataStream("password");
 
             pgpF = new PgpObjectFactory(clear);
 
@@ -423,8 +423,8 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
         }
 
         private void CheckLiteralData(
-            PgpLiteralData	ld,
-            byte[]			data)
+            PgpLiteralData    ld,
+            byte[]            data)
         {
             if (!ld.FileName.Equals(PgpLiteralData.Console))
                 throw new Exception("wrong filename in packet");
@@ -586,7 +586,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
             //
             // Read a v3 private key
             //
-            char[] passP = "FIXCITY_QA".ToCharArray();
+            String passP = "FIXCITY_QA";
 
             {
                 PgpSecretKeyRing pgpPriv2 = new PgpSecretKeyRing(testPrivKeyV3);
@@ -804,7 +804,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
             //
             // key pair generation - CAST5 encryption
             //
-            char[] passPhrase = "hello".ToCharArray();
+            String passPhrase = "hello";
             IAsymmetricCipherKeyPairGenerator kpg = GeneratorUtilities.GetKeyPairGenerator("RSA");
             RsaKeyGenerationParameters genParam = new RsaKeyGenerationParameters(
                 BigInteger.ValueOf(0x10001), new SecureRandom(), 1024, 25);
@@ -905,7 +905,14 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
             //
             kp = kpg.GenerateKeyPair();
 
-            secretKey = new PgpSecretKey(PgpSignature.DefaultCertification, PublicKeyAlgorithmTag.RsaGeneral, kp.Public, kp.Private, DateTime.UtcNow, "fred", SymmetricKeyAlgorithmTag.Aes256, passPhrase, null, null, new SecureRandom());
+            secretKey = new PgpSecretKey(PgpSignature.DefaultCertification,
+                PublicKeyAlgorithmTag.RsaGeneral,
+                kp.Public,
+                kp.Private,
+                DateTime.UtcNow,
+                "fred",
+                SymmetricKeyAlgorithmTag.Aes256,
+                passPhrase, null, null, new SecureRandom());
 
             secretKey.ExtractPrivateKey(passPhrase);
 
@@ -916,9 +923,9 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
             //
             const string newPass = "newPass";
 
-            secretKey = PgpSecretKey.CopyWithNewPassword(secretKey, passPhrase, newPass.ToCharArray(), secretKey.KeyEncryptionAlgorithm, new SecureRandom());
+            secretKey = PgpSecretKey.CopyWithNewPassword(secretKey, passPhrase, newPass, secretKey.KeyEncryptionAlgorithm, new SecureRandom());
 
-            secretKey.ExtractPrivateKey(newPass.ToCharArray());
+            secretKey.ExtractPrivateKey(newPass);
 
             secretKey.Encode(new UncloseableMemoryStream());
 
@@ -943,7 +950,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
                 Fail("failed to verify certification");
             }
 
-            pgpPrivKey = secretKey.ExtractPrivateKey(newPass.ToCharArray());
+            pgpPrivKey = secretKey.ExtractPrivateKey(newPass);
 
             //
             // signature generation
@@ -1121,9 +1128,9 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
         }
 
         private void PerformTestSig(
-            HashAlgorithmTag	hashAlgorithm,
-            PgpPublicKey		pubKey,
-            PgpPrivateKey		privKey)
+            HashAlgorithmTag    hashAlgorithm,
+            PgpPublicKey        pubKey,
+            PgpPrivateKey        privKey)
         {
             const string data = "hello world!";
             byte[] dataBytes = Encoding.ASCII.GetBytes(data);

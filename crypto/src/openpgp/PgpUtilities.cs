@@ -177,27 +177,29 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
             return ParameterUtilities.CreateKeyParameter(algName, keyBytes);
         }
 
-        public static KeyParameter MakeRandomKey(
-            SymmetricKeyAlgorithmTag    algorithm,
-            SecureRandom                random)
+        public static KeyParameter MakeRandomKey(SymmetricKeyAlgorithmTag  algorithm,
+                                                 SecureRandom              random)
         {
-            int keySize = GetKeySize(algorithm);
-            byte[] keyBytes = new byte[(keySize + 7) / 8];
+
+            var keySize   = GetKeySize(algorithm);
+            var keyBytes  = new byte[(keySize + 7) / 8];
             random.NextBytes(keyBytes);
+
             return MakeKey(algorithm, keyBytes);
+
         }
 
-        public static KeyParameter MakeKeyFromPassPhrase(
-            SymmetricKeyAlgorithmTag    algorithm,
-            S2k                            s2k,
-            char[]                        passPhrase)
+        public static KeyParameter MakeKeyFromPassPhrase(SymmetricKeyAlgorithmTag  algorithm,
+                                                         S2k                       s2k,
+                                                         String                    passPhrase)
         {
-            int keySize = GetKeySize(algorithm);
-            byte[] pBytes = Strings.ToByteArray(new string(passPhrase));
-            byte[] keyBytes = new byte[(keySize + 7) / 8];
 
-            int generatedBytes = 0;
-            int loopCount = 0;
+            var keySize   = GetKeySize(algorithm);
+            var pBytes    = Strings.ToByteArray(passPhrase);
+            var keyBytes  = new byte[(keySize + 7) / 8];
+
+            int generatedBytes  = 0;
+            int loopCount       = 0;
 
             while (generatedBytes < keyBytes.Length)
             {

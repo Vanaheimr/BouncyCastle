@@ -24,21 +24,21 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Examples
         {
         }
 
-		private static void ExportKeyPair(
+        private static void ExportKeyPair(
             Stream                   secretOut,
             Stream                   publicOut,
             AsymmetricKeyParameter   publicKey,
             AsymmetricKeyParameter   privateKey,
-            string                   identity,
-            char[]                   passPhrase,
+            String                   identity,
+            String                   passPhrase,
             bool                     armor)
         {
-			if (armor)
-			{
-				secretOut = new ArmoredOutputStream(secretOut);
-			}
+            if (armor)
+            {
+                secretOut = new ArmoredOutputStream(secretOut);
+            }
 
-			PgpSecretKey secretKey = new PgpSecretKey(
+            PgpSecretKey secretKey = new PgpSecretKey(
                 PgpSignature.DefaultCertification,
                 PublicKeyAlgorithmTag.RsaGeneral,
                 publicKey,
@@ -54,29 +54,29 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Examples
 
             secretKey.Encode(secretOut);
 
-			if (armor)
+            if (armor)
             {
-				secretOut.Close();
-				publicOut = new ArmoredOutputStream(publicOut);
+                secretOut.Close();
+                publicOut = new ArmoredOutputStream(publicOut);
             }
 
             PgpPublicKey key = secretKey.PublicKey;
 
             key.Encode(publicOut);
 
-			if (armor)
-			{
-				publicOut.Close();
-			}
+            if (armor)
+            {
+                publicOut.Close();
+            }
         }
 
-		public static int Main(
-			string[] args)
+        public static int Main(
+            string[] args)
         {
             IAsymmetricCipherKeyPairGenerator kpg = GeneratorUtilities.GetKeyPairGenerator("RSA");
 
             kpg.Init(new RsaKeyGenerationParameters(
-				BigInteger.ValueOf(0x10001), new SecureRandom(), 1024, 25));
+                BigInteger.ValueOf(0x10001), new SecureRandom(), 1024, 25));
 
             AsymmetricCipherKeyPair kp = kpg.GenerateKeyPair();
 
@@ -86,30 +86,30 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Examples
                 return 0;
             }
 
-			Stream out1, out2;
+            Stream out1, out2;
             if (args[0].Equals("-a"))
             {
                 if (args.Length < 3)
                 {
                     Console.WriteLine("RsaKeyPairGenerator [-a] identity passPhrase");
-					return 0;
-				}
+                    return 0;
+                }
 
-				out1 = File.Create("secret.asc");
+                out1 = File.Create("secret.asc");
                 out2 = File.Create("pub.asc");
 
-                ExportKeyPair(out1, out2, kp.Public, kp.Private, args[1], args[2].ToCharArray(), true);
+                ExportKeyPair(out1, out2, kp.Public, kp.Private, args[1], args[2], true);
             }
             else
             {
                 out1 = File.Create("secret.bpg");
                 out2 = File.Create("pub.bpg");
 
-                ExportKeyPair(out1, out2, kp.Public, kp.Private, args[0], args[1].ToCharArray(), false);
+                ExportKeyPair(out1, out2, kp.Public, kp.Private, args[0], args[1], false);
             }
-			out1.Close();
-			out2.Close();
-			return 0;
-		}
+            out1.Close();
+            out2.Close();
+            return 0;
+        }
     }
 }

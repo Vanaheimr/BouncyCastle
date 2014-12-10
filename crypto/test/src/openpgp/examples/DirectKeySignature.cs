@@ -94,10 +94,10 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Examples
 
         private static byte[] SignPublicKey(
             PgpSecretKey    secretKey,
-            string            secretKeyPass,
+            String          secretKeyPass,
             PgpPublicKey    keyToBeSigned,
-            string            notationName,
-            string            notationValue,
+            String          notationName,
+            String          notationValue,
             bool            armor)
         {
             Stream os = new MemoryStream();
@@ -106,7 +106,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Examples
                 os = new ArmoredOutputStream(os);
             }
 
-            var pgpPrivKey = secretKey.ExtractPrivateKey(secretKeyPass.ToCharArray());
+            var pgpPrivKey = secretKey.ExtractPrivateKey(secretKeyPass);
 
             var sGen = new PgpSignatureGenerator(secretKey.PublicKey.Algorithm, HashAlgorithmTag.Sha1);
 

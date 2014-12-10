@@ -92,7 +92,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
             + "BMWcd2h1C5+UeBJ9CrrLniCCI8s5u8z36Rno3sfhBnXdRmWSxExXtocbg1Ht"
             + "dyiThf6TK3W29Yy/T6x45Ws5zOasaJdsFKM=");
 
-        private static readonly char[] pass = "hello world".ToCharArray();
+        private static readonly String pass = "hello world";
 
         private static readonly SecureRandom random = new SecureRandom();
 

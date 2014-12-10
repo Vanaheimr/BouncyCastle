@@ -33,7 +33,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
         internal PgpSecretKey(PgpPrivateKey             privKey,
                               PgpPublicKey              pubKey,
                               SymmetricKeyAlgorithmTag  encAlgorithm,
-                              Char[]                    passPhrase,
+                              String                    passPhrase,
                               Boolean                   useSha1,
                               SecureRandom              rand)
 
@@ -44,7 +44,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
         internal PgpSecretKey(PgpPrivateKey             privKey,
                               PgpPublicKey              pubKey,
                               SymmetricKeyAlgorithmTag  encAlgorithm,
-                              Char[]                    passPhrase,
+                              String                    passPhrase,
                               Boolean                   useSha1,
                               SecureRandom              rand,
                               Boolean                   isMasterKey)
@@ -143,7 +143,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
                             PgpKeyPair                   keyPair,
                             String                       id,
                             SymmetricKeyAlgorithmTag     encAlgorithm,
-                            Char[]                       passPhrase,
+                            String                       passPhrase,
                             PgpSignatureSubpacketVector  hashedPackets,
                             PgpSignatureSubpacketVector  unhashedPackets,
                             SecureRandom                 rand)
@@ -156,7 +156,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
                             PgpKeyPair                   keyPair,
                             String                       id,
                             SymmetricKeyAlgorithmTag     encAlgorithm,
-                            Char[]                       passPhrase,
+                            String                       passPhrase,
                             Boolean                      useSha1,
                             PgpSignatureSubpacketVector  hashedPackets,
                             PgpSignatureSubpacketVector  unhashedPackets,
@@ -173,7 +173,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
                             DateTime                     time,
                             String                       id,
                             SymmetricKeyAlgorithmTag     encAlgorithm,
-                            Char[]                       passPhrase,
+                            String                       passPhrase,
                             PgpSignatureSubpacketVector  hashedPackets,
                             PgpSignatureSubpacketVector  unhashedPackets,
                             SecureRandom                 rand)
@@ -191,7 +191,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
                             DateTime                      time,
                             String                        id,
                             SymmetricKeyAlgorithmTag      encAlgorithm,
-                            Char[]                        passPhrase,
+                            String                        passPhrase,
                             Boolean                       useSha1,
                             PgpSignatureSubpacketVector   hashedPackets,
                             PgpSignatureSubpacketVector   unhashedPackets,
@@ -321,7 +321,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
             get { return _PublicKey.GetUserAttributes(); }
         }
 
-        private Byte[] ExtractKeyData(Char[] passPhrase)
+        private Byte[] ExtractKeyData(String passPhrase)
         {
 
             var alg      = _SecretKeyPacket.EncAlgorithm;
@@ -432,7 +432,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
         }
 
         /// <summary>Extract a <c>PgpPrivateKey</c> from this secret key's encrypted contents.</summary>
-        public PgpPrivateKey ExtractPrivateKey(Char[] passPhrase)
+        public PgpPrivateKey ExtractPrivateKey(String passPhrase)
         {
 
             if (IsPrivateKeyEmpty)
@@ -603,8 +603,8 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
         /// <param name="newEncAlgorithm">The algorithm to be used for the encryption.</param>
         /// <param name="rand">Source of randomness.</param>
         public static PgpSecretKey CopyWithNewPassword(PgpSecretKey              key,
-                                                       Char[]                    oldPassPhrase,
-                                                       Char[]                    newPassPhrase,
+                                                       String                    oldPassPhrase,
+                                                       String                    newPassPhrase,
                                                        SymmetricKeyAlgorithmTag  newEncAlgorithm,
                                                        SecureRandom              rand)
         {
@@ -699,7 +699,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
 
         private static Byte[] EncryptKeyData(Byte[]                    rawKeyData,
                                              SymmetricKeyAlgorithmTag  encAlgorithm,
-                                             Char[]                    passPhrase,
+                                             String                    passPhrase,
                                              SecureRandom              random,
                                              out S2k                   s2k,
                                              out Byte[]                iv)

@@ -213,8 +213,8 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
             + "RdanignRjpqSu3vTn8r/VO63+meZfKvmpI6i2b3o/UZ8Xh9lJu1vrRoNpnuP"
             + "Nifs+ljmsAFn");
 
-        private static readonly char[] sec2pass1 = "sandhya".ToCharArray();
-        private static readonly char[] sec2pass2 = "psai".ToCharArray();
+        private static readonly String sec2pass1 = "sandhya";
+        private static readonly String sec2pass2 = "psai";
 
         private static readonly byte[] pub3 = Base64.Decode(
             "mQGiBEB9BH0RBACtYQtE7tna6hgGyGLpq+ds3r2cLC0ISn5dNw7tm9vwiNVF"
@@ -291,7 +291,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
             + "AAYFAkB9BH4ACgkQqcxXy+NlA6mtMgCgvccZA/Sg7BXVpxli47SYhxSHoM4A"
             + "oNCOMplSnYTuh5ikKeBWtz36gC1psAIAAA==");
 
-        private static readonly char[] sec3pass1 = "123456".ToCharArray();
+        private static readonly String sec3pass1 = "123456";
 
         //
         // GPG comment packets.
@@ -394,7 +394,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
             + "XctWqNd1EQas7rUN728u7bk8G7m37MGqQuKCpNvOScH4TnPROBY8get0G3bC4mWz"
             + "6emPeENnuyElfWQiHEtCZr1InjnNbb/C97O+vWu9PfsE");
 
-        private static readonly char[] sec5pass1 = "12345678".ToCharArray();
+        private static readonly String sec5pass1 = "12345678";
 
         //
         // Werner Koch "odd keys"
@@ -763,7 +763,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
             + "uPetUqEviPiwAYeJAEwEGBECAAwFAkEcraYFGwwAAAAACgkQ9P5W+Cv/YhShrgCg"
             + "+JW8m5nF3R/oZGuG87bXQBszkjMAoLhGPncuGKowJXMRVc70/8qwXQJLsAFn");
 
-        private static readonly char[] sec8pass = "qwertyui".ToCharArray();
+        private static readonly String sec8pass = "qwertyui";
 
         private static readonly byte[] sec9 = Base64.Decode(
             "lQGqBEHCokERBAC9rh5SzC1sX1y1zoFuBB/v0SGhoKMEvLYf8Qv/j4deAMrc"
@@ -802,7 +802,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
             + "Xvehtw4afisAoME/t8xz/rj/N7QRN9p8Ji8VPGSqAJ9K8eFJ+V0mxR+octJr"
             + "6neEEX/i1Q==");
 
-        public char[] sec9pass = "foo".ToCharArray();
+        public String sec9pass = "foo";
 
         // version 4 keys with expiry dates
         private static readonly byte[] pub10 = Base64.Decode(
@@ -910,7 +910,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
             + "6o6mojUQxnHr+ZFKUpo6ocvTgBDlC57d8IpwJeZ2TvqD6EdA8rZ0YriVjxGMDrX1"
             + "8esfw+iLchfEwXtBIRwS");
 
-        private static readonly char[] rewrapPass = "voltage123".ToCharArray();
+        private static readonly String rewrapPass = "voltage123";
 
         private static readonly byte[] pubWithX509 = Base64.Decode(
               "mQENBERabjABCACtmfyo6Nph9MQjv4nmCWjZrRYnhXbivomAdIwYkLZUj1bjqE+j"
@@ -1813,7 +1813,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
         [Test]
         public void GenerateTest()
         {
-            char[] passPhrase = "hello".ToCharArray();
+            String passPhrase = "hello";
             DsaParametersGenerator pGen = new DsaParametersGenerator();
             pGen.Init(512, 80, new SecureRandom());
             DsaParameters dsaParams = pGen.GenerateParameters();
@@ -1889,7 +1889,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
         {
             SecureRandom random = new SecureRandom();
 
-            char[] passPhrase = "hello".ToCharArray();
+            String passPhrase = "hello";
             IAsymmetricCipherKeyPairGenerator rsaKpg = GeneratorUtilities.GetKeyPairGenerator("RSA");
 
             rsaKpg.Init(new KeyGenerationParameters(random, 512));
@@ -1943,7 +1943,8 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
         [Test]
         public void GenerateSha1Test()
         {
-            char[] passPhrase = "hello".ToCharArray();
+
+            String passPhrase = "hello";
 
             IAsymmetricCipherKeyPairGenerator dsaKpg = GeneratorUtilities.GetKeyPairGenerator("DSA");
             DsaParametersGenerator pGen = new DsaParametersGenerator();

@@ -21,7 +21,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
         private String                      id;
         private SymmetricKeyAlgorithmTag    encAlgorithm;
         private Int32                       certificationLevel;
-        private Char[]                      passPhrase;
+        private String                      passPhrase;
         private Boolean                     useSha1;
         private PgpKeyPair                  masterKey;
         private PgpSignatureSubpacketVector hashedPacketVector;
@@ -48,7 +48,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
                                    PgpKeyPair                    masterKey,
                                    String                        id,
                                    SymmetricKeyAlgorithmTag      encAlgorithm,
-                                   Char[]                        passPhrase,
+                                   String                        passPhrase,
                                    PgpSignatureSubpacketVector   hashedPackets,
                                    PgpSignatureSubpacketVector   unhashedPackets,
                                    SecureRandom                  rand)
@@ -75,7 +75,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
                                    PgpKeyPair                   masterKey,
                                    String                       id,
                                    SymmetricKeyAlgorithmTag     encAlgorithm,
-                                   Char[]                       passPhrase,
+                                   String                       passPhrase,
                                    Boolean                      useSha1,
                                    PgpSignatureSubpacketVector  hashedPackets,
                                    PgpSignatureSubpacketVector  unhashedPackets,

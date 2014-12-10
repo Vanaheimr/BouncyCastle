@@ -80,10 +80,10 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Examples
         * @param armor
         */
         private static void SignFile(
-            string    fileName,
+            String    fileName,
             Stream    keyIn,
             Stream    outputStream,
-            char[]    pass,
+            String    pass,
             bool    armor,
             bool    compress)
         {
@@ -92,9 +92,9 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Examples
                 outputStream = new ArmoredOutputStream(outputStream);
             }
 
-            PgpSecretKey pgpSec = PgpExampleUtilities.ReadSecretKey(keyIn);
-            PgpPrivateKey pgpPrivKey = pgpSec.ExtractPrivateKey(pass);
-            PgpSignatureGenerator sGen = new PgpSignatureGenerator(pgpSec.PublicKey.Algorithm, HashAlgorithmTag.Sha1);
+            var pgpSec      = PgpExampleUtilities.ReadSecretKey(keyIn);
+            var pgpPrivKey  = pgpSec.ExtractPrivateKey(pass);
+            var sGen        = new PgpSignatureGenerator(pgpSec.PublicKey.Algorithm, HashAlgorithmTag.Sha1);
 
             sGen.InitSign(PgpSignature.BinaryDocument, pgpPrivKey);
             foreach (string userId in pgpSec.PublicKey.GetUserIds())
@@ -159,14 +159,14 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Examples
                     keyIn = File.OpenRead(args[3]);
                     fos = File.Create(args[2] + ".asc");
 
-                    SignFile(args[2], keyIn, fos, args[4].ToCharArray(), true, true);
+                    SignFile(args[2], keyIn, fos, args[4], true, true);
                 }
                 else
                 {
                     keyIn = File.OpenRead(args[2]);
                     fos = File.Create(args[1] + ".bpg");
 
-                    SignFile(args[1], keyIn, fos, args[3].ToCharArray(), false, true);
+                    SignFile(args[1], keyIn, fos, args[3], false, true);
                 }
                 keyIn.Close();
                 fos.Close();

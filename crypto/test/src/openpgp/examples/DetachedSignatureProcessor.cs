@@ -89,10 +89,10 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Examples
         }
 
         private static void CreateSignature(
-            string    inputFileName,
-            string    keyFileName,
-            string    outputFileName,
-            char[]    pass,
+            String    inputFileName,
+            String    keyFileName,
+            String    outputFileName,
+            String    pass,
             bool    armor)
         {
             using (Stream keyIn = File.OpenRead(keyFileName),
@@ -103,10 +103,10 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Examples
         }
 
         private static void CreateSignature(
-            string    fileName,
+            String    fileName,
             Stream    keyIn,
             Stream    outputStream,
-            char[]    pass,
+            String    pass,
             bool    armor)
         {
             if (armor)
@@ -148,11 +148,11 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Examples
             {
                 if (args[1].Equals("-a"))
                 {
-                    CreateSignature(args[2], args[3], args[2] + ".asc", args[4].ToCharArray(), true);
+                    CreateSignature(args[2], args[3], args[2] + ".asc", args[4], true);
                 }
                 else
                 {
-                    CreateSignature(args[1], args[2], args[1] + ".bpg", args[3].ToCharArray(), false);
+                    CreateSignature(args[1], args[2], args[1] + ".bpg", args[3], false);
                 }
             }
             else if (args[0].Equals("-v"))

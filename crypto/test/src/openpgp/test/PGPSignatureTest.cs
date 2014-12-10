@@ -45,7 +45,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
             + "9enEyjRDAlwAnjTjjt57NKIgyym7OTCwzIU3xgFpAJ0VO5m5PfQKmGJRhaewLSZD"
             + "4nXkHg==");
 
-        private static readonly char[] dsaPass = "hello world".ToCharArray();
+        private static readonly String dsaPass = "hello world";
 
         private static readonly byte[] rsaKeyRing = Base64.Decode(
               "lQIEBEBXUNMBBADScQczBibewnbCzCswc/9ut8R0fwlltBRxMW0NMdKJY2LF"
@@ -66,7 +66,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
             + "8D9QvWsPOOso81KU2axUY8zIer64Uzqc4szMIlLw06c8vea27RfgjBpSCryw"
             + "AgAA");
 
-        private static readonly char[] rsaPass = "2002 Buffalo Sabres".ToCharArray();
+        private static readonly String rsaPass = "2002 Buffalo Sabres";
 
         private static readonly byte[] nullPacketsSubKeyBinding = Base64.Decode(
             "iDYEGBECAAAAACp9AJ9PlJCrFpi+INwG7z61eku2Wg1HaQCgl33X5Egj+Kf7F9CXIWj2iFCvQDo=");

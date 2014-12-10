@@ -26,7 +26,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Examples
          * @throws PGPException
          * @throws NoSuchProviderException
          */
-        internal static PgpPrivateKey FindSecretKey(PgpSecretKeyRingBundle pgpSec, UInt64 keyID, Char[] pass)
+        internal static PgpPrivateKey FindSecretKey(PgpSecretKeyRingBundle pgpSec, UInt64 keyID, String pass)
         {
 
             var pgpSecKey = pgpSec.GetSecretKey(keyID);

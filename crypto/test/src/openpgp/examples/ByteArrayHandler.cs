@@ -39,7 +39,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Examples
         */
         public static byte[] Decrypt(
             byte[] encrypted,
-            char[] passPhrase)
+            String passPhrase)
         {
             Stream inputStream = new MemoryStream(encrypted);
 
@@ -102,7 +102,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Examples
         */
         public static byte[] Encrypt(
             byte[]                        clearData,
-            char[]                        passPhrase,
+            String                        passPhrase,
             string                        fileName,
             SymmetricKeyAlgorithmTag    algorithm,
             bool                        armor)
@@ -173,21 +173,20 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Examples
             string[] args)
         {
             string passPhrase = "Dick Beck";
-            char[] passArray = passPhrase.ToCharArray();
 
             byte[] original = Encoding.ASCII.GetBytes("Hello world");
             Console.WriteLine("Starting PGP test");
-            byte[] encrypted = Encrypt(original, passArray, "iway", SymmetricKeyAlgorithmTag.Cast5, true);
+            byte[] encrypted = Encrypt(original, passPhrase, "iway", SymmetricKeyAlgorithmTag.Cast5, true);
 
             Console.WriteLine("\nencrypted data = '"+Hex.ToHexString(encrypted)+"'");
-            byte[] decrypted= Decrypt(encrypted,passArray);
+            byte[] decrypted = Decrypt(encrypted, passPhrase);
 
             Console.WriteLine("\ndecrypted data = '"+GetAsciiString(decrypted)+"'");
 
-            encrypted = Encrypt(original, passArray, "iway", SymmetricKeyAlgorithmTag.Aes256, false);
+            encrypted = Encrypt(original, passPhrase, "iway", SymmetricKeyAlgorithmTag.Aes256, false);
 
             Console.WriteLine("\nencrypted data = '"+Hex.ToHexString(encrypted)+"'");
-            decrypted= Decrypt(encrypted, passArray);
+            decrypted = Decrypt(encrypted, passPhrase);
 
             Console.WriteLine("\ndecrypted data = '"+GetAsciiString(decrypted)+"'");
         }
