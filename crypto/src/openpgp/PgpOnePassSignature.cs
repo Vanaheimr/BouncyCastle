@@ -9,22 +9,20 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
     /// <remarks>A one pass signature object.</remarks>
     public class PgpOnePassSignature
     {
-        private OnePassSignaturePacket sigPack;
-        private int signatureType;
-        private ISigner sig;
-        private byte lastb;
 
-        internal PgpOnePassSignature(
-            BcpgInputStream bcpgInput)
+        private OnePassSignaturePacket  sigPack;
+        private PgpSignatures           signatureType;
+        private ISigner                 sig;
+        private Byte                    lastb;
+
+        internal PgpOnePassSignature(BcpgInputStream bcpgInput)
             : this((OnePassSignaturePacket) bcpgInput.ReadPacket())
-        {
-        }
+        { }
 
-        internal PgpOnePassSignature(
-            OnePassSignaturePacket sigPack)
+        internal PgpOnePassSignature(OnePassSignaturePacket sigPack)
         {
-            this.sigPack = sigPack;
-            this.signatureType = sigPack.SignatureType;
+            this.sigPack        = sigPack;
+            this.signatureType  = sigPack.SignatureType;
         }
 
         /// <summary>Initialise the signature object for verification.</summary>
@@ -53,22 +51,20 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
 
         }
 
-        public void Update(
-            byte b)
+        public void Update(Byte b)
         {
-            if (signatureType == PgpSignature.CanonicalTextDocument)
-            {
+
+            if (signatureType == PgpSignatures.CanonicalTextDocument)
                 doCanonicalUpdateByte(b);
-            }
+
             else
-            {
                 sig.Update(b);
-            }
+
         }
 
-        private void doCanonicalUpdateByte(
-            byte b)
+        private void doCanonicalUpdateByte(Byte b)
         {
+
             if (b == '\r')
             {
                 doUpdateCRLF();
@@ -97,7 +93,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
         public void Update(
             byte[] bytes)
         {
-            if (signatureType == PgpSignature.CanonicalTextDocument)
+            if (signatureType == PgpSignatures.CanonicalTextDocument)
             {
                 for (int i = 0; i != bytes.Length; i++)
                 {
@@ -115,7 +111,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
             int     off,
             int     length)
         {
-            if (signatureType == PgpSignature.CanonicalTextDocument)
+            if (signatureType == PgpSignatures.CanonicalTextDocument)
             {
                 int finish = off + length;
 
@@ -131,14 +127,15 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
         }
 
         /// <summary>Verify the calculated signature against the passed in PgpSignature.</summary>
-        public bool Verify(
-            PgpSignature pgpSig)
+        public bool Verify(PgpSignature pgpSig)
         {
-            byte[] trailer = pgpSig.GetSignatureTrailer();
+
+            var trailer = pgpSig.SignatureTrailer;
 
             sig.BlockUpdate(trailer, 0, trailer.Length);
 
-            return sig.VerifySignature(pgpSig.GetSignature());
+            return sig.VerifySignature(pgpSig.Signature);
+
         }
 
         public UInt64 KeyId
@@ -146,17 +143,17 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
             get { return sigPack.KeyId; }
         }
 
-        public int SignatureType
+        public PgpSignatures SignatureType
         {
             get { return sigPack.SignatureType; }
         }
 
-        public HashAlgorithmTag HashAlgorithm
+        public HashAlgorithms HashAlgorithm
         {
             get { return sigPack.HashAlgorithm; }
         }
 
-        public PublicKeyAlgorithmTag KeyAlgorithm
+        public PublicKeyAlgorithms KeyAlgorithm
         {
             get { return sigPack.KeyAlgorithm; }
         }
@@ -170,10 +167,11 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
             return bOut.ToArray();
         }
 
-        public void Encode(
-            Stream outStr)
+        public void Encode(Stream outStr)
         {
             BcpgOutputStream.Wrap(outStr).WritePacket(sigPack);
         }
+
     }
+
 }

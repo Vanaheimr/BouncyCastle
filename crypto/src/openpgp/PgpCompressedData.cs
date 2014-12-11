@@ -18,7 +18,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
         }
 
 		/// <summary>The algorithm used for compression</summary>
-        public CompressionAlgorithmTag Algorithm
+        public CompressionAlgorithms Algorithm
         {
 			get { return data.Algorithm; }
         }
@@ -34,13 +34,13 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
         {
             switch (Algorithm)
             {
-				case CompressionAlgorithmTag.Uncompressed:
+				case CompressionAlgorithms.Uncompressed:
 					return GetInputStream();
-				case CompressionAlgorithmTag.Zip:
+				case CompressionAlgorithms.Zip:
 					return new ZInputStream(GetInputStream(), true);
-                case CompressionAlgorithmTag.ZLib:
+                case CompressionAlgorithms.ZLib:
 					return new ZInputStream(GetInputStream());
-				case CompressionAlgorithmTag.BZip2:
+				case CompressionAlgorithms.BZip2:
 					return new CBZip2InputStream(GetInputStream());
                 default:
                     throw new PgpException("can't recognise compression algorithm: " + Algorithm);

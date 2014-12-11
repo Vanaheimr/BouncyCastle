@@ -10,28 +10,28 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
 	public class PgpCompressedDataGenerator
 		: IStreamGenerator
 	{
-		private readonly CompressionAlgorithmTag algorithm;
+		private readonly CompressionAlgorithms algorithm;
 		private readonly int compression;
 
 		private Stream dOut;
 		private BcpgOutputStream pkOut;
 
 		public PgpCompressedDataGenerator(
-			CompressionAlgorithmTag algorithm)
+			CompressionAlgorithms algorithm)
 			: this(algorithm, JZlib.Z_DEFAULT_COMPRESSION)
 		{
 		}
 
 		public PgpCompressedDataGenerator(
-			CompressionAlgorithmTag	algorithm,
+			CompressionAlgorithms	algorithm,
 			int						compression)
 		{
 			switch (algorithm)
 			{
-				case CompressionAlgorithmTag.Uncompressed:
-				case CompressionAlgorithmTag.Zip:
-				case CompressionAlgorithmTag.ZLib:
-				case CompressionAlgorithmTag.BZip2:
+				case CompressionAlgorithms.Uncompressed:
+				case CompressionAlgorithms.Zip:
+				case CompressionAlgorithms.ZLib:
+				case CompressionAlgorithms.BZip2:
 					break;
 				default:
 					throw new ArgumentException("unknown compression algorithm", "algorithm");
@@ -130,16 +130,16 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
 
 			switch (algorithm)
 			{
-				case CompressionAlgorithmTag.Uncompressed:
+				case CompressionAlgorithms.Uncompressed:
 					dOut = pkOut;
 					break;
-				case CompressionAlgorithmTag.Zip:
+				case CompressionAlgorithms.Zip:
 					dOut = new SafeZOutputStream(pkOut, compression, true);
 					break;
-				case CompressionAlgorithmTag.ZLib:
+				case CompressionAlgorithms.ZLib:
 					dOut = new SafeZOutputStream(pkOut, compression, false);
 					break;
-				case CompressionAlgorithmTag.BZip2:
+				case CompressionAlgorithms.BZip2:
 					dOut = new SafeCBZip2OutputStream(pkOut);
 					break;
 				default:

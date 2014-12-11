@@ -15,7 +15,7 @@ namespace Org.BouncyCastle.Bcpg
 
 		public SecretSubkeyPacket(
             PublicKeyPacket				pubKeyPacket,
-            SymmetricKeyAlgorithmTag	encAlgorithm,
+            SymmetricKeyAlgorithms	encAlgorithm,
             S2k							s2k,
             byte[]						iv,
             byte[]						secKeyData)
@@ -25,7 +25,7 @@ namespace Org.BouncyCastle.Bcpg
 
 		public SecretSubkeyPacket(
 			PublicKeyPacket				pubKeyPacket,
-			SymmetricKeyAlgorithmTag	encAlgorithm,
+			SymmetricKeyAlgorithms	encAlgorithm,
 			int							s2kUsage,
 			S2k							s2k,
 			byte[]						iv,

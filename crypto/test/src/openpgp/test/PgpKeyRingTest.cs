@@ -1341,46 +1341,46 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
                     {
                         int sCount = 0;
 
-                        foreach (PgpSignature pgpSignature in pk.GetSignaturesOfType(PgpSignature.SubkeyBinding))
+                        foreach (PgpSignature pgpSignature in pk.GetSignaturesOfType(PgpSignatures.SubkeyBinding))
                         {
-                            int type = pgpSignature.SignatureType;
-                            if (type != PgpSignature.SubkeyBinding)
-                            {
+
+                            var type = pgpSignature.SignatureType;
+                            if (type != PgpSignatures.SubkeyBinding)
                                 Fail("failed to return correct signature type");
-                            }
+
                             sCount++;
+
                         }
 
                         if (sCount != 1)
-                        {
                             Fail("failed to find binding signature");
-                        }
+
                     }
 
                     pk.GetSignatures();
 
-                    if (((Int64)k.KeyId) == -4049084404703773049L
-                        || ((Int64)k.KeyId) == -1413891222336124627L)
+                    if (((Int64) k.KeyId) == -4049084404703773049L ||
+                        ((Int64) k.KeyId) == -1413891222336124627L)
                     {
                         k.ExtractPrivateKey(sec2pass1);
                     }
-                    else if (((Int64)k.KeyId) == -6498553574938125416L
-                        || k.KeyId == 59034765524361024L)
+
+                    else if (((Int64) k.KeyId) == -6498553574938125416L ||
+                                      k.KeyId  == 59034765524361024L)
                     {
                         k.ExtractPrivateKey(sec2pass2);
                     }
+
                 }
 
                 if (keyCount != 2)
-                {
                     Fail("wrong number of secret keys");
-                }
+
             }
 
             if (count != 2)
-            {
                 Fail("wrong number of secret keyrings");
-            }
+
         }
 
         [Test]
@@ -1585,7 +1585,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
                     {
                         int count = 0;
 
-                        foreach (PgpSignature sig in k.GetSignaturesOfType(PgpSignature.SubkeyRevocation))
+                        foreach (PgpSignature sig in k.GetSignaturesOfType(PgpSignatures.SubkeyRevocation))
                         {
                             if (sig == null)
                                 Fail("null signature found");
@@ -1621,7 +1621,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
                 int count = 0;
                 PgpSignature sig = null;
 
-                foreach (PgpSignature sigTemp in k.GetSignaturesOfType(PgpSignature.SubkeyRevocation))
+                foreach (PgpSignature sigTemp in k.GetSignaturesOfType(PgpSignatures.SubkeyRevocation))
                 {
                     sig = sigTemp;
                     count++;
@@ -1841,11 +1841,11 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
             // this is quicker because we are using preGenerated parameters.
             //
             AsymmetricCipherKeyPair elgKp = elgKpg.GenerateKeyPair();
-            PgpKeyPair dsaKeyPair = new PgpKeyPair(PublicKeyAlgorithmTag.Dsa, dsaKp, DateTime.UtcNow);
-            PgpKeyPair elgKeyPair = new PgpKeyPair(PublicKeyAlgorithmTag.ElGamalEncrypt, elgKp, DateTime.UtcNow);
+            PgpKeyPair dsaKeyPair = new PgpKeyPair(PublicKeyAlgorithms.Dsa, dsaKp, DateTime.UtcNow);
+            PgpKeyPair elgKeyPair = new PgpKeyPair(PublicKeyAlgorithms.ElGamalEncrypt, elgKp, DateTime.UtcNow);
 
-            PgpKeyRingGenerator keyRingGen = new PgpKeyRingGenerator(PgpSignature.PositiveCertification, dsaKeyPair,
-                "test", SymmetricKeyAlgorithmTag.Aes256, passPhrase, null, null, new SecureRandom());
+            PgpKeyRingGenerator keyRingGen = new PgpKeyRingGenerator(PgpSignatures.PositiveCertification, dsaKeyPair,
+                "test", SymmetricKeyAlgorithms.Aes256, passPhrase, null, null, new SecureRandom());
 
             keyRingGen.AddSubKey(elgKeyPair);
 
@@ -1873,7 +1873,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
             foreach (PgpSignature sig in sKey.GetSignatures())
             {
                 if (sig.KeyId == vKey.KeyId
-                    && sig.SignatureType == PgpSignature.SubkeyBinding)
+                    && sig.SignatureType == PgpSignatures.SubkeyBinding)
                 {
                     sig.InitVerify(vKey);
 
@@ -1899,18 +1899,18 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
             // this is quicker because we are using pregenerated parameters.
             //
             AsymmetricCipherKeyPair rsaKp = rsaKpg.GenerateKeyPair();
-            PgpKeyPair rsaKeyPair1 = new PgpKeyPair(PublicKeyAlgorithmTag.RsaGeneral, rsaKp, DateTime.UtcNow);
+            PgpKeyPair rsaKeyPair1 = new PgpKeyPair(PublicKeyAlgorithms.RsaGeneral, rsaKp, DateTime.UtcNow);
 
             rsaKp = rsaKpg.GenerateKeyPair();
-            PgpKeyPair rsaKeyPair2 = new PgpKeyPair(PublicKeyAlgorithmTag.RsaGeneral, rsaKp, DateTime.UtcNow);
+            PgpKeyPair rsaKeyPair2 = new PgpKeyPair(PublicKeyAlgorithms.RsaGeneral, rsaKp, DateTime.UtcNow);
 
-            PgpKeyRingGenerator keyRingGen = new PgpKeyRingGenerator(PgpSignature.PositiveCertification,
-                rsaKeyPair1, "test", SymmetricKeyAlgorithmTag.Aes256, passPhrase, null, null, random);
+            PgpKeyRingGenerator keyRingGen = new PgpKeyRingGenerator(PgpSignatures.PositiveCertification,
+                rsaKeyPair1, "test", SymmetricKeyAlgorithms.Aes256, passPhrase, null, null, random);
             PgpSecretKeyRing secRing1 = keyRingGen.GenerateSecretKeyRing();
             PgpPublicKeyRing pubRing1 = keyRingGen.GeneratePublicKeyRing();
 
-            keyRingGen = new PgpKeyRingGenerator(PgpSignature.PositiveCertification,
-                rsaKeyPair2, "test", SymmetricKeyAlgorithmTag.Aes256, passPhrase, null, null, random);
+            keyRingGen = new PgpKeyRingGenerator(PgpSignatures.PositiveCertification,
+                rsaKeyPair2, "test", SymmetricKeyAlgorithms.Aes256, passPhrase, null, null, random);
             PgpSecretKeyRing secRing2 = keyRingGen.GenerateSecretKeyRing();
             PgpPublicKeyRing pubRing2 = keyRingGen.GeneratePublicKeyRing();
 
@@ -1976,11 +1976,11 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
             AsymmetricCipherKeyPair elgKp = elgKpg.GenerateKeyPair();
 
 
-            PgpKeyPair dsaKeyPair = new PgpKeyPair(PublicKeyAlgorithmTag.Dsa, dsaKp, DateTime.UtcNow);
-            PgpKeyPair elgKeyPair = new PgpKeyPair(PublicKeyAlgorithmTag.ElGamalEncrypt, elgKp, DateTime.UtcNow);
+            PgpKeyPair dsaKeyPair = new PgpKeyPair(PublicKeyAlgorithms.Dsa, dsaKp, DateTime.UtcNow);
+            PgpKeyPair elgKeyPair = new PgpKeyPair(PublicKeyAlgorithms.ElGamalEncrypt, elgKp, DateTime.UtcNow);
 
-            PgpKeyRingGenerator keyRingGen = new PgpKeyRingGenerator(PgpSignature.PositiveCertification, dsaKeyPair,
-                "test", SymmetricKeyAlgorithmTag.Aes256, passPhrase, true, null, null, new SecureRandom());
+            PgpKeyRingGenerator keyRingGen = new PgpKeyRingGenerator(PgpSignatures.PositiveCertification, dsaKeyPair,
+                "test", SymmetricKeyAlgorithms.Aes256, passPhrase, true, null, null, new SecureRandom());
 
             keyRingGen.AddSubKey(elgKeyPair);
 
@@ -2008,7 +2008,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
             foreach (PgpSignature sig in sKey.GetSignatures())
             {
                 if (sig.KeyId == vKey.KeyId
-                    && sig.SignatureType == PgpSignature.SubkeyBinding)
+                    && sig.SignatureType == PgpSignatures.SubkeyBinding)
                 {
                     sig.InitVerify(vKey);
 
@@ -2039,7 +2039,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
                         pgpKeyEnum,
                         rewrapPass,
                         null,
-                        SymmetricKeyAlgorithmTag.Null,
+                        SymmetricKeyAlgorithms.Null,
                         rand);
                     pgpPriv = PgpSecretKeyRing.InsertSecretKey(pgpPriv, pgpKey);
 
@@ -2095,11 +2095,11 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
                 if (sEn.MoveNext())
                 {
                     PgpSignature sig = (PgpSignature) sEn.Current;
-                    if (sig.KeyAlgorithm != PublicKeyAlgorithmTag.Experimental_1)
+                    if (sig.KeyAlgorithm != PublicKeyAlgorithms.Experimental_1)
                     {
                         Fail("experimental signature not found");
                     }
-                    if (!AreEqual(sig.GetSignature(), Hex.Decode("000101")))
+                    if (!AreEqual(sig.Signature, Hex.Decode("000101")))
                     {
                         Fail("experimental encoding check failed");
                     }

@@ -26,14 +26,14 @@ namespace Org.BouncyCastle.Bcpg.Sig
         public KeyExpirationTime(
             bool    critical,
             byte[]     data)
-            : base(SignatureSubpacketTag.KeyExpireTime, critical, data)
+            : base(SignatureSubpackets.KeyExpireTime, critical, data)
         {
         }
 
         public KeyExpirationTime(
             bool    critical,
             long       seconds)
-            : base(SignatureSubpacketTag.KeyExpireTime, critical, TimeToBytes(seconds))
+            : base(SignatureSubpackets.KeyExpireTime, critical, TimeToBytes(seconds))
         {
         }
 

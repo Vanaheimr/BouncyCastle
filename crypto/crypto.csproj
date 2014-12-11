@@ -1414,7 +1414,7 @@
     <Compile Include="src\bcpg\CompressedDataPacket.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\bcpg\CompressionAlgorithmTags.cs">
+    <Compile Include="src\bcpg\CompressionAlgorithms.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="src\bcpg\ContainedPacket.cs">
@@ -1438,7 +1438,7 @@
     <Compile Include="src\bcpg\ExperimentalPacket.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\bcpg\HashAlgorithmTags.cs">
+    <Compile Include="src\bcpg\HashAlgorithms.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="src\bcpg\IBcpgKey.cs">
@@ -1471,7 +1471,7 @@
     <Compile Include="src\bcpg\PacketTags.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\bcpg\PublicKeyAlgorithmTags.cs">
+    <Compile Include="src\bcpg\PublicKeyAlgorithms.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="src\bcpg\PublicKeyEncSessionPacket.cs">
@@ -1507,7 +1507,7 @@
     <Compile Include="src\bcpg\SignatureSubpacketsReader.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\bcpg\SignatureSubpacketTags.cs">
+    <Compile Include="src\bcpg\SignatureSubpackets.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="src\bcpg\sig\EmbeddedSignature.cs">
@@ -1567,7 +1567,7 @@
     <Compile Include="src\bcpg\SymmetricEncIntegrityPacket.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\bcpg\SymmetricKeyAlgorithmTags.cs">
+    <Compile Include="src\bcpg\SymmetricKeyAlgorithms.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="src\bcpg\SymmetricKeyEncSessionPacket.cs">
@@ -1585,7 +1585,7 @@
     <Compile Include="src\bcpg\UserAttributeSubpacketsReader.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\bcpg\UserAttributeSubpacketTags.cs">
+    <Compile Include="src\bcpg\UserAttributeSubpackets.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="src\bcpg\UserIDPacket.cs">

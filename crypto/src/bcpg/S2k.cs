@@ -18,7 +18,7 @@ namespace Org.BouncyCastle.Bcpg
         public const int GnuDummyS2K = 101;
 
         internal int type;
-        internal HashAlgorithmTag algorithm;
+        internal HashAlgorithms algorithm;
         internal byte[] iv;
         internal int itCount = -1;
         internal int protectionMode = -1;
@@ -27,7 +27,7 @@ namespace Org.BouncyCastle.Bcpg
             Stream inStr)
         {
 			type = inStr.ReadByte();
-            algorithm = (HashAlgorithmTag) inStr.ReadByte();
+            algorithm = (HashAlgorithms) inStr.ReadByte();
 
             //
             // if this happens we have a dummy-S2k packet.
@@ -56,14 +56,14 @@ namespace Org.BouncyCastle.Bcpg
         }
 
         public S2k(
-            HashAlgorithmTag algorithm)
+            HashAlgorithms algorithm)
         {
             this.type = 0;
             this.algorithm = algorithm;
         }
 
         public S2k(
-            HashAlgorithmTag algorithm,
+            HashAlgorithms algorithm,
             byte[] iv)
         {
             this.type = 1;
@@ -72,7 +72,7 @@ namespace Org.BouncyCastle.Bcpg
         }
 
         public S2k(
-            HashAlgorithmTag algorithm,
+            HashAlgorithms algorithm,
             byte[] iv,
             int itCount)
         {
@@ -88,7 +88,7 @@ namespace Org.BouncyCastle.Bcpg
         }
 
 		/// <summary>The hash algorithm.</summary>
-        public HashAlgorithmTag HashAlgorithm
+        public HashAlgorithms HashAlgorithm
         {
 			get { return algorithm; }
 		}

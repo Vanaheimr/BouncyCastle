@@ -12,7 +12,7 @@ namespace Org.BouncyCastle.Bcpg
         private int version;
         private long time;
         private int validDays;
-        private PublicKeyAlgorithmTag algorithm;
+        private PublicKeyAlgorithms algorithm;
         private IBcpgKey key;
 
         internal PublicKeyPacket(
@@ -28,20 +28,20 @@ namespace Org.BouncyCastle.Bcpg
                 validDays = (bcpgIn.ReadByte() << 8) | bcpgIn.ReadByte();
             }
 
-            algorithm = (PublicKeyAlgorithmTag) bcpgIn.ReadByte();
+            algorithm = (PublicKeyAlgorithms) bcpgIn.ReadByte();
 
-            switch ((PublicKeyAlgorithmTag) algorithm)
+            switch ((PublicKeyAlgorithms) algorithm)
             {
-                case PublicKeyAlgorithmTag.RsaEncrypt:
-                case PublicKeyAlgorithmTag.RsaGeneral:
-                case PublicKeyAlgorithmTag.RsaSign:
+                case PublicKeyAlgorithms.RsaEncrypt:
+                case PublicKeyAlgorithms.RsaGeneral:
+                case PublicKeyAlgorithms.RsaSign:
                     key = new RsaPublicBcpgKey(bcpgIn);
                     break;
-                case PublicKeyAlgorithmTag.Dsa:
+                case PublicKeyAlgorithms.Dsa:
                     key = new DsaPublicBcpgKey(bcpgIn);
                     break;
-                case PublicKeyAlgorithmTag.ElGamalEncrypt:
-                case PublicKeyAlgorithmTag.ElGamalGeneral:
+                case PublicKeyAlgorithms.ElGamalEncrypt:
+                case PublicKeyAlgorithms.ElGamalGeneral:
                     key = new ElGamalPublicBcpgKey(bcpgIn);
                     break;
                 default:
@@ -51,7 +51,7 @@ namespace Org.BouncyCastle.Bcpg
 
         /// <summary>Construct a version 4 public key packet.</summary>
         public PublicKeyPacket(
-            PublicKeyAlgorithmTag	algorithm,
+            PublicKeyAlgorithms	algorithm,
             DateTime				time,
             IBcpgKey				key)
         {
@@ -66,7 +66,7 @@ namespace Org.BouncyCastle.Bcpg
             get { return version; }
         }
 
-        public virtual PublicKeyAlgorithmTag Algorithm
+        public virtual PublicKeyAlgorithms Algorithm
         {
             get { return algorithm; }
         }

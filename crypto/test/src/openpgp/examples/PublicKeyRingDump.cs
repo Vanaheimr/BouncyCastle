@@ -21,27 +21,27 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Examples
         }
 
         public static string GetAlgorithm(
-            PublicKeyAlgorithmTag algId)
+            PublicKeyAlgorithms algId)
         {
             switch (algId)
             {
-                case PublicKeyAlgorithmTag.RsaGeneral:
+                case PublicKeyAlgorithms.RsaGeneral:
                     return "RsaGeneral";
-                case PublicKeyAlgorithmTag.RsaEncrypt:
+                case PublicKeyAlgorithms.RsaEncrypt:
                     return "RsaEncrypt";
-                case PublicKeyAlgorithmTag.RsaSign:
+                case PublicKeyAlgorithms.RsaSign:
                     return "RsaSign";
-                case PublicKeyAlgorithmTag.ElGamalEncrypt:
+                case PublicKeyAlgorithms.ElGamalEncrypt:
                     return "ElGamalEncrypt";
-                case PublicKeyAlgorithmTag.Dsa:
+                case PublicKeyAlgorithms.Dsa:
                     return "DSA";
-                case PublicKeyAlgorithmTag.EC:
+                case PublicKeyAlgorithms.EC:
                     return "EC";
-                case PublicKeyAlgorithmTag.ECDsa:
+                case PublicKeyAlgorithms.ECDsa:
                     return "ECDSA";
-                case PublicKeyAlgorithmTag.ElGamalGeneral:
+                case PublicKeyAlgorithms.ElGamalGeneral:
                     return "ElGamalGeneral";
-                case PublicKeyAlgorithmTag.DiffieHellman:
+                case PublicKeyAlgorithms.DiffieHellman:
                     return "DiffieHellman";
             }
 

@@ -83,21 +83,21 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
             bool    isCritical,
             int[]    algorithms)
         {
-            list.Add(new PreferredAlgorithms(SignatureSubpacketTag.PreferredHashAlgorithms, isCritical, algorithms));
+            list.Add(new PreferredAlgorithms(SignatureSubpackets.PreferredHashAlgorithms, isCritical, algorithms));
         }
 
         public void SetPreferredSymmetricAlgorithms(
             bool    isCritical,
             int[]    algorithms)
         {
-            list.Add(new PreferredAlgorithms(SignatureSubpacketTag.PreferredSymmetricAlgorithms, isCritical, algorithms));
+            list.Add(new PreferredAlgorithms(SignatureSubpackets.PreferredSymmetricAlgorithms, isCritical, algorithms));
         }
 
         public void SetPreferredCompressionAlgorithms(
             bool    isCritical,
             int[]    algorithms)
         {
-            list.Add(new PreferredAlgorithms(SignatureSubpacketTag.PreferredCompressionAlgorithms, isCritical, algorithms));
+            list.Add(new PreferredAlgorithms(SignatureSubpackets.PreferredCompressionAlgorithms, isCritical, algorithms));
         }
 
         public void SetKeyFlags(
@@ -121,7 +121,8 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
             bool            isCritical,
             PgpSignature    pgpSignature)
         {
-            byte[] sig = pgpSignature.GetEncoded();
+
+            byte[] sig = pgpSignature.Encoded;
             byte[] data;
 
             // TODO Should be >= ?
@@ -167,7 +168,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
         /// <summary>
         /// Sets revocation key sub packet
         /// </summary>    
-        public void SetRevocationKey(bool isCritical, PublicKeyAlgorithmTag keyAlgorithm, byte[] fingerprint)
+        public void SetRevocationKey(bool isCritical, PublicKeyAlgorithms keyAlgorithm, byte[] fingerprint)
         {
             list.Add(new RevocationKey(isCritical, RevocationKeyTag.ClassDefault, keyAlgorithm, fingerprint));
         }

@@ -15,23 +15,23 @@ namespace Org.BouncyCastle.Bcpg
 		public RevocationKey(
 			bool	isCritical,
 			byte[]	data)
-			: base(SignatureSubpacketTag.RevocationKey, isCritical, data)
+			: base(SignatureSubpackets.RevocationKey, isCritical, data)
 		{
 		}
 
 		public RevocationKey(
 			bool					isCritical,
 			RevocationKeyTag		signatureClass,
-			PublicKeyAlgorithmTag	keyAlgorithm,
+			PublicKeyAlgorithms	keyAlgorithm,
 			byte[]					fingerprint)
-			: base(SignatureSubpacketTag.RevocationKey, isCritical,
+			: base(SignatureSubpackets.RevocationKey, isCritical,
 				CreateData(signatureClass, keyAlgorithm, fingerprint))
 		{
 		}
 
 		private static byte[] CreateData(
 			RevocationKeyTag		signatureClass,
-			PublicKeyAlgorithmTag	keyAlgorithm,
+			PublicKeyAlgorithms	keyAlgorithm,
 			byte[]					fingerprint)
 		{
 			byte[] data = new byte[2 + fingerprint.Length];
@@ -46,9 +46,9 @@ namespace Org.BouncyCastle.Bcpg
 			get { return (RevocationKeyTag)this.GetData()[0]; }
 		}
 
-		public virtual PublicKeyAlgorithmTag Algorithm
+		public virtual PublicKeyAlgorithms Algorithm
 		{
-			get { return (PublicKeyAlgorithmTag)this.GetData()[1]; }
+			get { return (PublicKeyAlgorithms)this.GetData()[1]; }
 		}
 
         public virtual byte[] GetFingerprint()

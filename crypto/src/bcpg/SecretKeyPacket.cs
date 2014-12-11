@@ -18,7 +18,7 @@ namespace Org.BouncyCastle.Bcpg
         private PublicKeyPacket           pubKeyPacket;
         private readonly Byte[]           secKeyData;
         private Int32                     s2kUsage;
-        private SymmetricKeyAlgorithmTag  encAlgorithm;
+        private SymmetricKeyAlgorithms  encAlgorithm;
         private S2k                       s2k;
         private Byte[]                    iv;
 
@@ -42,12 +42,12 @@ namespace Org.BouncyCastle.Bcpg
 
             if (s2kUsage == UsageChecksum || s2kUsage == UsageSha1)
             {
-                encAlgorithm = (SymmetricKeyAlgorithmTag) bcpgIn.ReadByte();
+                encAlgorithm = (SymmetricKeyAlgorithms) bcpgIn.ReadByte();
                 s2k = new S2k(bcpgIn);
             }
             else
             {
-                encAlgorithm = (SymmetricKeyAlgorithmTag) s2kUsage;
+                encAlgorithm = (SymmetricKeyAlgorithms) s2kUsage;
             }
 
             if (!(s2k != null && s2k.Type == S2k.GnuDummyS2K && s2k.ProtectionMode == 0x01))
@@ -70,7 +70,7 @@ namespace Org.BouncyCastle.Bcpg
         }
 
         public SecretKeyPacket(PublicKeyPacket           pubKeyPacket,
-                               SymmetricKeyAlgorithmTag  encAlgorithm,
+                               SymmetricKeyAlgorithms  encAlgorithm,
                                S2k                       s2k,
                                Byte[]                    iv,
                                Byte[]                    secKeyData)
@@ -80,7 +80,7 @@ namespace Org.BouncyCastle.Bcpg
             this.pubKeyPacket = pubKeyPacket;
             this.encAlgorithm = encAlgorithm;
 
-            if (encAlgorithm != SymmetricKeyAlgorithmTag.Null)
+            if (encAlgorithm != SymmetricKeyAlgorithms.Null)
             {
                 this.s2kUsage = UsageChecksum;
             }
@@ -96,7 +96,7 @@ namespace Org.BouncyCastle.Bcpg
         }
 
         public SecretKeyPacket(PublicKeyPacket           pubKeyPacket,
-                               SymmetricKeyAlgorithmTag  encAlgorithm,
+                               SymmetricKeyAlgorithms  encAlgorithm,
                                Int32                     s2kUsage,
                                S2k                       s2k,
                                Byte[]                    iv,
@@ -115,7 +115,7 @@ namespace Org.BouncyCastle.Bcpg
 
         #endregion
 
-        public SymmetricKeyAlgorithmTag EncAlgorithm
+        public SymmetricKeyAlgorithms EncAlgorithm
         {
             get { return encAlgorithm; }
         }

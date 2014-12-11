@@ -52,34 +52,34 @@ namespace Org.BouncyCastle.Bcpg
 				throw new EndOfStreamException();
 
 			bool isCritical = ((tag & 0x80) != 0);
-			SignatureSubpacketTag type = (SignatureSubpacketTag)(tag & 0x7f);
+			SignatureSubpackets type = (SignatureSubpackets)(tag & 0x7f);
 			switch (type)
 			{
-				case SignatureSubpacketTag.CreationTime:
+				case SignatureSubpackets.CreationTime:
 					return new SignatureCreationTime(isCritical, data);
-				case SignatureSubpacketTag.KeyExpireTime:
+				case SignatureSubpackets.KeyExpireTime:
 					return new KeyExpirationTime(isCritical, data);
-				case SignatureSubpacketTag.ExpireTime:
+				case SignatureSubpackets.ExpireTime:
 					return new SignatureExpirationTime(isCritical, data);
-				case SignatureSubpacketTag.Revocable:
+				case SignatureSubpackets.Revocable:
 					return new Revocable(isCritical, data);
-				case SignatureSubpacketTag.Exportable:
+				case SignatureSubpackets.Exportable:
 					return new Exportable(isCritical, data);
-				case SignatureSubpacketTag.IssuerKeyId:
+				case SignatureSubpackets.IssuerKeyId:
 					return new IssuerKeyId(isCritical, data);
-				case SignatureSubpacketTag.TrustSig:
+				case SignatureSubpackets.TrustSig:
 					return new TrustSignature(isCritical, data);
-				case SignatureSubpacketTag.PreferredCompressionAlgorithms:
-				case SignatureSubpacketTag.PreferredHashAlgorithms:
-				case SignatureSubpacketTag.PreferredSymmetricAlgorithms:
+				case SignatureSubpackets.PreferredCompressionAlgorithms:
+				case SignatureSubpackets.PreferredHashAlgorithms:
+				case SignatureSubpackets.PreferredSymmetricAlgorithms:
 					return new PreferredAlgorithms(type, isCritical, data);
-				case SignatureSubpacketTag.KeyFlags:
+				case SignatureSubpackets.KeyFlags:
 					return new KeyFlags(isCritical, data);
-				case SignatureSubpacketTag.PrimaryUserId:
+				case SignatureSubpackets.PrimaryUserId:
 					return new PrimaryUserId(isCritical, data);
-				case SignatureSubpacketTag.SignerUserId:
+				case SignatureSubpackets.SignerUserId:
 					return new SignerUserId(isCritical, data);
-				case SignatureSubpacketTag.NotationData:
+				case SignatureSubpackets.NotationData:
 					return new NotationData(isCritical, data);
 			}
 			return new SignatureSubpacket(type, isCritical, data);

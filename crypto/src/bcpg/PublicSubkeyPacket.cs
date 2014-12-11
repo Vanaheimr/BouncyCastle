@@ -14,7 +14,7 @@ namespace Org.BouncyCastle.Bcpg
 
 		/// <summary>Construct a version 4 public subkey packet.</summary>
         public PublicSubkeyPacket(
-            PublicKeyAlgorithmTag	algorithm,
+            PublicKeyAlgorithms	algorithm,
             DateTime				time,
             IBcpgKey				key)
             : base(algorithm, time, key)

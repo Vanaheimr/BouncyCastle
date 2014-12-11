@@ -6,7 +6,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Examples
     internal class PgpExampleUtilities
     {
 
-        internal static byte[] CompressFile(String fileName, CompressionAlgorithmTag algorithm)
+        internal static byte[] CompressFile(String fileName, CompressionAlgorithms algorithm)
         {
             var bOut     = new MemoryStream();
             var comData  = new PgpCompressedDataGenerator(algorithm);

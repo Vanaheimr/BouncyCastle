@@ -193,14 +193,14 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Examples
 
             try
             {
-                PgpEncryptedDataGenerator cPk = new PgpEncryptedDataGenerator(SymmetricKeyAlgorithmTag.Cast5, withIntegrityCheck, new SecureRandom());
+                PgpEncryptedDataGenerator cPk = new PgpEncryptedDataGenerator(SymmetricKeyAlgorithms.Cast5, withIntegrityCheck, new SecureRandom());
 
                 cPk.AddMethod(encKey);
 
                 Stream cOut = cPk.Open(outputStream, new byte[1 << 16]);
 
                 PgpCompressedDataGenerator comData = new PgpCompressedDataGenerator(
-                    CompressionAlgorithmTag.Zip);
+                    CompressionAlgorithms.Zip);
 
                 PgpUtilities.WriteFileToLiteralData(
                     comData.Open(cOut),

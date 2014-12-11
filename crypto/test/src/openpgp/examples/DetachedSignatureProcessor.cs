@@ -77,14 +77,10 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Examples
 
             dIn.Close();
 
-            if (sig.Verify())
-            {
+            if (sig.IsValid)
                 Console.WriteLine("signature verified.");
-            }
             else
-            {
                 Console.WriteLine("signature verification failed.");
-            }
 
         }
 
@@ -115,9 +111,9 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Examples
 
             var pgpSec      = PgpExampleUtilities.ReadSecretKey(keyIn);
             var pgpPrivKey  = pgpSec.ExtractPrivateKey(passphrase);
-            var sGen        = new PgpSignatureGenerator(pgpSec.PublicKey.Algorithm, HashAlgorithmTag.Sha512);
+            var sGen        = new PgpSignatureGenerator(pgpSec.PublicKey.Algorithm, HashAlgorithms.Sha512);
 
-            sGen.InitSign(PgpSignature.BinaryDocument, pgpPrivKey);
+            sGen.InitSign(PgpSignatures.BinaryDocument, pgpPrivKey);
 
             var bOut        = new BcpgOutputStream(outputStream);
 

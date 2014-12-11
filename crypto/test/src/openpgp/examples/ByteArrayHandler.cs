@@ -104,7 +104,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Examples
             byte[]                        clearData,
             String                        passPhrase,
             string                        fileName,
-            SymmetricKeyAlgorithmTag    algorithm,
+            SymmetricKeyAlgorithms    algorithm,
             bool                        armor)
         {
             if (fileName == null)
@@ -112,7 +112,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Examples
                 fileName = PgpLiteralData.Console;
             }
 
-            byte[] compressedData = Compress(clearData, fileName, CompressionAlgorithmTag.Zip);
+            byte[] compressedData = Compress(clearData, fileName, CompressionAlgorithms.Zip);
 
             MemoryStream bOut = new MemoryStream();
 
@@ -138,7 +138,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Examples
             return bOut.ToArray();
         }
 
-        private static byte[] Compress(byte[] clearData, string fileName, CompressionAlgorithmTag algorithm)
+        private static byte[] Compress(byte[] clearData, string fileName, CompressionAlgorithms algorithm)
         {
             MemoryStream bOut = new MemoryStream();
 
@@ -176,14 +176,14 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Examples
 
             byte[] original = Encoding.ASCII.GetBytes("Hello world");
             Console.WriteLine("Starting PGP test");
-            byte[] encrypted = Encrypt(original, passPhrase, "iway", SymmetricKeyAlgorithmTag.Cast5, true);
+            byte[] encrypted = Encrypt(original, passPhrase, "iway", SymmetricKeyAlgorithms.Cast5, true);
 
             Console.WriteLine("\nencrypted data = '"+Hex.ToHexString(encrypted)+"'");
             byte[] decrypted = Decrypt(encrypted, passPhrase);
 
             Console.WriteLine("\ndecrypted data = '"+GetAsciiString(decrypted)+"'");
 
-            encrypted = Encrypt(original, passPhrase, "iway", SymmetricKeyAlgorithmTag.Aes256, false);
+            encrypted = Encrypt(original, passPhrase, "iway", SymmetricKeyAlgorithms.Aes256, false);
 
             Console.WriteLine("\nencrypted data = '"+Hex.ToHexString(encrypted)+"'");
             decrypted = Decrypt(encrypted, passPhrase);

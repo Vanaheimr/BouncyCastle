@@ -44,6 +44,21 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
 
         #endregion
 
+        #region FirstSecretKey
+
+        /// <summary>
+        /// Return the master private key.
+        /// </summary>
+        public PgpSecretKey FirstSecretKey
+        {
+            get
+            {
+                return keys.First().Value;
+            }
+        }
+
+        #endregion
+
         #region ExtraPublicKeys
 
         /// <summary>
@@ -56,6 +71,21 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
             get
             {
                 return extraPubKeys.Values;
+            }
+        }
+
+        #endregion
+
+        #region FirstPublicKey
+
+        /// <summary>
+        /// Return the public key for the master key.
+        /// </summary>
+        public PgpPublicKey FirstPublicKey
+        {
+            get
+            {
+                return keys.First().Value.PublicKey;
             }
         }
 
@@ -163,20 +193,36 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
 
 
 
-        /// <summary>Return the master private key.</summary>
-        public PgpSecretKey FirstSecretKey
+
+        public Byte[] GetEncoded()
         {
-            get
-            {
-                return keys.First().Value;
-            }
+
+            var bOut = new MemoryStream();
+            EncodeToStream(bOut);
+
+            return bOut.ToArray();
+
         }
 
-        /// <summary>Return the public key for the master key.</summary>
-        public PgpPublicKey GetPublicKey()
+
+        #region EncodeToStream(OutStream)
+
+        public void EncodeToStream(Stream OutStream)
         {
-            return keys.First().Value.PublicKey;
+
+            if (OutStream == null)
+                throw new ArgumentNullException("outStr");
+
+            foreach (var key in keys.Values)
+                key.Encode(OutStream);
+
+            foreach (var extraPubKey in extraPubKeys.Values)
+                extraPubKey.Encode(OutStream);
+
         }
+
+        #endregion
+
 
 
 
@@ -196,29 +242,9 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
 
 
 
-        public Byte[] GetEncoded()
-        {
 
-            var bOut = new MemoryStream();
-            Encode(bOut);
 
-            return bOut.ToArray();
 
-        }
-
-        public void Encode(Stream outStr)
-        {
-
-            if (outStr == null)
-                throw new ArgumentNullException("outStr");
-
-            foreach (var key in keys.Values)
-                key.Encode(outStr);
-
-            foreach (var extraPubKey in extraPubKeys.Values)
-                extraPubKey.Encode(outStr);
-
-        }
 
         /// <summary>
         /// Replace the public key set on the secret ring with the corresponding key off the public ring.
@@ -253,7 +279,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
         public static PgpSecretKeyRing CopyWithNewPassword(PgpSecretKeyRing          ring,
                                                            String                    oldPassPhrase,
                                                            String                    newPassPhrase,
-                                                           SymmetricKeyAlgorithmTag  newEncAlgorithm,
+                                                           SymmetricKeyAlgorithms  newEncAlgorithm,
                                                            SecureRandom              rand)
 
         {

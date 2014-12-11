@@ -14,7 +14,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
         }
 
 		public UserAttributeSubpacket GetSubpacket(
-            UserAttributeSubpacketTag type)
+            UserAttributeSubpackets type)
         {
             for (int i = 0; i != packets.Length; i++)
             {
@@ -29,7 +29,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
 
 		public ImageAttrib GetImageAttribute()
         {
-            UserAttributeSubpacket p = GetSubpacket(UserAttributeSubpacketTag.ImageAttribute);
+            UserAttributeSubpacket p = GetSubpacket(UserAttributeSubpackets.ImageAttribute);
 
             return p == null ? null : (ImageAttrib) p;
         }

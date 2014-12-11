@@ -18,7 +18,7 @@ namespace Org.BouncyCastle.Bcpg.Sig
 		public NotationData(
 			bool	critical,
 			byte[]	data)
-			: base(SignatureSubpacketTag.NotationData, critical, data)
+			: base(SignatureSubpackets.NotationData, critical, data)
 		{
 		}
 
@@ -27,7 +27,7 @@ namespace Org.BouncyCastle.Bcpg.Sig
 			bool	humanReadable,
 			string	notationName,
 			string	notationValue)
-			: base(SignatureSubpacketTag.NotationData, critical,
+			: base(SignatureSubpackets.NotationData, critical,
 				createData(humanReadable, notationName, notationValue))
 		{
 		}

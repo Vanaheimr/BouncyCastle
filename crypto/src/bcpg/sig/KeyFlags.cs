@@ -41,14 +41,14 @@ namespace Org.BouncyCastle.Bcpg.Sig
 		public KeyFlags(
             bool	critical,
             byte[]	data)
-            : base(SignatureSubpacketTag.KeyFlags, critical, data)
+            : base(SignatureSubpackets.KeyFlags, critical, data)
         {
         }
 
 		public KeyFlags(
 			bool	critical,
 			int		flags)
-            : base(SignatureSubpacketTag.KeyFlags, critical, IntToByteArray(flags))
+            : base(SignatureSubpackets.KeyFlags, critical, IntToByteArray(flags))
         {
         }
 

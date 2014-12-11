@@ -11,7 +11,7 @@ namespace Org.BouncyCastle.Bcpg
     {
         private int version;
         private UInt64 keyId;
-        private PublicKeyAlgorithmTag algorithm;
+        private PublicKeyAlgorithms algorithm;
         private BigInteger[] data;
 
         internal PublicKeyEncSessionPacket(BcpgInputStream bcpgIn)
@@ -28,16 +28,16 @@ namespace Org.BouncyCastle.Bcpg
             keyId |= (UInt64) bcpgIn.ReadByte() << 8;
             keyId |= (uint)   bcpgIn.ReadByte();
 
-            algorithm = (PublicKeyAlgorithmTag) bcpgIn.ReadByte();
+            algorithm = (PublicKeyAlgorithms) bcpgIn.ReadByte();
 
-            switch ((PublicKeyAlgorithmTag) algorithm)
+            switch ((PublicKeyAlgorithms) algorithm)
             {
-                case PublicKeyAlgorithmTag.RsaEncrypt:
-                case PublicKeyAlgorithmTag.RsaGeneral:
+                case PublicKeyAlgorithms.RsaEncrypt:
+                case PublicKeyAlgorithms.RsaGeneral:
                     data = new BigInteger[]{ new MPInteger(bcpgIn).Value };
                     break;
-                case PublicKeyAlgorithmTag.ElGamalEncrypt:
-                case PublicKeyAlgorithmTag.ElGamalGeneral:
+                case PublicKeyAlgorithms.ElGamalEncrypt:
+                case PublicKeyAlgorithms.ElGamalGeneral:
                     data = new BigInteger[]
                     {
                         new MPInteger(bcpgIn).Value,
@@ -52,7 +52,7 @@ namespace Org.BouncyCastle.Bcpg
 
         public PublicKeyEncSessionPacket(
             UInt64                    keyId,
-            PublicKeyAlgorithmTag    algorithm,
+            PublicKeyAlgorithms    algorithm,
             BigInteger[]            data)
         {
             this.version = 3;
@@ -71,7 +71,7 @@ namespace Org.BouncyCastle.Bcpg
             get { return keyId; }
         }
 
-        public PublicKeyAlgorithmTag Algorithm
+        public PublicKeyAlgorithms Algorithm
         {
             get { return algorithm; }
         }

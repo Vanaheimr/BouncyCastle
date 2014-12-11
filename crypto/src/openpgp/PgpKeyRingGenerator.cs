@@ -19,8 +19,8 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
 
         private List<PgpSecretKey>          keys;
         private String                      id;
-        private SymmetricKeyAlgorithmTag    encAlgorithm;
-        private Int32                       certificationLevel;
+        private SymmetricKeyAlgorithms      encAlgorithm;
+        private PgpSignatures               certificationLevel;
         private String                      passPhrase;
         private Boolean                     useSha1;
         private PgpKeyPair                  masterKey;
@@ -44,10 +44,10 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
         /// <param name="hashedPackets">Packets to be included in the certification hash.</param>
         /// <param name="unhashedPackets">Packets to be attached unhashed to the certification.</param>
         /// <param name="rand">input secured random.</param>
-        public PgpKeyRingGenerator(Int32                         certificationLevel,
+        public PgpKeyRingGenerator(PgpSignatures                 certificationLevel,
                                    PgpKeyPair                    masterKey,
                                    String                        id,
-                                   SymmetricKeyAlgorithmTag      encAlgorithm,
+                                   SymmetricKeyAlgorithms        encAlgorithm,
                                    String                        passPhrase,
                                    PgpSignatureSubpacketVector   hashedPackets,
                                    PgpSignatureSubpacketVector   unhashedPackets,
@@ -71,10 +71,10 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
         /// <param name="hashedPackets">Packets to be included in the certification hash.</param>
         /// <param name="unhashedPackets">Packets to be attached unhashed to the certification.</param>
         /// <param name="rand">input secured random.</param>
-        public PgpKeyRingGenerator(Int32                        certificationLevel,
+        public PgpKeyRingGenerator(PgpSignatures                certificationLevel,
                                    PgpKeyPair                   masterKey,
                                    String                       id,
-                                   SymmetricKeyAlgorithmTag     encAlgorithm,
+                                   SymmetricKeyAlgorithms       encAlgorithm,
                                    String                       passPhrase,
                                    Boolean                      useSha1,
                                    PgpSignatureSubpacketVector  hashedPackets,
@@ -121,10 +121,10 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
             try
             {
 
-                var sGen = new PgpSignatureGenerator(masterKey.PublicKey.Algorithm, HashAlgorithmTag.Sha1);
+                var sGen = new PgpSignatureGenerator(masterKey.PublicKey.Algorithm, HashAlgorithms.Sha1);
 
                 // Generate the certification
-                sGen.InitSign(PgpSignature.SubkeyBinding, masterKey.PrivateKey);
+                sGen.InitSign(PgpSignatures.SubkeyBinding, masterKey.PrivateKey);
 
                 sGen.SetHashedSubpackets(hashedPackets);
                 sGen.SetUnhashedSubpackets(unhashedPackets);

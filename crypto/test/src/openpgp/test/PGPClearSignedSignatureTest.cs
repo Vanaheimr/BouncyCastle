@@ -221,16 +221,15 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
                 while (lookAhead != -1);
             }
 
-            if (!sig.Verify())
-            {
+            if (!sig.IsValid)
                 Fail("signature failed to verify m_in " + type);
-            }
+
         }
 
-        private PgpSecretKey ReadSecretKey(
-            Stream    inputStream)
+        private PgpSecretKey ReadSecretKey(Stream  inputStream)
         {
-            PgpSecretKeyRingBundle        pgpSec = new PgpSecretKeyRingBundle(inputStream);
+
+            var pgpSec = new PgpSecretKeyRingBundle(inputStream);
 
             //
             // we just loop through the collection till we find a key suitable for encryption, in the real
@@ -239,30 +238,29 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
             //
             // iterate through the key rings.
             //
-            foreach (PgpSecretKeyRing kRing in pgpSec.GetKeyRings())
+            foreach (var kRing in pgpSec.GetKeyRings())
             {
                 foreach (var k in kRing.SecretKeys)
                 {
                     if (k.IsSigningKey)
-                    {
                         return k;
-                    }
                 }
             }
 
             throw new ArgumentException("Can't find signing key in key ring.");
+
         }
 
         private void generateTest(
             string message,
             string type)
         {
-            PgpSecretKey                    pgpSecKey = ReadSecretKey(new MemoryStream(secretKey));
-            PgpPrivateKey                   pgpPrivKey = pgpSecKey.ExtractPrivateKey("");
-            PgpSignatureGenerator           sGen = new PgpSignatureGenerator(pgpSecKey.PublicKey.Algorithm, HashAlgorithmTag.Sha256);
-            PgpSignatureSubpacketGenerator  spGen = new PgpSignatureSubpacketGenerator();
+            PgpSecretKey                    pgpSecKey   = ReadSecretKey(new MemoryStream(secretKey));
+            PgpPrivateKey                   pgpPrivKey  = pgpSecKey.ExtractPrivateKey("");
+            PgpSignatureGenerator           sGen        = new PgpSignatureGenerator(pgpSecKey.PublicKey.Algorithm, HashAlgorithms.Sha256);
+            PgpSignatureSubpacketGenerator  spGen       = new PgpSignatureSubpacketGenerator();
 
-            sGen.InitSign(PgpSignature.CanonicalTextDocument, pgpPrivKey);
+            sGen.InitSign(PgpSignatures.CanonicalTextDocument, pgpPrivKey);
 
             IEnumerator    it = pgpSecKey.PublicKey.GetUserIds().GetEnumerator();
             if (it.MoveNext())
@@ -275,7 +273,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
             ArmoredOutputStream aOut = new ArmoredOutputStream(bOut);
             MemoryStream bIn = new MemoryStream(Encoding.ASCII.GetBytes(message), false);
 
-            aOut.BeginClearText(HashAlgorithmTag.Sha256);
+            aOut.BeginClearText(HashAlgorithms.Sha256);
 
             //
             // note the last \n m_in the file is ignored
@@ -372,15 +370,14 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
             return lookAhead;
         }
 
-        private static void ProcessLine(
-            PgpSignature    sig,
-            byte[]            line)
+        private static void ProcessLine(PgpSignature  sig,
+                                        Byte[]        line)
         {
-            int length = GetLengthWithoutWhiteSpace(line);
+
+            var length = GetLengthWithoutWhiteSpace(line);
             if (length > 0)
-            {
                 sig.Update(line, 0, length);
-            }
+
         }
 
         private static void ProcessLine(
@@ -388,19 +385,19 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
             PgpSignatureGenerator    sGen,
             byte[]                    line)
         {
-            int length = GetLengthWithoutWhiteSpace(line);
+
+            var length = GetLengthWithoutWhiteSpace(line);
             if (length > 0)
-            {
-                sGen.Update(line, 0, length);
-            }
+                sGen.Update(line, 0, (Int32) length);
 
             aOut.Write(line, 0, line.Length);
+
         }
 
-        private static int GetLengthWithoutWhiteSpace(
-            byte[] line)
+        private static UInt64 GetLengthWithoutWhiteSpace(Byte[] line)
         {
-            int end = line.Length - 1;
+
+            var end = (UInt64) line.Length - 1;
 
             while (end >= 0 && IsWhiteSpace(line[end]))
             {
@@ -408,6 +405,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
             }
 
             return end + 1;
+
         }
 
         private static bool IsWhiteSpace(

@@ -38,14 +38,14 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Examples
                 secretOut = new ArmoredOutputStream(secretOut);
             }
 
-            PgpSecretKey secretKey = new PgpSecretKey(
-                PgpSignature.DefaultCertification,
-                PublicKeyAlgorithmTag.RsaGeneral,
+            var secretKey = new PgpSecretKey(
+                PgpSignatures.DefaultCertification,
+                PublicKeyAlgorithms.RsaGeneral,
                 publicKey,
                 privateKey,
                 DateTime.UtcNow,
                 identity,
-                SymmetricKeyAlgorithmTag.Cast5,
+                SymmetricKeyAlgorithms.Cast5,
                 passPhrase,
                 null,
                 null,

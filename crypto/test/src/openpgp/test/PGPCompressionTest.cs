@@ -20,44 +20,44 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
 		[Test]
 		public void TestUncompressed()
 		{
-			doTestCompression(CompressionAlgorithmTag.Uncompressed);
+			doTestCompression(CompressionAlgorithms.Uncompressed);
 		}
 
 		[Test]
 		public void TestZip()
 		{
-			doTestCompression(CompressionAlgorithmTag.Zip);
+			doTestCompression(CompressionAlgorithms.Zip);
 		}
 
 		[Test]
 		public void TestZLib()
 		{
-			doTestCompression(CompressionAlgorithmTag.ZLib);
+			doTestCompression(CompressionAlgorithms.ZLib);
 		}
 
 		[Test]
 		public void TestBZip2()
 		{
-			doTestCompression(CompressionAlgorithmTag.BZip2);
+			doTestCompression(CompressionAlgorithms.BZip2);
 		}
 
 		public override void PerformTest()
 		{
-			doTestCompression(CompressionAlgorithmTag.Uncompressed);
-			doTestCompression(CompressionAlgorithmTag.Zip);
-			doTestCompression(CompressionAlgorithmTag.ZLib);
-			doTestCompression(CompressionAlgorithmTag.BZip2);
+			doTestCompression(CompressionAlgorithms.Uncompressed);
+			doTestCompression(CompressionAlgorithms.Zip);
+			doTestCompression(CompressionAlgorithms.ZLib);
+			doTestCompression(CompressionAlgorithms.BZip2);
 		}
 
 		private void doTestCompression(
-			CompressionAlgorithmTag type)
+			CompressionAlgorithms type)
 		{
 			doTestCompression(type, true);
 			doTestCompression(type, false);
 		}
 
 		private void doTestCompression(
-			CompressionAlgorithmTag	type,
+			CompressionAlgorithms	type,
 			bool					streamClose)
 		{
 			MemoryStream bOut = new MemoryStream();

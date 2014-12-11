@@ -4,8 +4,10 @@ using System.Text;
 
 namespace Org.BouncyCastle.Crypto
 {
+
     public interface ISigner
     {
+
         /**
          * Return the name of the algorithm the signer implements.
          *
@@ -13,7 +15,7 @@ namespace Org.BouncyCastle.Crypto
          */
         string AlgorithmName { get; }
 
-		/**
+        /**
          * Initialise the signer for signing or verification.
          *
          * @param forSigning true if for signing, false otherwise
@@ -46,5 +48,7 @@ namespace Org.BouncyCastle.Crypto
          * reset the internal state
          */
         void Reset();
+
     }
+
 }

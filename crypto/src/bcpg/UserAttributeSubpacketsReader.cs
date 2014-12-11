@@ -53,10 +53,10 @@ namespace Org.BouncyCastle.Bcpg
             if (Streams.ReadFully(input, data) < data.Length)
                 throw new EndOfStreamException();
 
-            UserAttributeSubpacketTag type = (UserAttributeSubpacketTag) tag;
+            UserAttributeSubpackets type = (UserAttributeSubpackets) tag;
             switch (type)
             {
-                case UserAttributeSubpacketTag.ImageAttribute:
+                case UserAttributeSubpackets.ImageAttribute:
                     return new ImageAttrib(longLength, data);
             }
             return new UserAttributeSubpacket(type, longLength, data);

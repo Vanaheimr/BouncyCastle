@@ -28,14 +28,14 @@ namespace Org.BouncyCastle.Bcpg.Sig
         public Exportable(
             bool    critical,
             byte[]     data)
-            : base(SignatureSubpacketTag.Exportable, critical, data)
+            : base(SignatureSubpackets.Exportable, critical, data)
         {
         }
 
         public Exportable(
             bool    critical,
             bool    isExportable)
-            : base(SignatureSubpacketTag.Exportable, critical, BooleanToByteArray(isExportable))
+            : base(SignatureSubpackets.Exportable, critical, BooleanToByteArray(isExportable))
         {
         }
 

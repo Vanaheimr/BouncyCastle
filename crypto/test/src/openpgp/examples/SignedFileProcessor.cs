@@ -94,9 +94,9 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Examples
 
             var pgpSec      = PgpExampleUtilities.ReadSecretKey(keyIn);
             var pgpPrivKey  = pgpSec.ExtractPrivateKey(pass);
-            var sGen        = new PgpSignatureGenerator(pgpSec.PublicKey.Algorithm, HashAlgorithmTag.Sha1);
+            var sGen        = new PgpSignatureGenerator(pgpSec.PublicKey.Algorithm, HashAlgorithms.Sha1);
 
-            sGen.InitSign(PgpSignature.BinaryDocument, pgpPrivKey);
+            sGen.InitSign(PgpSignatures.BinaryDocument, pgpPrivKey);
             foreach (string userId in pgpSec.PublicKey.GetUserIds())
             {
                 PgpSignatureSubpacketGenerator spGen = new PgpSignatureSubpacketGenerator();
@@ -110,7 +110,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Examples
             PgpCompressedDataGenerator cGen = null;
             if (compress)
             {
-                cGen = new PgpCompressedDataGenerator(CompressionAlgorithmTag.ZLib);
+                cGen = new PgpCompressedDataGenerator(CompressionAlgorithms.ZLib);
 
                 cOut = cGen.Open(cOut);
             }

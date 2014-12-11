@@ -6,9 +6,32 @@ using Org.BouncyCastle.Crypto;
 using Org.BouncyCastle.Security;
 using Org.BouncyCastle.Utilities;
 using Org.BouncyCastle.Utilities.Date;
+using System.Collections.Generic;
 
 namespace Org.BouncyCastle.Bcpg.OpenPgp
 {
+
+    public enum PgpSignatures
+    {
+
+        BinaryDocument             = 0x00,
+        CanonicalTextDocument      = 0x01,
+        StandAlone                 = 0x02,
+
+        DefaultCertification       = 0x10,
+        NoCertification            = 0x11,
+        CasualCertification        = 0x12,
+        PositiveCertification      = 0x13,
+
+        SubkeyBinding              = 0x18,
+        PrimaryKeyBinding          = 0x19,
+        DirectKey                  = 0x1f,
+        KeyRevocation              = 0x20,
+        SubkeyRevocation           = 0x28,
+        CertificationRevocation    = 0x30,
+        Timestamp                  = 0x40
+
+    }
 
     /// <summary>
     /// A PGP signature object.
@@ -16,29 +39,248 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
     public class PgpSignature
     {
 
-        public const int BinaryDocument             = 0x00;
-        public const int CanonicalTextDocument      = 0x01;
-        public const int StandAlone                 = 0x02;
+        #region Data
 
-        public const int DefaultCertification       = 0x10;
-        public const int NoCertification            = 0x11;
-        public const int CasualCertification        = 0x12;
-        public const int PositiveCertification      = 0x13;
-
-        public const int SubkeyBinding              = 0x18;
-        public const int PrimaryKeyBinding          = 0x19;
-        public const int DirectKey                  = 0x1f;
-        public const int KeyRevocation              = 0x20;
-        public const int SubkeyRevocation           = 0x28;
-        public const int CertificationRevocation    = 0x30;
-        public const int Timestamp                  = 0x40;
-
-        private readonly SignaturePacket    sigPck;
-        private readonly int                signatureType;
-        private readonly TrustPacket        trustPck;
+        private readonly SignaturePacket  sigPck;
+        private readonly PgpSignatures    signatureType;
+        private readonly TrustPacket      trustPck;
 
         private ISigner sig;
         private byte    lastb; // Initial value anything but '\r'
+
+        #endregion
+
+        #region Properties
+
+        #region Version
+
+        /// <summary>
+        /// The OpenPGP version number for this signature.
+        /// </summary>
+        public Int32 Version
+        {
+            get
+            {
+                return sigPck.Version;
+            }
+        }
+
+        #endregion
+
+        #region KeyAlgorithm
+
+        /// <summary>
+        /// The key algorithm associated with this signature.
+        /// </summary>
+        public PublicKeyAlgorithms KeyAlgorithm
+        {
+            get
+            {
+                return sigPck.KeyAlgorithm;
+            }
+        }
+
+        #endregion
+
+        #region HashAlgorithm
+
+        /// <summary>
+        /// The hash algorithm associated with this signature.
+        /// </summary>
+        public HashAlgorithms HashAlgorithm
+        {
+            get
+            {
+                return sigPck.HashAlgorithm;
+            }
+        }
+
+        #endregion
+
+        #region SignatureType
+
+        public PgpSignatures SignatureType
+        {
+            get
+            {
+                return sigPck.SignatureType;
+            }
+        }
+
+        #endregion
+
+        #region KeyId
+
+        /// <summary>
+        /// The identification of the key that created the signature.
+        /// </summary>
+        public UInt64 KeyId
+        {
+            get
+            {
+                return sigPck.KeyId;
+            }
+        }
+
+        #endregion
+
+        #region KeyIdHex
+
+        /// <summary>
+        /// The identification of the key that created the signature as hex-value.
+        /// </summary>
+        public String KeyIdHex
+        {
+            get
+            {
+                return "0x" + ((UInt64)sigPck.KeyId).ToString("X");
+            }
+        }
+
+        #endregion
+
+        #region CreationTime
+
+        /// <summary>
+        /// The creation time of this signature.
+        /// </summary>
+        public DateTime CreationTime
+        {
+            get
+            {
+                return DateTimeUtilities.UnixMsToDateTime(sigPck.CreationTime);
+            }
+        }
+
+        #endregion
+
+        #region HasSubpackets
+
+        /// <summary>
+        /// Return true if the signature has either hashed or unhashed subpackets.
+        /// </summary>
+        public Boolean HasSubpackets
+        {
+            get
+            {
+                return sigPck.HashedSubPackets != null ||
+                       sigPck.UnhashedSubPackets != null;
+            }
+        }
+
+        #endregion
+
+        #region HashedSubPackets
+
+        public PgpSignatureSubpacketVector HashedSubPackets
+        {
+            get
+            {
+                return createSubpacketVector(sigPck.HashedSubPackets);
+            }
+        }
+
+        #endregion
+
+        #region UnhashedSubPackets
+
+        public PgpSignatureSubpacketVector UnhashedSubPackets
+        {
+            get
+            {
+                return createSubpacketVector(sigPck.UnhashedSubPackets);
+            }
+        }
+
+        #endregion
+
+        #region Signature
+
+        public Byte[] Signature
+        {
+
+            get
+            {
+
+                var sigValues = sigPck.Signature;
+
+                if (sigValues != null)
+                {
+
+                    // An RSA signature...
+                    if (sigValues.Length == 1)
+                        return sigValues[0].Value.ToByteArrayUnsigned();
+
+                    else
+                    {
+
+                        try
+                        {
+                            return new DerSequence(new DerInteger(sigValues[0].Value),
+                                                   new DerInteger(sigValues[1].Value)).GetEncoded();
+                        }
+                        catch (IOException e)
+                        {
+                            throw new PgpException("exception encoding DSA sig.", e);
+                        }
+
+                    }
+
+                }
+
+                return sigPck.GetSignatureBytes();
+
+            }
+
+        }
+
+        #endregion
+
+        #region SignatureTrailer
+
+        public Byte[] SignatureTrailer
+        {
+            get
+            {
+                return sigPck.SignatureTrailer;
+            }
+        }
+
+        #endregion
+
+        #region Encoded
+
+        public Byte[] Encoded
+        {
+            get
+            {
+                return Encode(new MemoryStream()).ToArray();
+            }
+        }
+
+        #endregion
+
+        #region IsValid
+
+        public Boolean IsValid
+        {
+            get
+            {
+
+                var trailer = SignatureTrailer;
+                sig.BlockUpdate(trailer, 0, trailer.Length);
+
+                return sig.VerifySignature(Signature);
+
+            }
+
+        }
+
+        #endregion
+
+        #endregion
+
+        #region Constructor(s)
 
         internal PgpSignature(BcpgInputStream bcpgInput)
             : this((SignaturePacket) bcpgInput.ReadPacket())
@@ -61,58 +303,84 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
 
         }
 
-        private void GetSig()
-        {
-            this.sig = SignerUtilities.GetSigner(
-                PgpUtilities.GetSignatureName(sigPck.KeyAlgorithm, sigPck.HashAlgorithm));
-        }
+        #endregion
 
-        /// <summary>The OpenPGP version number for this signature.</summary>
-        public int Version
-        {
-            get { return sigPck.Version; }
-        }
 
-        /// <summary>The key algorithm associated with this signature.</summary>
-        public PublicKeyAlgorithmTag KeyAlgorithm
-        {
-            get { return sigPck.KeyAlgorithm; }
-        }
 
-        /// <summary>The hash algorithm associated with this signature.</summary>
-        public HashAlgorithmTag HashAlgorithm
-        {
-            get { return sigPck.HashAlgorithm; }
-        }
+        #region Encode<T>(OutputStream)
 
-        public void InitVerify(PgpPublicKey pubKey)
+        public T Encode<T>(T OutputStream)
+            where T : Stream
         {
 
-            lastb = 0;
+            var bcpgOut = BcpgOutputStream.Wrap(OutputStream);
 
-            if (sig == null)
-                GetSig();
+            bcpgOut.WritePacket(sigPck);
 
-            try
-            {
-                sig.Init(false, pubKey.GetKey());
-            }
-            catch (InvalidKeyException e)
-            {
-                throw new PgpException("invalid key.", e);
-            }
+            if (trustPck != null)
+                bcpgOut.WritePacket(trustPck);
+
+            return OutputStream;
 
         }
 
-        public void Update(Byte b)
+        #endregion
+
+        #region Update(InByte)
+
+        public void Update(Byte InByte)
         {
 
-            if (signatureType == CanonicalTextDocument)
-                doCanonicalUpdateByte(b);
+            if (signatureType == PgpSignatures.CanonicalTextDocument)
+                doCanonicalUpdateByte(InByte);
 
             else
-                sig.Update(b);
+                sig.Update(InByte);
 
+        }
+
+        #endregion
+
+        #region Update(params InBytes)
+
+        public void Update(params Byte[] InBytes)
+        {
+            Update(InBytes, 0, (UInt64) InBytes.Length);
+        }
+
+        #endregion
+
+        #region Update(InBytes, Offset, Length)
+
+        public void Update(Byte[]  InBytes,
+                           UInt64  Offset,
+                           UInt64  Length)
+        {
+
+            if (signatureType == PgpSignatures.CanonicalTextDocument)
+            {
+
+                var finish = Offset + Length;
+
+                for (var i = Offset; i != finish; i++)
+                    doCanonicalUpdateByte(InBytes[i]);
+
+            }
+
+            else
+                sig.BlockUpdate(InBytes, (Int32) Offset, (Int32) Length);
+
+        }
+
+        #endregion
+
+
+
+        #region (private) 
+
+        private void GetSig()
+        {
+            this.sig = SignerUtilities.GetSigner(PgpUtilities.GetSignatureName(sigPck.KeyAlgorithm, sigPck.HashAlgorithm));
         }
 
         private void doCanonicalUpdateByte(Byte b)
@@ -139,41 +407,6 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
             sig.Update((byte)'\n');
         }
 
-        public void Update(params Byte[] bytes)
-        {
-            Update(bytes, 0, bytes.Length);
-        }
-
-        public void Update(Byte[]  bytes,
-                           Int32   off,
-                           Int32   length)
-        {
-
-            if (signatureType == CanonicalTextDocument)
-            {
-
-                int finish = off + length;
-
-                for (int i = off; i != finish; i++)
-                    doCanonicalUpdateByte(bytes[i]);
-
-            }
-
-            else
-                sig.BlockUpdate(bytes, off, length);
-
-        }
-
-        public Boolean Verify()
-        {
-
-            var trailer = GetSignatureTrailer();
-            sig.BlockUpdate(trailer, 0, trailer.Length);
-
-            return sig.VerifySignature(GetSignature());
-
-        }
-
         private void UpdateWithIdData(Int32   header,
                                       Byte[]  idBytes)
         {
@@ -188,7 +421,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
 
         }
 
-        private void UpdateWithPublicKey(PgpPublicKey key)
+        private void UpdateWithPublicKey(PgpPublicKey  key)
         {
 
             var keyBytes = GetEncodedPublicKey(key);
@@ -198,6 +431,52 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
                         (byte) (keyBytes.Length));
 
             this.Update(keyBytes);
+
+        }
+
+        private PgpSignatureSubpacketVector createSubpacketVector(IEnumerable<SignatureSubpacket> pcks)
+        {
+
+            return pcks == null
+                ? null
+                : new PgpSignatureSubpacketVector(pcks);
+
+        }
+
+        private byte[] GetEncodedPublicKey(PgpPublicKey pubKey)
+        {
+
+            try
+            {
+                return pubKey.publicPk.GetEncodedContents();
+            }
+            catch (IOException e)
+            {
+                throw new PgpException("exception preparing key.", e);
+            }
+
+        }
+
+        #endregion
+
+
+
+        public void InitVerify(PgpPublicKey PublicKey)
+        {
+
+            lastb = 0;
+
+            if (sig == null)
+                GetSig();
+
+            try
+            {
+                sig.Init(false, PublicKey.GetKey());
+            }
+            catch (InvalidKeyException e)
+            {
+                throw new PgpException("invalid key.", e);
+            }
 
         }
 
@@ -214,9 +493,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
 
             UpdateWithPublicKey(key);
 
-            //
             // hash in the userAttributes
-            //
             try
             {
 
@@ -233,9 +510,9 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
                 throw new PgpException("cannot encode subpacket array", e);
             }
 
-            this.Update(sigPck.GetSignatureTrailer());
+            this.Update(sigPck.SignatureTrailer);
 
-            return sig.VerifySignature(this.GetSignature());
+            return sig.VerifySignature(Signature);
 
         }
 
@@ -252,181 +529,53 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
 
             UpdateWithPublicKey(key);
 
-            //
             // hash in the id
-            //
             UpdateWithIdData(0xb4, Strings.ToUtf8ByteArray(id));
 
-            Update(sigPck.GetSignatureTrailer());
+            Update(sigPck.SignatureTrailer);
 
-            return sig.VerifySignature(GetSignature());
+            return sig.VerifySignature(Signature);
 
         }
 
-        /// <summary>Verify a certification for the passed in key against the passed in master key.</summary>
+        /// <summary>
+        /// Verify a certification for the passed in key against the passed in master key.
+        /// </summary>
         /// <param name="masterKey">The key we are verifying against.</param>
         /// <param name="pubKey">The key we are verifying.</param>
         /// <returns>True, if the certification is valid, false otherwise.</returns>
-        public bool VerifyCertification(PgpPublicKey    masterKey,
-                                        PgpPublicKey    pubKey)
+        public Boolean VerifyCertification(PgpPublicKey  masterKey,
+                                           PgpPublicKey  pubKey)
         {
 
             UpdateWithPublicKey(masterKey);
             UpdateWithPublicKey(pubKey);
 
-            Update(sigPck.GetSignatureTrailer());
+            Update(sigPck.SignatureTrailer);
 
-            return sig.VerifySignature(GetSignature());
+            return sig.VerifySignature(Signature);
 
         }
 
-        /// <summary>Verify a key certification, such as revocation, for the passed in key.</summary>
+        /// <summary>
+        /// Verify a key certification, such as revocation, for the passed in key.
+        /// </summary>
         /// <param name="pubKey">The key we are checking.</param>
         /// <returns>True, if the certification is valid, false otherwise.</returns>
-        public bool VerifyCertification(PgpPublicKey pubKey)
+        public Boolean VerifyCertification(PgpPublicKey pubKey)
         {
 
-            if (SignatureType != KeyRevocation && SignatureType != SubkeyRevocation)
+            if (SignatureType != PgpSignatures.KeyRevocation && SignatureType != PgpSignatures.SubkeyRevocation)
                 throw new InvalidOperationException("signature is not a key signature");
 
             UpdateWithPublicKey(pubKey);
 
-            Update(sigPck.GetSignatureTrailer());
+            Update(sigPck.SignatureTrailer);
 
-            return sig.VerifySignature(GetSignature());
-
-        }
-
-        public int SignatureType
-        {
-            get { return sigPck.SignatureType; }
-        }
-
-        /// <summary>The ID of the key that created the signature.</summary>
-        public UInt64 KeyId
-        {
-            get { return sigPck.KeyId; }
-        }
-
-        public String KeyIdHex
-        {
-            get
-            {
-                return "0x" + ((UInt64) sigPck.KeyId).ToString("X");
-            }
-        }
-
-        /// <summary>The creation time of this signature.</summary>
-        public DateTime CreationTime
-        {
-            get { return DateTimeUtilities.UnixMsToDateTime(sigPck.CreationTime); }
-        }
-
-        public byte[] GetSignatureTrailer()
-        {
-            return sigPck.GetSignatureTrailer();
-        }
-
-        /// <summary>
-        /// Return true if the signature has either hashed or unhashed subpackets.
-        /// </summary>
-        public bool HasSubpackets
-        {
-            get
-            {
-                return sigPck.GetHashedSubPackets() != null
-                    || sigPck.GetUnhashedSubPackets() != null;
-            }
-        }
-
-        public PgpSignatureSubpacketVector GetHashedSubPackets()
-        {
-            return createSubpacketVector(sigPck.GetHashedSubPackets());
-        }
-
-        public PgpSignatureSubpacketVector GetUnhashedSubPackets()
-        {
-            return createSubpacketVector(sigPck.GetUnhashedSubPackets());
-        }
-
-        private PgpSignatureSubpacketVector createSubpacketVector(SignatureSubpacket[] pcks)
-        {
-            return pcks == null ? null : new PgpSignatureSubpacketVector(pcks);
-        }
-
-        public byte[] GetSignature()
-        {
-
-            var sigValues = sigPck.GetSignature();
-
-            byte[] signature;
-
-            if (sigValues != null)
-            {
-
-                if (sigValues.Length == 1)    // an RSA signature
-                    signature = sigValues[0].Value.ToByteArrayUnsigned();
-
-                else
-                {
-
-                    try
-                    {
-                        signature = new DerSequence(new DerInteger(sigValues[0].Value),
-                                                    new DerInteger(sigValues[1].Value)).GetEncoded();
-                    }
-                    catch (IOException e)
-                    {
-                        throw new PgpException("exception encoding DSA sig.", e);
-                    }
-
-                }
-
-            }
-
-            else
-                signature = sigPck.GetSignatureBytes();
-
-            return signature;
+            return sig.VerifySignature(Signature);
 
         }
 
-        // TODO Handle the encoding stuff by subclassing BcpgObject?
-        public byte[] GetEncoded()
-        {
-
-            var bOut = new MemoryStream();
-            Encode(bOut);
-
-            return bOut.ToArray();
-
-        }
-
-        public void Encode(Stream outStream)
-        {
-
-            var bcpgOut = BcpgOutputStream.Wrap(outStream);
-
-            bcpgOut.WritePacket(sigPck);
-
-            if (trustPck != null)
-                bcpgOut.WritePacket(trustPck);
-
-        }
-
-        private byte[] GetEncodedPublicKey(PgpPublicKey pubKey) 
-        {
-
-            try
-            {
-                return pubKey.publicPk.GetEncodedContents();
-            }
-            catch (IOException e)
-            {
-                throw new PgpException("exception preparing key.", e);
-            }
-
-        }
 
     }
 

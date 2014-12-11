@@ -20,12 +20,12 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
     public class PgpPublicKey
     {
 
-        private static readonly int[] MasterKeyCertificationTypes = new int[]
+        private static readonly PgpSignatures[] MasterKeyCertificationTypes = new PgpSignatures[]
         {
-            PgpSignature.PositiveCertification,
-            PgpSignature.CasualCertification,
-            PgpSignature.NoCertification,
-            PgpSignature.DefaultCertification
+            PgpSignatures.PositiveCertification,
+            PgpSignatures.CasualCertification,
+            PgpSignatures.NoCertification,
+            PgpSignatures.DefaultCertification
         };
 
         #region Data
@@ -93,7 +93,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
                 {
                     while (ns < keySigs.Count)
                     {
-                        if (keySigs[ns++].SignatureType == PgpSignature.KeyRevocation)
+                        if (keySigs[ns++].SignatureType == PgpSignatures.KeyRevocation)
                             return true;
                     }
                 }
@@ -101,7 +101,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
                 // Sub-key
                 while (ns < subSigs.Count)
                 {
-                    if ((subSigs[ns++]).SignatureType == PgpSignature.SubkeyRevocation)
+                    if ((subSigs[ns++]).SignatureType == PgpSignatures.SubkeyRevocation)
                         return true;
                 }
 
@@ -129,7 +129,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
         /// <param name="time">Date of creation.</param>
         /// <exception cref="ArgumentException">If <c>pubKey</c> is not public.</exception>
         /// <exception cref="PgpException">On key creation problem.</exception>
-        public PgpPublicKey(PublicKeyAlgorithmTag   algorithm,
+        public PgpPublicKey(PublicKeyAlgorithms   algorithm,
                             AsymmetricKeyParameter  pubKey,
                             DateTime                time)
         {
@@ -384,7 +384,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
                 }
                 else
                 {
-                    long seconds = GetExpirationTimeFromSig(false, PgpSignature.SubkeyBinding);
+                    long seconds = GetExpirationTimeFromSig(false, PgpSignatures.SubkeyBinding);
 
                     if (seconds >= 0)
                     {
@@ -416,22 +416,21 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
         }
 
 
-        private long GetExpirationTimeFromSig(bool    selfSigned,
-                                              int     signatureType)
+        private long GetExpirationTimeFromSig(Boolean        selfSigned,
+                                              PgpSignatures  signatureType)
         {
 
-            foreach (PgpSignature sig in GetSignaturesOfType(signatureType))
+            foreach (var sig in GetSignaturesOfType(signatureType))
             {
                 if (!selfSigned || sig.KeyId == KeyId)
                 {
-                    PgpSignatureSubpacketVector hashed = sig.GetHashedSubPackets();
 
+                    var hashed = sig.HashedSubPackets;
                     if (hashed != null)
-                    {
                         return hashed.GetKeyExpirationTime();
-                    }
 
                     return 0;
+
                 }
             }
 
@@ -470,10 +469,10 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
             {
                 switch (publicPk.Algorithm)
                 {
-                    case PublicKeyAlgorithmTag.ElGamalEncrypt:
-                    case PublicKeyAlgorithmTag.ElGamalGeneral:
-                    case PublicKeyAlgorithmTag.RsaEncrypt:
-                    case PublicKeyAlgorithmTag.RsaGeneral:
+                    case PublicKeyAlgorithms.ElGamalEncrypt:
+                    case PublicKeyAlgorithms.ElGamalGeneral:
+                    case PublicKeyAlgorithms.RsaEncrypt:
+                    case PublicKeyAlgorithms.RsaGeneral:
                         return true;
                     default:
                         return false;
@@ -488,7 +487,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
         }
 
         /// <summary>The algorithm code associated with the public key.</summary>
-        public PublicKeyAlgorithmTag Algorithm
+        public PublicKeyAlgorithms Algorithm
         {
             get { return publicPk.Algorithm; }
         }
@@ -508,16 +507,16 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
             {
                 switch (publicPk.Algorithm)
                 {
-                    case PublicKeyAlgorithmTag.RsaEncrypt:
-                    case PublicKeyAlgorithmTag.RsaGeneral:
-                    case PublicKeyAlgorithmTag.RsaSign:
+                    case PublicKeyAlgorithms.RsaEncrypt:
+                    case PublicKeyAlgorithms.RsaGeneral:
+                    case PublicKeyAlgorithms.RsaSign:
                         RsaPublicBcpgKey rsaK = (RsaPublicBcpgKey) publicPk.Key;
                         return new RsaKeyParameters(false, rsaK.Modulus, rsaK.PublicExponent);
-                    case PublicKeyAlgorithmTag.Dsa:
+                    case PublicKeyAlgorithms.Dsa:
                         DsaPublicBcpgKey dsaK = (DsaPublicBcpgKey) publicPk.Key;
                         return new DsaPublicKeyParameters(dsaK.Y, new DsaParameters(dsaK.P, dsaK.Q, dsaK.G));
-                    case PublicKeyAlgorithmTag.ElGamalEncrypt:
-                    case PublicKeyAlgorithmTag.ElGamalGeneral:
+                    case PublicKeyAlgorithms.ElGamalEncrypt:
+                    case PublicKeyAlgorithms.ElGamalGeneral:
                         ElGamalPublicBcpgKey elK = (ElGamalPublicBcpgKey) publicPk.Key;
                         return new ElGamalPublicKeyParameters(elK.Y, new ElGamalParameters(elK.P, elK.G));
                     default:
@@ -606,7 +605,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
         /// <summary>Allows enumeration of signatures of the passed in type that are on this key.</summary>
         /// <param name="SignatureType">The type of the signature to be returned.</param>
         /// <returns>An <c>IEnumerable</c> of <c>PgpSignature</c> objects.</returns>
-        public IEnumerable<PgpSignature> GetSignaturesOfType(Int32 SignatureType)
+        public IEnumerable<PgpSignature> GetSignaturesOfType(PgpSignatures SignatureType)
         {
             return GetSignatures().Where(sig => sig.SignatureType == SignatureType);
         }
@@ -851,13 +850,13 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
 
             if (key.IsMasterKey)
             {
-                if (certification.SignatureType == PgpSignature.SubkeyRevocation)
+                if (certification.SignatureType == PgpSignatures.SubkeyRevocation)
                     throw new ArgumentException("signature type incorrect for master key revocation.");
             }
 
             else
             {
-                if (certification.SignatureType == PgpSignature.KeyRevocation)
+                if (certification.SignatureType == PgpSignatures.KeyRevocation)
                     throw new ArgumentException("signature type incorrect for sub-key revocation.");
             }
 

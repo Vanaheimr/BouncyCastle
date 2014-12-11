@@ -25,17 +25,17 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
         }
 
         private static IBufferedCipher GetKeyCipher(
-            PublicKeyAlgorithmTag algorithm)
+            PublicKeyAlgorithms algorithm)
         {
             try
             {
                 switch (algorithm)
                 {
-                    case PublicKeyAlgorithmTag.RsaEncrypt:
-                    case PublicKeyAlgorithmTag.RsaGeneral:
+                    case PublicKeyAlgorithms.RsaEncrypt:
+                    case PublicKeyAlgorithms.RsaGeneral:
                         return CipherUtilities.GetCipher("RSA//PKCS1Padding");
-                    case PublicKeyAlgorithmTag.ElGamalEncrypt:
-                    case PublicKeyAlgorithmTag.ElGamalGeneral:
+                    case PublicKeyAlgorithms.ElGamalEncrypt:
+                    case PublicKeyAlgorithms.ElGamalGeneral:
                         return CipherUtilities.GetCipher("ElGamal/ECB/PKCS1Padding");
                     default:
                         throw new PgpException("unknown asymmetric algorithm: " + algorithm);
@@ -74,12 +74,12 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
         /// <summary>
         /// Return the algorithm code for the symmetric algorithm used to encrypt the data.
         /// </summary>
-        public SymmetricKeyAlgorithmTag GetSymmetricAlgorithm(
+        public SymmetricKeyAlgorithms GetSymmetricAlgorithm(
             PgpPrivateKey privKey)
         {
             byte[] plain = fetchSymmetricKeyData(privKey);
 
-            return (SymmetricKeyAlgorithmTag) plain[0];
+            return (SymmetricKeyAlgorithms) plain[0];
         }
 
         /// <summary>Return the decrypted data stream for the packet.</summary>
@@ -89,7 +89,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
             byte[] plain = fetchSymmetricKeyData(privKey);
 
             IBufferedCipher c2;
-            string cipherName = PgpUtilities.GetSymmetricCipherName((SymmetricKeyAlgorithmTag) plain[0]);
+            string cipherName = PgpUtilities.GetSymmetricCipherName((SymmetricKeyAlgorithms) plain[0]);
             string cName = cipherName;
 
             try
@@ -132,7 +132,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
                 {
                     truncStream = new TruncatedStream(encStream);
 
-                    string digestName = PgpUtilities.GetDigestName(HashAlgorithmTag.Sha1);
+                    string digestName = PgpUtilities.GetDigestName(HashAlgorithms.Sha1);
                     IDigest digest = DigestUtilities.GetDigest(digestName);
 
                     encStream = new DigestStream(truncStream, digest, null);
@@ -194,8 +194,8 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
 
             BigInteger[] keyD = keyData.GetEncSessionKey();
 
-            if (keyData.Algorithm == PublicKeyAlgorithmTag.RsaEncrypt
-                || keyData.Algorithm == PublicKeyAlgorithmTag.RsaGeneral)
+            if (keyData.Algorithm == PublicKeyAlgorithms.RsaEncrypt
+                || keyData.Algorithm == PublicKeyAlgorithms.RsaGeneral)
             {
                 c1.ProcessBytes(keyD[0].ToByteArrayUnsigned());
             }

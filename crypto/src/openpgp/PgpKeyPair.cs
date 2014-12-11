@@ -73,7 +73,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
 
         #region Constructor(s)
 
-        public PgpKeyPair(PublicKeyAlgorithmTag    algorithm,
+        public PgpKeyPair(PublicKeyAlgorithms    algorithm,
                           AsymmetricCipherKeyPair  keyPair,
                           DateTime                 time)
 
@@ -81,7 +81,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
 
         { }
 
-        public PgpKeyPair(PublicKeyAlgorithmTag   algorithm,
+        public PgpKeyPair(PublicKeyAlgorithms   algorithm,
                           AsymmetricKeyParameter  pubKey,
                           AsymmetricKeyParameter  privKey,
                           DateTime                time)

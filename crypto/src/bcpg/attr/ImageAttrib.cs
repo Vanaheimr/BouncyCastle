@@ -25,7 +25,7 @@ namespace Org.BouncyCastle.Bcpg.Attr
         }
 
         public ImageAttrib(bool forceLongLength, byte[] data)
-            : base(UserAttributeSubpacketTag.ImageAttribute, forceLongLength, data)
+            : base(UserAttributeSubpackets.ImageAttribute, forceLongLength, data)
         {
             hdrLength = ((data[1] & 0xff) << 8) | (data[0] & 0xff);
             _version = data[2] & 0xff;

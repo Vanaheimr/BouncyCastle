@@ -72,43 +72,43 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
         [Test]
         public void TestGenerateK1024H224()
         {
-            doSigGenerateTest("DSA-1024-160.sec", "DSA-1024-160.pub", HashAlgorithmTag.Sha224);
+            doSigGenerateTest("DSA-1024-160.sec", "DSA-1024-160.pub", HashAlgorithms.Sha224);
         }
 
         [Test]
         public void TestGenerateK1024H256()
         {
-            doSigGenerateTest("DSA-1024-160.sec", "DSA-1024-160.pub", HashAlgorithmTag.Sha256);
+            doSigGenerateTest("DSA-1024-160.sec", "DSA-1024-160.pub", HashAlgorithms.Sha256);
         }
 
         [Test]
         public void TestGenerateK1024H384()
         {
-            doSigGenerateTest("DSA-1024-160.sec", "DSA-1024-160.pub", HashAlgorithmTag.Sha384);
+            doSigGenerateTest("DSA-1024-160.sec", "DSA-1024-160.pub", HashAlgorithms.Sha384);
         }
 
         [Test]
         public void TestGenerateK1024H512()
         {
-            doSigGenerateTest("DSA-1024-160.sec", "DSA-1024-160.pub", HashAlgorithmTag.Sha512);
+            doSigGenerateTest("DSA-1024-160.sec", "DSA-1024-160.pub", HashAlgorithms.Sha512);
         }
 
         [Test]
         public void TestGenerateK2048H256()
         {
-            doSigGenerateTest("DSA-2048-224.sec", "DSA-2048-224.pub", HashAlgorithmTag.Sha256);
+            doSigGenerateTest("DSA-2048-224.sec", "DSA-2048-224.pub", HashAlgorithms.Sha256);
         }
 
         [Test]
         public void TestGenerateK2048H512()
         {
-            doSigGenerateTest("DSA-2048-224.sec", "DSA-2048-224.pub", HashAlgorithmTag.Sha512);
+            doSigGenerateTest("DSA-2048-224.sec", "DSA-2048-224.pub", HashAlgorithms.Sha512);
         }
 
         private void doSigGenerateTest(
             String              privateKeyFile,
             String              publicKeyFile,
-            HashAlgorithmTag    digest)
+            HashAlgorithms    digest)
         {
             PgpSecretKeyRing        secRing = loadSecretKey(privateKeyFile);
             PgpPublicKeyRing        pubRing = loadPublicKey(publicKeyFile);
@@ -116,9 +116,9 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
             byte[]                    dataBytes = Encoding.ASCII.GetBytes(data);
             MemoryStream            bOut = new MemoryStream();
             MemoryStream            testIn = new MemoryStream(dataBytes, false);
-            PgpSignatureGenerator    sGen = new PgpSignatureGenerator(PublicKeyAlgorithmTag.Dsa, digest);
+            PgpSignatureGenerator    sGen = new PgpSignatureGenerator(PublicKeyAlgorithms.Dsa, digest);
 
-            sGen.InitSign(PgpSignature.BinaryDocument, secRing.FirstSecretKey.ExtractPrivateKey("test"));
+            sGen.InitSign(PgpSignatures.BinaryDocument, secRing.FirstSecretKey.ExtractPrivateKey("test"));
 
             BcpgOutputStream bcOut = new BcpgOutputStream(bOut);
 
@@ -153,7 +153,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
             PgpOnePassSignature     ops = p1[0];
 
             Assert.AreEqual(digest, ops.HashAlgorithm);
-            Assert.AreEqual(PublicKeyAlgorithmTag.Dsa, ops.KeyAlgorithm);
+            Assert.AreEqual(PublicKeyAlgorithms.Dsa, ops.KeyAlgorithm);
 
             PgpLiteralData          p2 = (PgpLiteralData)pgpFact.NextPgpObject();
             if (!p2.ModificationTime.Equals(testDate))
@@ -174,7 +174,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
             PgpSignature sig = p3[0];
 
             Assert.AreEqual(digest, sig.HashAlgorithm);
-            Assert.AreEqual(PublicKeyAlgorithmTag.Dsa, sig.KeyAlgorithm);
+            Assert.AreEqual(PublicKeyAlgorithms.Dsa, sig.KeyAlgorithm);
 
             Assert.IsTrue(ops.Verify(sig));
         }

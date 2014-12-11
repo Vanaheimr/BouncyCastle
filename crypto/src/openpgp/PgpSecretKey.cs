@@ -32,7 +32,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
 
         internal PgpSecretKey(PgpPrivateKey             privKey,
                               PgpPublicKey              pubKey,
-                              SymmetricKeyAlgorithmTag  encAlgorithm,
+                              SymmetricKeyAlgorithms    encAlgorithm,
                               String                    passPhrase,
                               Boolean                   useSha1,
                               SecureRandom              rand)
@@ -43,7 +43,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
 
         internal PgpSecretKey(PgpPrivateKey             privKey,
                               PgpPublicKey              pubKey,
-                              SymmetricKeyAlgorithmTag  encAlgorithm,
+                              SymmetricKeyAlgorithms    encAlgorithm,
                               String                    passPhrase,
                               Boolean                   useSha1,
                               SecureRandom              rand,
@@ -56,18 +56,18 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
 
             switch (pubKey.Algorithm)
             {
-                case PublicKeyAlgorithmTag.RsaEncrypt:
-                case PublicKeyAlgorithmTag.RsaSign:
-                case PublicKeyAlgorithmTag.RsaGeneral:
+                case PublicKeyAlgorithms.RsaEncrypt:
+                case PublicKeyAlgorithms.RsaSign:
+                case PublicKeyAlgorithms.RsaGeneral:
                     RsaPrivateCrtKeyParameters rsK = (RsaPrivateCrtKeyParameters) privKey.Key;
                     secKey = new RsaSecretBcpgKey(rsK.Exponent, rsK.P, rsK.Q);
                     break;
-                case PublicKeyAlgorithmTag.Dsa:
+                case PublicKeyAlgorithms.Dsa:
                     DsaPrivateKeyParameters dsK = (DsaPrivateKeyParameters) privKey.Key;
                     secKey = new DsaSecretBcpgKey(dsK.X);
                     break;
-                case PublicKeyAlgorithmTag.ElGamalEncrypt:
-                case PublicKeyAlgorithmTag.ElGamalGeneral:
+                case PublicKeyAlgorithms.ElGamalEncrypt:
+                case PublicKeyAlgorithms.ElGamalGeneral:
                     ElGamalPrivateKeyParameters esK = (ElGamalPrivateKeyParameters) privKey.Key;
                     secKey = new ElGamalSecretBcpgKey(esK.X);
                     break;
@@ -88,7 +88,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
 
                 keyData = Arrays.Concatenate(keyData, checksumData);
 
-                if (encAlgorithm == SymmetricKeyAlgorithmTag.Null)
+                if (encAlgorithm == SymmetricKeyAlgorithms.Null)
                 {
                     if (isMasterKey)
                     {
@@ -139,10 +139,10 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
             }
         }
 
-        public PgpSecretKey(Int32                        certificationLevel,
+        public PgpSecretKey(PgpSignatures                certificationLevel,
                             PgpKeyPair                   keyPair,
                             String                       id,
-                            SymmetricKeyAlgorithmTag     encAlgorithm,
+                            SymmetricKeyAlgorithms       encAlgorithm,
                             String                       passPhrase,
                             PgpSignatureSubpacketVector  hashedPackets,
                             PgpSignatureSubpacketVector  unhashedPackets,
@@ -152,10 +152,10 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
 
         { }
 
-        public PgpSecretKey(Int32                        certificationLevel,
+        public PgpSecretKey(PgpSignatures                certificationLevel,
                             PgpKeyPair                   keyPair,
                             String                       id,
-                            SymmetricKeyAlgorithmTag     encAlgorithm,
+                            SymmetricKeyAlgorithms       encAlgorithm,
                             String                       passPhrase,
                             Boolean                      useSha1,
                             PgpSignatureSubpacketVector  hashedPackets,
@@ -166,13 +166,13 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
 
         { }
 
-        public PgpSecretKey(Int32                        certificationLevel,
-                            PublicKeyAlgorithmTag        algorithm,
+        public PgpSecretKey(PgpSignatures                certificationLevel,
+                            PublicKeyAlgorithms          algorithm,
                             AsymmetricKeyParameter       pubKey,
                             AsymmetricKeyParameter       privKey,
                             DateTime                     time,
                             String                       id,
-                            SymmetricKeyAlgorithmTag     encAlgorithm,
+                            SymmetricKeyAlgorithms       encAlgorithm,
                             String                       passPhrase,
                             PgpSignatureSubpacketVector  hashedPackets,
                             PgpSignatureSubpacketVector  unhashedPackets,
@@ -184,13 +184,13 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
 
         { }
 
-        public PgpSecretKey(Int32                         certificationLevel,
-                            PublicKeyAlgorithmTag         algorithm,
+        public PgpSecretKey(PgpSignatures                 certificationLevel,
+                            PublicKeyAlgorithms           algorithm,
                             AsymmetricKeyParameter        pubKey,
                             AsymmetricKeyParameter        privKey,
                             DateTime                      time,
                             String                        id,
-                            SymmetricKeyAlgorithmTag      encAlgorithm,
+                            SymmetricKeyAlgorithms        encAlgorithm,
                             String                        passPhrase,
                             Boolean                       useSha1,
                             PgpSignatureSubpacketVector   hashedPackets,
@@ -204,7 +204,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
         #endregion
 
 
-        private static PgpPublicKey CertifiedPublicKey(Int32                        certificationLevel,
+        private static PgpPublicKey CertifiedPublicKey(PgpSignatures                certificationLevel,
                                                        PgpKeyPair                   keyPair,
                                                        String                       id,
                                                        PgpSignatureSubpacketVector  hashedPackets,
@@ -216,7 +216,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
 
             try
             {
-                sGen = new PgpSignatureGenerator(keyPair.PublicKey.Algorithm, HashAlgorithmTag.Sha1);
+                sGen = new PgpSignatureGenerator(keyPair.PublicKey.Algorithm, HashAlgorithms.Sha1);
             }
             catch (Exception e)
             {
@@ -259,11 +259,11 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
             {
                 switch (_PublicKey.Algorithm)
                 {
-                    case PublicKeyAlgorithmTag.RsaGeneral:
-                    case PublicKeyAlgorithmTag.RsaSign:
-                    case PublicKeyAlgorithmTag.Dsa:
-                    case PublicKeyAlgorithmTag.ECDsa:
-                    case PublicKeyAlgorithmTag.ElGamalGeneral:
+                    case PublicKeyAlgorithms.RsaGeneral:
+                    case PublicKeyAlgorithms.RsaSign:
+                    case PublicKeyAlgorithms.Dsa:
+                    case PublicKeyAlgorithms.ECDsa:
+                    case PublicKeyAlgorithms.ElGamalGeneral:
                         return true;
                     default:
                         return false;
@@ -290,7 +290,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
         }
 
         /// <summary>The algorithm the key is encrypted with.</summary>
-        public SymmetricKeyAlgorithmTag KeyEncryptionAlgorithm
+        public SymmetricKeyAlgorithms KeyEncryptionAlgorithm
         {
             get { return _SecretKeyPacket.EncAlgorithm; }
         }
@@ -327,7 +327,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
             var alg      = _SecretKeyPacket.EncAlgorithm;
             var encData  = _SecretKeyPacket.GetSecretKeyData();
 
-            if (alg == SymmetricKeyAlgorithmTag.Null)
+            if (alg == SymmetricKeyAlgorithms.Null)
                 // TODO Check checksum here?
                 return encData;
 
@@ -451,9 +451,9 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
                 switch (pubPk.Algorithm)
                 {
 
-                    case PublicKeyAlgorithmTag.RsaEncrypt:
-                    case PublicKeyAlgorithmTag.RsaGeneral:
-                    case PublicKeyAlgorithmTag.RsaSign:
+                    case PublicKeyAlgorithms.RsaEncrypt:
+                    case PublicKeyAlgorithms.RsaGeneral:
+                    case PublicKeyAlgorithms.RsaSign:
                         RsaPublicBcpgKey rsaPub = (RsaPublicBcpgKey)pubPk.Key;
                         RsaSecretBcpgKey rsaPriv = new RsaSecretBcpgKey(bcpgIn);
                         RsaPrivateCrtKeyParameters rsaPrivSpec = new RsaPrivateCrtKeyParameters(
@@ -468,15 +468,15 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
                         privateKey = rsaPrivSpec;
                         break;
 
-                    case PublicKeyAlgorithmTag.Dsa:
+                    case PublicKeyAlgorithms.Dsa:
                         DsaPublicBcpgKey dsaPub = (DsaPublicBcpgKey)pubPk.Key;
                         DsaSecretBcpgKey dsaPriv = new DsaSecretBcpgKey(bcpgIn);
                         DsaParameters dsaParams = new DsaParameters(dsaPub.P, dsaPub.Q, dsaPub.G);
                         privateKey = new DsaPrivateKeyParameters(dsaPriv.X, dsaParams);
                         break;
 
-                    case PublicKeyAlgorithmTag.ElGamalEncrypt:
-                    case PublicKeyAlgorithmTag.ElGamalGeneral:
+                    case PublicKeyAlgorithms.ElGamalEncrypt:
+                    case PublicKeyAlgorithms.ElGamalGeneral:
                         ElGamalPublicBcpgKey elPub = (ElGamalPublicBcpgKey)pubPk.Key;
                         ElGamalSecretBcpgKey elPriv = new ElGamalSecretBcpgKey(bcpgIn);
                         ElGamalParameters elParams = new ElGamalParameters(elPub.P, elPub.G);
@@ -605,7 +605,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
         public static PgpSecretKey CopyWithNewPassword(PgpSecretKey              key,
                                                        String                    oldPassPhrase,
                                                        String                    newPassPhrase,
-                                                       SymmetricKeyAlgorithmTag  newEncAlgorithm,
+                                                       SymmetricKeyAlgorithms  newEncAlgorithm,
                                                        SecureRandom              rand)
         {
 
@@ -620,7 +620,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
 
             var pubKeyPacket = key._SecretKeyPacket.PublicKeyPacket;
 
-            if (newEncAlgorithm == SymmetricKeyAlgorithmTag.Null)
+            if (newEncAlgorithm == SymmetricKeyAlgorithms.Null)
             {
 
                 s2kUsage = SecretKeyPacket.UsageNone;
@@ -698,7 +698,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
         }
 
         private static Byte[] EncryptKeyData(Byte[]                    rawKeyData,
-                                             SymmetricKeyAlgorithmTag  encAlgorithm,
+                                             SymmetricKeyAlgorithms  encAlgorithm,
                                              String                    passPhrase,
                                              SecureRandom              random,
                                              out S2k                   s2k,
@@ -719,7 +719,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
 
             byte[] s2kIV = new byte[8];
             random.NextBytes(s2kIV);
-            s2k = new S2k(HashAlgorithmTag.Sha1, s2kIV, 0x60);
+            s2k = new S2k(HashAlgorithms.Sha1, s2kIV, 0x60);
 
             KeyParameter kp = PgpUtilities.MakeKeyFromPassPhrase(encAlgorithm, s2k, passPhrase);
 

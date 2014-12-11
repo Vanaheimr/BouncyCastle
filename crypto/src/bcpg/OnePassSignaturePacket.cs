@@ -1,3 +1,4 @@
+using Org.BouncyCastle.Bcpg.OpenPgp;
 using System;
 using System.IO;
 
@@ -8,9 +9,9 @@ namespace Org.BouncyCastle.Bcpg
     {
 
         private Int32                   version;
-        private Int32                   sigType;
-        private HashAlgorithmTag        hashAlgorithm;
-        private PublicKeyAlgorithmTag   keyAlgorithm;
+        private PgpSignatures           sigType;
+        private HashAlgorithms          hashAlgorithm;
+        private PublicKeyAlgorithms     keyAlgorithm;
         private UInt64                  keyId;
         private Int32                   nested;
 
@@ -18,9 +19,9 @@ namespace Org.BouncyCastle.Bcpg
         {
 
             version        = bcpgIn.ReadByte();
-            sigType        = bcpgIn.ReadByte();
-            hashAlgorithm  = (HashAlgorithmTag)      bcpgIn.ReadByte();
-            keyAlgorithm   = (PublicKeyAlgorithmTag) bcpgIn.ReadByte();
+            sigType        = (PgpSignatures)       bcpgIn.ReadByte();
+            hashAlgorithm  = (HashAlgorithms)      bcpgIn.ReadByte();
+            keyAlgorithm   = (PublicKeyAlgorithms) bcpgIn.ReadByte();
 
             keyId |= (UInt64) bcpgIn.ReadByte() << 56;
             keyId |= (UInt64) bcpgIn.ReadByte() << 48;
@@ -36,33 +37,35 @@ namespace Org.BouncyCastle.Bcpg
         }
 
         public OnePassSignaturePacket(
-            int                     sigType,
-            HashAlgorithmTag        hashAlgorithm,
-            PublicKeyAlgorithmTag   keyAlgorithm,
+            PgpSignatures           sigType,
+            HashAlgorithms          hashAlgorithm,
+            PublicKeyAlgorithms     keyAlgorithm,
             UInt64                  keyId,
-            bool                    isNested)
+            Boolean                 isNested)
         {
-            this.version = 3;
-            this.sigType = sigType;
-            this.hashAlgorithm = hashAlgorithm;
-            this.keyAlgorithm = keyAlgorithm;
-            this.keyId = keyId;
-            this.nested = (isNested) ? 0 : 1;
+
+            this.version        = 3;
+            this.sigType        = sigType;
+            this.hashAlgorithm  = hashAlgorithm;
+            this.keyAlgorithm   = keyAlgorithm;
+            this.keyId          = keyId;
+            this.nested         = (isNested) ? 0 : 1;
+
         }
 
-        public int SignatureType
+        public PgpSignatures SignatureType
         {
             get { return sigType; }
         }
 
         /// <summary>The encryption algorithm tag.</summary>
-        public PublicKeyAlgorithmTag KeyAlgorithm
+        public PublicKeyAlgorithms KeyAlgorithm
         {
             get { return keyAlgorithm; }
         }
 
         /// <summary>The hash algorithm tag.</summary>
-        public HashAlgorithmTag HashAlgorithm
+        public HashAlgorithms HashAlgorithm
         {
             get { return hashAlgorithm; }
         }
@@ -72,10 +75,10 @@ namespace Org.BouncyCastle.Bcpg
             get { return keyId; }
         }
 
-        public override void Encode(
-            BcpgOutputStream bcpgOut)
+        public override void Encode(BcpgOutputStream bcpgOut)
         {
-            MemoryStream bOut = new MemoryStream();
+
+            MemoryStream     bOut = new MemoryStream();
             BcpgOutputStream pOut = new BcpgOutputStream(bOut);
 
             pOut.Write(
@@ -89,6 +92,9 @@ namespace Org.BouncyCastle.Bcpg
             pOut.WriteByte((byte) nested);
 
             bcpgOut.WritePacket(PacketTag.OnePassSignature, bOut.ToArray(), true);
+
         }
+
     }
+
 }

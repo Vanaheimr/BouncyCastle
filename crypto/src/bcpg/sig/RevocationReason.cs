@@ -12,7 +12,7 @@ namespace Org.BouncyCastle.Bcpg
 		: SignatureSubpacket
     {
         public RevocationReason(bool isCritical, byte[] data)
-            : base(SignatureSubpacketTag.RevocationReason, isCritical, data)
+            : base(SignatureSubpackets.RevocationReason, isCritical, data)
         {
         }
 
@@ -20,7 +20,7 @@ namespace Org.BouncyCastle.Bcpg
 			bool				isCritical,
 			RevocationReasonTag	reason,
 			string				description)
-            : base(SignatureSubpacketTag.RevocationReason, isCritical, CreateData(reason, description))
+            : base(SignatureSubpackets.RevocationReason, isCritical, CreateData(reason, description))
         {
         }
 

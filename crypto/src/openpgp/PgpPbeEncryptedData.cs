@@ -35,7 +35,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
 
             try
             {
-                SymmetricKeyAlgorithmTag keyAlgorithm = keyData.EncAlgorithm;
+                SymmetricKeyAlgorithms keyAlgorithm = keyData.EncAlgorithm;
 
                 KeyParameter key = PgpUtilities.MakeKeyFromPassPhrase(
                     keyAlgorithm, keyData.S2k, passPhrase);
@@ -52,7 +52,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
 
                     byte[] keyBytes = keyCipher.DoFinal(secKeyData);
 
-                    keyAlgorithm = (SymmetricKeyAlgorithmTag) keyBytes[0];
+                    keyAlgorithm = (SymmetricKeyAlgorithms) keyBytes[0];
 
                     key = ParameterUtilities.CreateKeyParameter(
                         PgpUtilities.GetSymmetricCipherName(keyAlgorithm),
@@ -72,7 +72,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
                 {
                     truncStream = new TruncatedStream(encStream);
 
-                    string digestName = PgpUtilities.GetDigestName(HashAlgorithmTag.Sha1);
+                    string digestName = PgpUtilities.GetDigestName(HashAlgorithms.Sha1);
                     IDigest digest = DigestUtilities.GetDigest(digestName);
 
                     encStream = new DigestStream(truncStream, digest, null);
@@ -120,7 +120,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
         }
 
         private IBufferedCipher CreateStreamCipher(
-            SymmetricKeyAlgorithmTag keyAlgorithm)
+            SymmetricKeyAlgorithms keyAlgorithm)
         {
             string mode = (encData is SymmetricEncIntegrityPacket)
                 ? "CFB"

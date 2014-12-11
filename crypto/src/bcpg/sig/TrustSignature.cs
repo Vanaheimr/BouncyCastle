@@ -18,7 +18,7 @@ namespace Org.BouncyCastle.Bcpg.Sig
 		public TrustSignature(
             bool	critical,
             byte[]	data)
-            : base(SignatureSubpacketTag.TrustSig, critical, data)
+            : base(SignatureSubpackets.TrustSig, critical, data)
         {
         }
 
@@ -26,7 +26,7 @@ namespace Org.BouncyCastle.Bcpg.Sig
             bool	critical,
             int		depth,
             int		trustAmount)
-            : base(SignatureSubpacketTag.TrustSig, critical, IntToByteArray(depth, trustAmount))
+            : base(SignatureSubpackets.TrustSig, critical, IntToByteArray(depth, trustAmount))
         {
         }
 

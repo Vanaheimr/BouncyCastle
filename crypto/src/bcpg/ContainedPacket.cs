@@ -3,20 +3,28 @@ using System.IO;
 
 namespace Org.BouncyCastle.Bcpg
 {
-	/// <remarks>Basic type for a PGP packet.</remarks>
-    public abstract class ContainedPacket
-        : Packet
+
+    /// <summary>
+    /// Basic type for a PGP packet.
+    /// </summary>
+    public abstract class ContainedPacket : Packet
     {
-        public byte[] GetEncoded()
+
+        public Byte[] GetEncoded()
         {
-            MemoryStream bOut = new MemoryStream();
-            BcpgOutputStream pOut = new BcpgOutputStream(bOut);
 
-			pOut.WritePacket(this);
+            var OutputStream         = new MemoryStream();
+            var WrappedOutputStream  = new BcpgOutputStream(OutputStream);
 
-			return bOut.ToArray();
+            // Calls -> Encode(BcpgOutputStream bcpgOut)
+            WrappedOutputStream.WritePacket(this);
+
+            return OutputStream.ToArray();
+
         }
 
-		public abstract void Encode(BcpgOutputStream bcpgOut);
+        public abstract void Encode(BcpgOutputStream bcpgOut);
+
     }
+
 }

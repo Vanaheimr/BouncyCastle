@@ -24,7 +24,7 @@ namespace Org.BouncyCastle.Bcpg.Sig
         }
 
         public PreferredAlgorithms(
-            SignatureSubpacketTag        type,
+            SignatureSubpackets        type,
             bool    critical,
             byte[]     data)
             : base(type, critical, data)
@@ -32,7 +32,7 @@ namespace Org.BouncyCastle.Bcpg.Sig
         }
 
         public PreferredAlgorithms(
-            SignatureSubpacketTag        type,
+            SignatureSubpackets        type,
             bool    critical,
             int[]      preferences)
             : base(type, critical, IntToByteArray(preferences))

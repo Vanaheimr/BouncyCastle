@@ -5,13 +5,13 @@ namespace Org.BouncyCastle.Bcpg
 	/// <remarks>Basic type for a PGP Signature sub-packet.</remarks>
     public class SignatureSubpacket
     {
-        private readonly SignatureSubpacketTag type;
+        private readonly SignatureSubpackets type;
         private readonly bool critical;
 
 		internal readonly byte[] data;
 
 		protected internal SignatureSubpacket(
-            SignatureSubpacketTag	type,
+            SignatureSubpackets	type,
             bool					critical,
             byte[]					data)
         {
@@ -20,7 +20,7 @@ namespace Org.BouncyCastle.Bcpg
             this.data = data;
         }
 
-		public SignatureSubpacketTag SubpacketType
+		public SignatureSubpackets SubpacketType
         {
 			get { return type; }
         }

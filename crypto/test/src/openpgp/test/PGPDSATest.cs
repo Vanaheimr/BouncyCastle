@@ -283,9 +283,9 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
             byte[] dataBytes = Encoding.ASCII.GetBytes(data);
             MemoryStream testIn = new MemoryStream(dataBytes, false);
 
-            PgpSignatureGenerator sGen = new PgpSignatureGenerator(PublicKeyAlgorithmTag.Dsa, HashAlgorithmTag.Sha1);
+            PgpSignatureGenerator sGen = new PgpSignatureGenerator(PublicKeyAlgorithms.Dsa, HashAlgorithms.Sha1);
 
-            sGen.InitSign(PgpSignature.BinaryDocument, pgpPrivKey);
+            sGen.InitSign(PgpSignatures.BinaryDocument, pgpPrivKey);
 
             PgpSignatureSubpacketGenerator spGen = new PgpSignatureSubpacketGenerator();
 
@@ -298,7 +298,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
             sGen.SetHashedSubpackets(spGen.Generate());
 
             PgpCompressedDataGenerator cGen = new PgpCompressedDataGenerator(
-                CompressionAlgorithmTag.Zip);
+                CompressionAlgorithms.Zip);
 
             BcpgOutputStream bcOut = new BcpgOutputStream(cGen.Open(new UncloseableStream(bOut)));
 
@@ -418,12 +418,12 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
             MemoryStream bOut = new MemoryStream();
             MemoryStream testIn = new MemoryStream(dataBytes, false);
             PgpSignatureGenerator sGen = new PgpSignatureGenerator(
-                PublicKeyAlgorithmTag.Dsa, HashAlgorithmTag.Sha1);
+                PublicKeyAlgorithms.Dsa, HashAlgorithms.Sha1);
 
-            sGen.InitSign(PgpSignature.CanonicalTextDocument, pgpPrivKey);
+            sGen.InitSign(PgpSignatures.CanonicalTextDocument, pgpPrivKey);
 
             PgpCompressedDataGenerator  cGen = new PgpCompressedDataGenerator(
-                CompressionAlgorithmTag.Zip);
+                CompressionAlgorithms.Zip);
 
             BcpgOutputStream bcOut = new BcpgOutputStream(cGen.Open(new UncloseableStream(bOut)));
 
@@ -568,7 +568,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
 
             AsymmetricCipherKeyPair kp = kpg.GenerateKeyPair();
 
-            PgpKeyPair pgpKp = new PgpKeyPair(PublicKeyAlgorithmTag.Dsa,
+            PgpKeyPair pgpKp = new PgpKeyPair(PublicKeyAlgorithms.Dsa,
                 kp.Public, kp.Private, DateTime.UtcNow);
 
             PgpPublicKey k1 = pgpKp.PublicKey;

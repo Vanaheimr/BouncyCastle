@@ -29,14 +29,14 @@ namespace Org.BouncyCastle.Bcpg.Sig
         public PrimaryUserId(
             bool    critical,
             byte[]     data)
-            : base(SignatureSubpacketTag.PrimaryUserId, critical, data)
+            : base(SignatureSubpackets.PrimaryUserId, critical, data)
         {
         }
 
         public PrimaryUserId(
             bool    critical,
             bool    isPrimaryUserId)
-            : base(SignatureSubpacketTag.PrimaryUserId, critical, BooleanToByteArray(isPrimaryUserId))
+            : base(SignatureSubpackets.PrimaryUserId, critical, BooleanToByteArray(isPrimaryUserId))
         {
         }
 

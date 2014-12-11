@@ -33,18 +33,17 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Examples
                 PgpPublicKey key = ring.GetPublicKey();
 
                 // iterate through all direct key signautures and look for NotationData subpackets
-                foreach (PgpSignature sig in key.GetSignaturesOfType(PgpSignature.DirectKey))
+                foreach (PgpSignature sig in key.GetSignaturesOfType(PgpSignatures.DirectKey))
                 {
                     Console.WriteLine("Signature date is: "
-                        + sig.GetHashedSubPackets().GetSignatureCreationTime());
+                        + sig.HashedSubPackets.GetSignatureCreationTime());
 
-                    NotationData[] data = sig.GetHashedSubPackets().GetNotationDataOccurences();
-
-                    for (int i = 0; i < data.Length; i++)
+                    foreach (var data in sig.HashedSubPackets.GetNotationDataOccurences())
                     {
-                        Console.WriteLine("Found Notaion named '" + data[i].GetNotationName()
-                            +"' with content '" + data[i].GetNotationValue() + "'.");
+                        Console.WriteLine("Found Notaion named '" + data.GetNotationName()
+                            +"' with content '" + data.GetNotationValue() + "'.");
                     }
+
                 }
 
                 fis.Close();
@@ -108,9 +107,9 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Examples
 
             var pgpPrivKey = secretKey.ExtractPrivateKey(secretKeyPass);
 
-            var sGen = new PgpSignatureGenerator(secretKey.PublicKey.Algorithm, HashAlgorithmTag.Sha1);
+            var sGen = new PgpSignatureGenerator(secretKey.PublicKey.Algorithm, HashAlgorithms.Sha1);
 
-            sGen.InitSign(PgpSignature.DirectKey, pgpPrivKey);
+            sGen.InitSign(PgpSignatures.DirectKey, pgpPrivKey);
 
             var bOut = new BcpgOutputStream(os);
 

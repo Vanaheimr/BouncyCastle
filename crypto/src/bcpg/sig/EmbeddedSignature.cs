@@ -11,7 +11,7 @@ namespace Org.BouncyCastle.Bcpg.Sig
 		public EmbeddedSignature(
 			bool	critical,
 			byte[]	data)
-			: base(SignatureSubpacketTag.EmbeddedSignature, critical, data)
+			: base(SignatureSubpackets.EmbeddedSignature, critical, data)
 		{
 		}
 	}

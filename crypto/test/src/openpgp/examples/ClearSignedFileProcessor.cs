@@ -163,7 +163,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Examples
 
             sigIn.Close();
 
-            if (sig.Verify())
+            if (sig.IsValid)
                 Console.WriteLine("signature verified.");
 
             else
@@ -184,32 +184,32 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Examples
                                      String  digestName)
         {
 
-            HashAlgorithmTag HashAlgorithm;
+            HashAlgorithms HashAlgorithm;
 
             if (digestName.Equals("SHA256"))
-                HashAlgorithm = HashAlgorithmTag.Sha256;
+                HashAlgorithm = HashAlgorithms.Sha256;
 
             else if (digestName.Equals("SHA384"))
-                HashAlgorithm = HashAlgorithmTag.Sha384;
+                HashAlgorithm = HashAlgorithms.Sha384;
 
             else if (digestName.Equals("SHA512"))
-                HashAlgorithm = HashAlgorithmTag.Sha512;
+                HashAlgorithm = HashAlgorithms.Sha512;
 
             else if (digestName.Equals("MD5"))
-                HashAlgorithm = HashAlgorithmTag.MD5;
+                HashAlgorithm = HashAlgorithms.MD5;
 
             else if (digestName.Equals("RIPEMD160"))
-                HashAlgorithm = HashAlgorithmTag.RipeMD160;
+                HashAlgorithm = HashAlgorithms.RipeMD160;
 
             else
-                HashAlgorithm = HashAlgorithmTag.Sha1;
+                HashAlgorithm = HashAlgorithms.Sha1;
 
             var SecretKey                    = PgpExampleUtilities.ReadSecretKey(keyIn);
             var PrivateKey                   = SecretKey.ExtractPrivateKey(pass);
             var SignatureGenerator           = new PgpSignatureGenerator(SecretKey.PublicKey.Algorithm, HashAlgorithm);
             var SignatureSubpacketGenerator  = new PgpSignatureSubpacketGenerator();
 
-            SignatureGenerator.InitSign(PgpSignature.CanonicalTextDocument, PrivateKey);
+            SignatureGenerator.InitSign(PgpSignatures.CanonicalTextDocument, PrivateKey);
 
             foreach (var UserId in SecretKey.PublicKey.GetUserIds())
             {
@@ -265,7 +265,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Examples
 
             // note: trailing white space needs to be removed from the end of
             // each line for signature calculation RFC 4880 Section 7.1
-            int length = GetLengthWithoutWhiteSpace(line);
+            var length = GetLengthWithoutWhiteSpace(line);
             if (length > 0)
             {
                 sig.Update(line, 0, length);
@@ -281,7 +281,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Examples
             var length = GetLengthWithoutWhiteSpace(line);
 
             if (length > 0)
-                sGen.Update(line, 0, length);
+                sGen.Update(line, 0, (Int32) length);
 
             aOut.Write(line, 0, line.Length);
 
@@ -304,10 +304,10 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Examples
             return b == '\r' || b == '\n';
         }
 
-        private static int GetLengthWithoutWhiteSpace(byte[] line)
+        private static UInt64 GetLengthWithoutWhiteSpace(byte[] line)
         {
 
-            int end = line.Length - 1;
+            var end = (UInt64) line.Length - 1;
 
             while (end >= 0 && IsWhiteSpace(line[end]))
             {

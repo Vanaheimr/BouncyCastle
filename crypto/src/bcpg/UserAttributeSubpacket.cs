@@ -10,23 +10,23 @@ namespace Org.BouncyCastle.Bcpg
     */
     public class UserAttributeSubpacket
     {
-        internal readonly UserAttributeSubpacketTag	type;
+        internal readonly UserAttributeSubpackets	type;
         private readonly bool longLength;   // we preserve this as not everyone encodes length properly.
         protected readonly byte[] data;
 
-        protected internal UserAttributeSubpacket(UserAttributeSubpacketTag type, byte[] data)
+        protected internal UserAttributeSubpacket(UserAttributeSubpackets type, byte[] data)
             : this(type, false, data)
         {
         }
 
-        protected internal UserAttributeSubpacket(UserAttributeSubpacketTag type, bool forceLongLength, byte[] data)
+        protected internal UserAttributeSubpacket(UserAttributeSubpackets type, bool forceLongLength, byte[] data)
         {
             this.type = type;
             this.longLength = forceLongLength;
             this.data = data;
         }
 
-        public virtual UserAttributeSubpacketTag SubpacketType
+        public virtual UserAttributeSubpackets SubpacketType
         {
             get { return type; }
         }

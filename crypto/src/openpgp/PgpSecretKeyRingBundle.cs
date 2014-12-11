@@ -66,7 +66,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
                     throw new PgpException(SecretKeyRing.GetType().FullName + " found where PgpSecretKeyRing expected");
                 }
 
-                var key = pgpSecret.GetPublicKey().KeyId;
+                var key = pgpSecret.FirstPublicKey.KeyId;
                 secretRings.Add(key, pgpSecret);
                 order.Add(key);
 
@@ -223,7 +223,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
             foreach (var key in order)
             {
                 var pub = secretRings[key];
-                pub.Encode(bcpgOut);
+                pub.EncodeToStream(bcpgOut);
             }
 
         }
@@ -240,7 +240,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
                                                               PgpSecretKeyRing        secretKeyRing)
         {
 
-            var key = secretKeyRing.GetPublicKey().KeyId;
+            var key = secretKeyRing.FirstPublicKey.KeyId;
 
             if (bundle.secretRings.ContainsKey(key))
                 throw new ArgumentException("Collection already contains a key with a keyId for the passed in ring.");
@@ -267,7 +267,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
                                                                  PgpSecretKeyRing        secretKeyRing)
         {
 
-            var key = secretKeyRing.GetPublicKey().KeyId;
+            var key = secretKeyRing.FirstPublicKey.KeyId;
 
             if (!bundle.secretRings.ContainsKey(key))
                 throw new ArgumentException("Collection does not contain a key with a keyId for the passed in ring.");

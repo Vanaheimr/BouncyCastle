@@ -29,12 +29,12 @@ namespace Org.BouncyCastle.Bcpg.Sig
 
         public IssuerKeyId(Boolean  critical,
                            Byte[]   data)
-            : base(SignatureSubpacketTag.IssuerKeyId, critical, data)
+            : base(SignatureSubpackets.IssuerKeyId, critical, data)
         { }
 
         public IssuerKeyId(Boolean  critical,
                            UInt64   keyId)
-            : base(SignatureSubpacketTag.IssuerKeyId, critical, KeyIdToBytes(keyId))
+            : base(SignatureSubpackets.IssuerKeyId, critical, KeyIdToBytes(keyId))
         { }
 
         public UInt64 KeyId

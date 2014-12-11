@@ -10,7 +10,7 @@ namespace Org.BouncyCastle.Bcpg
         : ContainedPacket
     {
         private int version;
-        private SymmetricKeyAlgorithmTag encAlgorithm;
+        private SymmetricKeyAlgorithms encAlgorithm;
         private S2k s2k;
         private readonly byte[] secKeyData;
 
@@ -18,7 +18,7 @@ namespace Org.BouncyCastle.Bcpg
             BcpgInputStream bcpgIn)
         {
             version = bcpgIn.ReadByte();
-            encAlgorithm = (SymmetricKeyAlgorithmTag) bcpgIn.ReadByte();
+            encAlgorithm = (SymmetricKeyAlgorithms) bcpgIn.ReadByte();
 
             s2k = new S2k(bcpgIn);
 
@@ -26,7 +26,7 @@ namespace Org.BouncyCastle.Bcpg
         }
 
 		public SymmetricKeyEncSessionPacket(
-            SymmetricKeyAlgorithmTag	encAlgorithm,
+            SymmetricKeyAlgorithms	encAlgorithm,
             S2k							s2k,
             byte[]						secKeyData)
         {
@@ -39,7 +39,7 @@ namespace Org.BouncyCastle.Bcpg
         /**
         * @return int
         */
-        public SymmetricKeyAlgorithmTag EncAlgorithm
+        public SymmetricKeyAlgorithms EncAlgorithm
         {
 			get { return encAlgorithm; }
         }

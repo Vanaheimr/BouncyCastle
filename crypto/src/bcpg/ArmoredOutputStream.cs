@@ -111,7 +111,7 @@ namespace Org.BouncyCastle.Bcpg
          * Start a clear text signed message.
          * @param hashAlgorithm
          */
-        public void BeginClearText(HashAlgorithmTag  hashAlgorithm)
+        public void BeginClearText(HashAlgorithms  hashAlgorithm)
         {
 
             String hash;
@@ -119,31 +119,31 @@ namespace Org.BouncyCastle.Bcpg
             switch (hashAlgorithm)
             {
 
-                case HashAlgorithmTag.Sha1:
+                case HashAlgorithms.Sha1:
                     hash = "SHA1";
                     break;
 
-                case HashAlgorithmTag.Sha256:
+                case HashAlgorithms.Sha256:
                     hash = "SHA256";
                     break;
 
-                case HashAlgorithmTag.Sha384:
+                case HashAlgorithms.Sha384:
                     hash = "SHA384";
                     break;
 
-                case HashAlgorithmTag.Sha512:
+                case HashAlgorithms.Sha512:
                     hash = "SHA512";
                     break;
 
-                case HashAlgorithmTag.MD2:
+                case HashAlgorithms.MD2:
                     hash = "MD2";
                     break;
 
-                case HashAlgorithmTag.MD5:
+                case HashAlgorithms.MD5:
                     hash = "MD5";
                     break;
 
-                case HashAlgorithmTag.RipeMD160:
+                case HashAlgorithms.RipeMD160:
                     hash = "RIPEMD160";
                     break;
 

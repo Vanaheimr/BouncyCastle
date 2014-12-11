@@ -123,10 +123,10 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Examples
 
             try
             {
-                byte[] compressedData = PgpExampleUtilities.CompressFile(fileName, CompressionAlgorithmTag.Zip);
+                byte[] compressedData = PgpExampleUtilities.CompressFile(fileName, CompressionAlgorithms.Zip);
 
                 PgpEncryptedDataGenerator encGen = new PgpEncryptedDataGenerator(
-                    SymmetricKeyAlgorithmTag.Cast5, withIntegrityCheck, new SecureRandom());
+                    SymmetricKeyAlgorithms.Cast5, withIntegrityCheck, new SecureRandom());
                 encGen.AddMethod(passPhrase);
 
                 Stream encOut = encGen.Open(outputStream, compressedData.Length);

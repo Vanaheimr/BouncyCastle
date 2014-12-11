@@ -43,15 +43,15 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Examples
                 secretOut = new ArmoredOutputStream(secretOut);
             }
 
-            PgpKeyPair dsaKeyPair = new PgpKeyPair(PublicKeyAlgorithmTag.Dsa, dsaKp, DateTime.UtcNow);
-            PgpKeyPair elgKeyPair = new PgpKeyPair(PublicKeyAlgorithmTag.ElGamalEncrypt, elgKp, DateTime.UtcNow);
+            PgpKeyPair dsaKeyPair = new PgpKeyPair(PublicKeyAlgorithms.Dsa, dsaKp, DateTime.UtcNow);
+            PgpKeyPair elgKeyPair = new PgpKeyPair(PublicKeyAlgorithms.ElGamalEncrypt, elgKp, DateTime.UtcNow);
 
-            PgpKeyRingGenerator keyRingGen = new PgpKeyRingGenerator(PgpSignature.PositiveCertification, dsaKeyPair,
-                identity, SymmetricKeyAlgorithmTag.Aes256, passPhrase, true, null, null, new SecureRandom());
+            PgpKeyRingGenerator keyRingGen = new PgpKeyRingGenerator(PgpSignatures.PositiveCertification, dsaKeyPair,
+                identity, SymmetricKeyAlgorithms.Aes256, passPhrase, true, null, null, new SecureRandom());
 
             keyRingGen.AddSubKey(elgKeyPair);
 
-            keyRingGen.GenerateSecretKeyRing().Encode(secretOut);
+            keyRingGen.GenerateSecretKeyRing().EncodeToStream(secretOut);
 
             if (armor)
             {

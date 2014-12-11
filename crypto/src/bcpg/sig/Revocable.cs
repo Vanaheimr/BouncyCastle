@@ -29,14 +29,14 @@ namespace Org.BouncyCastle.Bcpg.Sig
         public Revocable(
             bool    critical,
             byte[]     data)
-            : base(SignatureSubpacketTag.Revocable, critical, data)
+            : base(SignatureSubpackets.Revocable, critical, data)
     {
         }
 
         public Revocable(
             bool    critical,
             bool    isRevocable)
-            : base(SignatureSubpacketTag.Revocable, critical, BooleanToByteArray(isRevocable))
+            : base(SignatureSubpackets.Revocable, critical, BooleanToByteArray(isRevocable))
     {
         }
 

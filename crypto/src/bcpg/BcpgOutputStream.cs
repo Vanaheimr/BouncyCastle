@@ -136,17 +136,17 @@ namespace Org.BouncyCastle.Bcpg
 
         private void WriteNewPacketLength(long bodyLen)
         {
+
             if (bodyLen < 192)
-            {
                 outStr.WriteByte((byte)bodyLen);
-            }
+
             else if (bodyLen <= 8383)
             {
                 bodyLen -= 192;
-
                 outStr.WriteByte((byte)(((bodyLen >> 8) & 0xff) + 192));
                 outStr.WriteByte((byte)bodyLen);
             }
+
             else
             {
                 outStr.WriteByte(0xff);
@@ -155,14 +155,15 @@ namespace Org.BouncyCastle.Bcpg
                 outStr.WriteByte((byte)(bodyLen >> 8));
                 outStr.WriteByte((byte)bodyLen);
             }
+
         }
 
-        private void WriteHeader(
-            PacketTag    tag,
-            bool        oldPackets,
-            bool        partial,
-            long        bodyLen)
+        private void WriteHeader(PacketTag  tag,
+                                 Boolean    oldPackets,
+                                 Boolean    partial,
+                                 Int64      bodyLen)
         {
+
             int hdr = 0x80;
 
             if (partialBuffer != null)
@@ -202,6 +203,7 @@ namespace Org.BouncyCastle.Bcpg
                     }
                 }
             }
+
             else
             {
                 hdr |= 0x40 | (int) tag;
@@ -216,6 +218,7 @@ namespace Org.BouncyCastle.Bcpg
                     this.WriteNewPacketLength(bodyLen);
                 }
             }
+
         }
 
         private void PartialFlush(bool isLast)
@@ -339,26 +342,26 @@ namespace Org.BouncyCastle.Bcpg
 
         internal virtual void WriteULong(UInt64 n)
         {
-            this.Write(
-                (byte)(n >> 56),
-                (byte)(n >> 48),
-                (byte)(n >> 40),
-                (byte)(n >> 32),
-                (byte)(n >> 24),
-                (byte)(n >> 16),
-                (byte)(n >> 8),
-                (byte)n);
+
+            this.Write((byte) (n >> 56),
+                       (byte) (n >> 48),
+                       (byte) (n >> 40),
+                       (byte) (n >> 32),
+                       (byte) (n >> 24),
+                       (byte) (n >> 16),
+                       (byte) (n >> 8),
+                       (byte) n);
+
         }
 
-        public void WritePacket(ContainedPacket p)
+        public void WritePacket(ContainedPacket containedPacket)
         {
-            p.Encode(this);
+            containedPacket.Encode(this);
         }
 
-        internal void WritePacket(
-            PacketTag    tag,
-            byte[]        body,
-            bool        oldFormat)
+        internal void WritePacket(PacketTag  tag,
+                                  Byte[]     body,
+                                  Boolean    oldFormat)
         {
             this.WriteHeader(tag, oldFormat, false, body.Length);
             this.Write(body);

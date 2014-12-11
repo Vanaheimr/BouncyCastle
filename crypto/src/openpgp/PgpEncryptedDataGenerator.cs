@@ -27,7 +27,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
             : ContainedPacket
         {
             protected byte[]                    sessionInfo;
-            protected SymmetricKeyAlgorithmTag  encAlgorithm;
+            protected SymmetricKeyAlgorithms  encAlgorithm;
             protected KeyParameter              key;
 
             public abstract void AddSessionInfo(byte[] si, SecureRandom random);
@@ -39,7 +39,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
             private S2k s2k;
 
             internal PbeMethod(
-                SymmetricKeyAlgorithmTag  encAlgorithm,
+                SymmetricKeyAlgorithms  encAlgorithm,
                 S2k                       s2k,
                 KeyParameter              key)
             {
@@ -95,17 +95,17 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
 
                 switch (pubKey.Algorithm)
                 {
-                    case PublicKeyAlgorithmTag.RsaEncrypt:
-                    case PublicKeyAlgorithmTag.RsaGeneral:
+                    case PublicKeyAlgorithms.RsaEncrypt:
+                    case PublicKeyAlgorithms.RsaGeneral:
                         c = CipherUtilities.GetCipher("RSA//PKCS1Padding");
                         break;
-                    case PublicKeyAlgorithmTag.ElGamalEncrypt:
-                    case PublicKeyAlgorithmTag.ElGamalGeneral:
+                    case PublicKeyAlgorithms.ElGamalEncrypt:
+                    case PublicKeyAlgorithms.ElGamalGeneral:
                         c = CipherUtilities.GetCipher("ElGamal/ECB/PKCS1Padding");
                         break;
-                    case PublicKeyAlgorithmTag.Dsa:
+                    case PublicKeyAlgorithms.Dsa:
                         throw new PgpException("Can't use DSA for encryption.");
-                    case PublicKeyAlgorithmTag.ECDsa:
+                    case PublicKeyAlgorithms.ECDsa:
                         throw new PgpException("Can't use ECDSA for encryption.");
                     default:
                         throw new PgpException("unknown asymmetric algorithm: " + pubKey.Algorithm);
@@ -119,12 +119,12 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
 
                 switch (pubKey.Algorithm)
                 {
-                    case PublicKeyAlgorithmTag.RsaEncrypt:
-                    case PublicKeyAlgorithmTag.RsaGeneral:
+                    case PublicKeyAlgorithms.RsaEncrypt:
+                    case PublicKeyAlgorithms.RsaGeneral:
                         data = new BigInteger[]{ new BigInteger(1, encKey) };
                         break;
-                    case PublicKeyAlgorithmTag.ElGamalEncrypt:
-                    case PublicKeyAlgorithmTag.ElGamalGeneral:
+                    case PublicKeyAlgorithms.ElGamalEncrypt:
+                    case PublicKeyAlgorithms.ElGamalGeneral:
                         int halfLength = encKey.Length / 2;
                         data = new BigInteger[]
                         {
@@ -146,18 +146,18 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
         }
 
         private readonly IList methods = Platform.CreateArrayList();
-        private readonly SymmetricKeyAlgorithmTag defAlgorithm;
+        private readonly SymmetricKeyAlgorithms defAlgorithm;
         private readonly SecureRandom rand;
 
         public PgpEncryptedDataGenerator(
-            SymmetricKeyAlgorithmTag encAlgorithm)
+            SymmetricKeyAlgorithms encAlgorithm)
         {
             this.defAlgorithm = encAlgorithm;
             this.rand = new SecureRandom();
         }
 
         public PgpEncryptedDataGenerator(
-            SymmetricKeyAlgorithmTag    encAlgorithm,
+            SymmetricKeyAlgorithms    encAlgorithm,
             bool                        withIntegrityPacket)
         {
             this.defAlgorithm = encAlgorithm;
@@ -169,7 +169,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
         /// <param name="encAlgorithm">The symmetric algorithm to use.</param>
         /// <param name="rand">Source of randomness.</param>
         public PgpEncryptedDataGenerator(
-            SymmetricKeyAlgorithmTag    encAlgorithm,
+            SymmetricKeyAlgorithms    encAlgorithm,
             SecureRandom                rand)
         {
             this.defAlgorithm = encAlgorithm;
@@ -178,7 +178,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
 
         /// <summary>Creates a cipher stream which will have an integrity packet associated with it.</summary>
         public PgpEncryptedDataGenerator(
-            SymmetricKeyAlgorithmTag    encAlgorithm,
+            SymmetricKeyAlgorithms    encAlgorithm,
             bool                        withIntegrityPacket,
             SecureRandom                rand)
         {
@@ -192,7 +192,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
         /// <param name="rand">Source of randomness.</param>
         /// <param name="oldFormat">PGP 2.6.x compatibility required.</param>
         public PgpEncryptedDataGenerator(
-            SymmetricKeyAlgorithmTag    encAlgorithm,
+            SymmetricKeyAlgorithms    encAlgorithm,
             SecureRandom                rand,
             bool                        oldFormat)
         {
@@ -207,13 +207,13 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
         public void AddMethod(
             String passPhrase) 
         {
-            AddMethod(passPhrase, HashAlgorithmTag.Sha1);
+            AddMethod(passPhrase, HashAlgorithms.Sha1);
         }
 
         /// <summary>Add a PBE encryption method to the encrypted object.</summary>
         public void AddMethod(
             String passPhrase,
-            HashAlgorithmTag    s2kDigest)
+            HashAlgorithms    s2kDigest)
         {
             byte[] iv = new byte[8];
             rand.NextBytes(iv);
@@ -253,7 +253,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
         }
 
         private byte[] CreateSessionInfo(
-            SymmetricKeyAlgorithmTag    algorithm,
+            SymmetricKeyAlgorithms    algorithm,
             KeyParameter                key)
         {
             byte[] keyBytes = key.GetKey();
@@ -400,7 +400,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
 
                 if (withIntegrityPacket)
                 {
-                    string digestName = PgpUtilities.GetDigestName(HashAlgorithmTag.Sha1);
+                    string digestName = PgpUtilities.GetDigestName(HashAlgorithms.Sha1);
                     IDigest digest = DigestUtilities.GetDigest(digestName);
                     myOut = digestOut = new DigestStream(myOut, null, digest);
                 }
