@@ -12,17 +12,55 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
     /// <summary>
     /// Container for a list of signature subpackets.
     /// </summary>
-    public class PgpSignatureSubpacketVector
+    public class PgpSignatureSubpacketVector : IEnumerable<SignatureSubpacket>
     {
 
+        #region Data
+
         private readonly List<SignatureSubpacket> packets;
+
+        #endregion
+
+        #region Properties
+
+        #region Count
+
+        /// <summary>
+        /// The number of packets this vector contains.
+        /// </summary>
+        public UInt64 Count
+        {
+            get
+            {
+                return (UInt64)packets.Count;
+            }
+        }
+
+        #endregion
+
+        #region CriticalTags
+
+        public IEnumerable<SignatureSubpackets> CriticalTags
+        {
+            get
+            {
+                return packets.Where (packet => packet.IsCritical()).
+                               Select(packet => packet.SubpacketType);
+            }
+        }
+
+        #endregion
+
+        #endregion
+
+        #region Constructor(s)
 
         internal PgpSignatureSubpacketVector(IEnumerable<SignatureSubpacket> packets)
         {
             this.packets = new List<SignatureSubpacket>(packets);
         }
 
-
+        #endregion
 
 
         public SignatureSubpacket GetSubpacket(SignatureSubpackets type)
@@ -55,7 +93,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
          * @param type type to look for.
          * @return true if present, false otherwise.
          */
-        public bool HasSubpacket(SignatureSubpackets type)
+        public Boolean HasSubpacket(SignatureSubpackets type)
         {
             return GetSubpacket(type) != null;
         }
@@ -87,7 +125,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
             return GetSubpacket2<IssuerKeyId, UInt64>(SignatureSubpackets.IssuerKeyId, item => item.KeyId);
         }
 
-        public bool HasSignatureCreationTime()
+        public Boolean HasSignatureCreationTime()
         {
             return GetSubpacket2<SignatureCreationTime, Boolean>(SignatureSubpackets.CreationTime, item => item != null);
             //return GetSubpacket(SignatureSubpackets.CreationTime) != null;
@@ -131,81 +169,78 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
 
         public int[] GetPreferredSymmetricAlgorithms()
         {
-            SignatureSubpacket p = GetSubpacket(SignatureSubpackets.PreferredSymmetricAlgorithms);
 
-            return p == null ? null : ((PreferredAlgorithms) p).GetPreferences();
+            var p = GetSubpacket(SignatureSubpackets.PreferredSymmetricAlgorithms);
+
+            return p == null
+                ? null
+                : ((PreferredAlgorithms) p).GetPreferences();
+
         }
 
         public int[] GetPreferredCompressionAlgorithms()
         {
-            SignatureSubpacket p = GetSubpacket(SignatureSubpackets.PreferredCompressionAlgorithms);
 
-            return p == null ? null : ((PreferredAlgorithms) p).GetPreferences();
+            var p = GetSubpacket(SignatureSubpackets.PreferredCompressionAlgorithms);
+
+            return p == null
+                ? null
+                : ((PreferredAlgorithms) p).GetPreferences();
+
         }
 
         public int GetKeyFlags()
         {
-            SignatureSubpacket p = GetSubpacket(SignatureSubpackets.KeyFlags);
 
-            return p == null ? 0 : ((KeyFlags) p).Flags;
+            var p = GetSubpacket(SignatureSubpackets.KeyFlags);
+
+            return p == null
+                ? 0
+                : ((KeyFlags) p).Flags;
+
         }
 
-        public string GetSignerUserId()
+        public String GetSignerUserId()
         {
-            SignatureSubpacket p = GetSubpacket(SignatureSubpackets.SignerUserId);
 
-            return p == null ? null : ((SignerUserId) p).GetId();
+            var p = GetSubpacket(SignatureSubpackets.SignerUserId);
+
+            return p == null
+                ? null
+                : ((SignerUserId) p).GetId();
+
         }
 
         public bool IsPrimaryUserId()
         {
-            PrimaryUserId primaryId = (PrimaryUserId)
-                this.GetSubpacket(SignatureSubpackets.PrimaryUserId);
+
+            var primaryId = (PrimaryUserId) this.GetSubpacket(SignatureSubpackets.PrimaryUserId);
 
             if (primaryId != null)
-            {
                 return primaryId.IsPrimaryUserId();
-            }
 
             return false;
+
         }
 
-        public SignatureSubpackets[] GetCriticalTags()
+        
+
+
+
+
+        #region IEnumerable Members
+
+        public IEnumerator<SignatureSubpacket> GetEnumerator()
         {
-            int count = 0;
-            for (int i = 0; i != packets.Count; i++)
-            {
-                if (packets[i].IsCritical())
-                {
-                    count++;
-                }
-            }
-
-            SignatureSubpackets[] list = new SignatureSubpackets[count];
-
-            count = 0;
-
-            for (int i = 0; i != packets.Count; i++)
-            {
-                if (packets[i].IsCritical())
-                {
-                    list[count++] = packets[i].SubpacketType;
-                }
-            }
-
-            return list;
+            return packets.GetEnumerator();
         }
 
-        /// <summary>Return the number of packets this vector contains.</summary>
-        public int Count
+        IEnumerator IEnumerable.GetEnumerator()
         {
-            get { return packets.Count; }
+            return packets.GetEnumerator();
         }
 
-        internal IEnumerable<SignatureSubpacket> ToSubpacketArray()
-        {
-            return packets;
-        }
+        #endregion
 
     }
 

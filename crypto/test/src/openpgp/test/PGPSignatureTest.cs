@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.Linq;
 using System.Text;
 
 using NUnit.Framework;
@@ -445,14 +446,14 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
             prefAlgs = hashedPcks.GetPreferredSymmetricAlgorithms();
             preferredAlgorithmCheck("symmetric", PREFERRED_SYMMETRIC_ALGORITHMS, prefAlgs);
 
-            SignatureSubpackets[] criticalHashed = hashedPcks.GetCriticalTags();
+            var criticalHashed = hashedPcks.CriticalTags;
 
-            if (criticalHashed.Length != 1)
+            if (criticalHashed.Count() != 1)
             {
                 Fail("wrong number of critical packets found.");
             }
 
-            if (criticalHashed[0] != SignatureSubpackets.SignerUserId)
+            if (criticalHashed.First() != SignatureSubpackets.SignerUserId)
             {
                 Fail("wrong critical packet found in tag list.");
             }
@@ -568,9 +569,9 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
                 Fail("unexpected signer user ID found");
             }
 
-            criticalHashed = hashedPcks.GetCriticalTags();
+            criticalHashed = hashedPcks.CriticalTags;
 
-            if (criticalHashed.Length != 0)
+            if (criticalHashed.Count() != 0)
             {
                 Fail("critical packets found when none expected");
             }
