@@ -121,61 +121,61 @@
     <Compile Include="bzip2\src\CRC.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\asn1\ASN1Encodable.cs">
+    <Compile Include="src\asn1\Asn1Encodable.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\asn1\ASN1EncodableVector.cs">
+    <Compile Include="src\asn1\Asn1EncodableVector.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="src\asn1\Asn1Exception.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\asn1\ASN1Generator.cs">
+    <Compile Include="src\asn1\Asn1Generator.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\asn1\ASN1InputStream.cs">
+    <Compile Include="src\asn1\Asn1InputStream.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\asn1\ASN1Null.cs">
+    <Compile Include="src\asn1\Asn1Null.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\asn1\ASN1Object.cs">
+    <Compile Include="src\asn1\Asn1Object.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\asn1\ASN1OctetString.cs">
+    <Compile Include="src\asn1\Asn1OctetString.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\asn1\ASN1OctetStringParser.cs">
+    <Compile Include="src\asn1\Asn1OctetStringParser.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\asn1\ASN1OutputStream.cs">
+    <Compile Include="src\asn1\Asn1OutputStream.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="src\asn1\Asn1ParsingException.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\asn1\ASN1Sequence.cs">
+    <Compile Include="src\asn1\Asn1Sequence.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\asn1\ASN1SequenceParser.cs">
+    <Compile Include="src\asn1\Asn1SequenceParser.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\asn1\ASN1Set.cs">
+    <Compile Include="src\asn1\Asn1Set.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\asn1\ASN1SetParser.cs">
+    <Compile Include="src\asn1\Asn1SetParser.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\asn1\ASN1StreamParser.cs">
+    <Compile Include="src\asn1\Asn1StreamParser.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\asn1\ASN1TaggedObject.cs">
+    <Compile Include="src\asn1\Asn1TaggedObject.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\asn1\ASN1TaggedObjectParser.cs">
+    <Compile Include="src\asn1\Asn1TaggedObjectParser.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\asn1\ASN1Tags.cs">
+    <Compile Include="src\asn1\Asn1Tags.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="src\asn1\bc\BCObjectIdentifiers.cs">
@@ -856,7 +856,7 @@
     <Compile Include="src\asn1\kisa\KISAObjectIdentifiers.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\asn1\LazyASN1InputStream.cs">
+    <Compile Include="src\asn1\LazyAsn1InputStream.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="src\asn1\LazyDERSequence.cs">
@@ -1090,7 +1090,7 @@
     <Compile Include="src\asn1\tsp\TSTInfo.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\asn1\util\ASN1Dump.cs">
+    <Compile Include="src\asn1\util\Asn1Dump.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="src\asn1\util\Dump.cs">
@@ -4039,10 +4039,10 @@
     <Compile Include="test\src\asn1\test\AllTests.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="test\src\asn1\test\ASN1SequenceParserTest.cs">
+    <Compile Include="test\src\asn1\test\Asn1SequenceParserTest.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="test\src\asn1\test\ASN1UnitTest.cs">
+    <Compile Include="test\src\asn1\test\Asn1UnitTest.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="test\src\asn1\test\AttributeTableUnitTest.cs">
