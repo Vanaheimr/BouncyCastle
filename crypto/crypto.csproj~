@@ -3418,7 +3418,7 @@
     <Compile Include="src\openpgp\PgpOnePassSignatureList.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\openpgp\PgpPbeEncryptedData.cs">
+    <Compile Include="src\openpgp\PgpPBEEncryptedData.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="src\openpgp\PgpPrivateKey.cs">
