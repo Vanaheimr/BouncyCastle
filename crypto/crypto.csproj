@@ -181,52 +181,52 @@
     <Compile Include="src\asn1\bc\BCObjectIdentifiers.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\asn1\BERApplicationSpecific.cs">
+    <Compile Include="src\asn1\BerApplicationSpecific.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\asn1\BERApplicationSpecificParser.cs">
+    <Compile Include="src\asn1\BerApplicationSpecificParser.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\asn1\BERGenerator.cs">
+    <Compile Include="src\asn1\BerGenerator.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\asn1\BERNull.cs">
+    <Compile Include="src\asn1\BerNull.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\asn1\BEROctetString.cs">
+    <Compile Include="src\asn1\BerOctetString.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\asn1\BEROctetStringGenerator.cs">
+    <Compile Include="src\asn1\BerOctetStringGenerator.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\asn1\BEROctetStringParser.cs">
+    <Compile Include="src\asn1\BerOctetStringParser.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\asn1\BEROutputStream.cs">
+    <Compile Include="src\asn1\BerOutputStream.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\asn1\BERSequence.cs">
+    <Compile Include="src\asn1\BerSequence.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\asn1\BERSequenceGenerator.cs">
+    <Compile Include="src\asn1\BerSequenceGenerator.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\asn1\BERSequenceParser.cs">
+    <Compile Include="src\asn1\BerSequenceParser.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\asn1\BERSet.cs">
+    <Compile Include="src\asn1\BerSet.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\asn1\BERSetGenerator.cs">
+    <Compile Include="src\asn1\BerSetGenerator.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\asn1\BERSetParser.cs">
+    <Compile Include="src\asn1\BerSetParser.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\asn1\BERTaggedObject.cs">
+    <Compile Include="src\asn1\BerTaggedObject.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\asn1\BERTaggedObjectParser.cs">
+    <Compile Include="src\asn1\BerTaggedObjectParser.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="src\asn1\cmp\CAKeyUpdAnnContent.cs">
@@ -580,100 +580,100 @@
     <Compile Include="src\asn1\DefiniteLengthInputStream.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\asn1\DERApplicationSpecific.cs">
+    <Compile Include="src\asn1\DerApplicationSpecific.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\asn1\DERBitString.cs">
+    <Compile Include="src\asn1\DerBitString.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\asn1\DERBMPString.cs">
+    <Compile Include="src\asn1\DerBmpString.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\asn1\DERBoolean.cs">
+    <Compile Include="src\asn1\DerBoolean.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\asn1\DEREnumerated.cs">
+    <Compile Include="src\asn1\DerEnumerated.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\asn1\DERExternal.cs">
+    <Compile Include="src\asn1\DerExternal.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\asn1\DERExternalParser.cs">
+    <Compile Include="src\asn1\DerExternalParser.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\asn1\DERGeneralizedTime.cs">
+    <Compile Include="src\asn1\DerGeneralizedTime.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\asn1\DERGeneralString.cs">
+    <Compile Include="src\asn1\DerGeneralString.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\asn1\DERGenerator.cs">
+    <Compile Include="src\asn1\DerGenerator.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\asn1\DERIA5String.cs">
+    <Compile Include="src\asn1\DerIA5String.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\asn1\DERInteger.cs">
+    <Compile Include="src\asn1\DerInteger.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\asn1\DERNull.cs">
+    <Compile Include="src\asn1\DerNull.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\asn1\DERNumericString.cs">
+    <Compile Include="src\asn1\DerNumericString.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\asn1\DERObjectIdentifier.cs">
+    <Compile Include="src\asn1\DerObjectIdentifier.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\asn1\DEROctetString.cs">
+    <Compile Include="src\asn1\DerOctetString.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\asn1\DEROctetStringParser.cs">
+    <Compile Include="src\asn1\DerOctetStringParser.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\asn1\DEROutputStream.cs">
+    <Compile Include="src\asn1\DerOutputStream.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\asn1\DERPrintableString.cs">
+    <Compile Include="src\asn1\DerPrintableString.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\asn1\DERSequence.cs">
+    <Compile Include="src\asn1\DerSequence.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\asn1\DERSequenceGenerator.cs">
+    <Compile Include="src\asn1\DerSequenceGenerator.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\asn1\DERSequenceParser.cs">
+    <Compile Include="src\asn1\DerSequenceParser.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\asn1\DERSet.cs">
+    <Compile Include="src\asn1\DerSet.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\asn1\DERSetGenerator.cs">
+    <Compile Include="src\asn1\DerSetGenerator.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\asn1\DERSetParser.cs">
+    <Compile Include="src\asn1\DerSetParser.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="src\asn1\DerStringBase.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\asn1\DERT61String.cs">
+    <Compile Include="src\asn1\DerT61String.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\asn1\DERTaggedObject.cs">
+    <Compile Include="src\asn1\DerTaggedObject.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\asn1\DERUniversalString.cs">
+    <Compile Include="src\asn1\DerUniversalString.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\asn1\DERUTCTime.cs">
+    <Compile Include="src\asn1\DerUtcTime.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\asn1\DERUTF8String.cs">
+    <Compile Include="src\asn1\DerUtf8String.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\asn1\DERVisibleString.cs">
+    <Compile Include="src\asn1\DerVisibleString.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="src\asn1\eac\EACObjectIdentifiers.cs">
@@ -859,10 +859,10 @@
     <Compile Include="src\asn1\LazyAsn1InputStream.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\asn1\LazyDERSequence.cs">
+    <Compile Include="src\asn1\LazyDerSequence.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\asn1\LazyDERSet.cs">
+    <Compile Include="src\asn1\LazyDerSet.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="src\asn1\LimitedInputStream.cs">
@@ -952,7 +952,7 @@
     <Compile Include="src\asn1\ocsp\TBSRequest.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\asn1\OIDTokenizer.cs">
+    <Compile Include="src\asn1\OidTokenizer.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="src\asn1\oiw\ElGamalParameter.cs">
@@ -1000,19 +1000,19 @@
     <Compile Include="src\asn1\pkcs\MacData.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\asn1\pkcs\PBEParameter.cs">
+    <Compile Include="src\asn1\pkcs\PbeParameter.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\asn1\pkcs\PBES2Parameters.cs">
+    <Compile Include="src\asn1\pkcs\PbeS2Parameters.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\asn1\pkcs\PBKDF2Params.cs">
+    <Compile Include="src\asn1\pkcs\Pbkdf2Params.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="src\asn1\pkcs\Pfx.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\asn1\pkcs\Pkcs12PBEParams.cs">
+    <Compile Include="src\asn1\pkcs\Pkcs12PbeParams.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="src\asn1\pkcs\PkcsObjectIdentifiers.cs">
@@ -1021,16 +1021,16 @@
     <Compile Include="src\asn1\pkcs\PrivateKeyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\asn1\pkcs\RC2CBCParameter.cs">
+    <Compile Include="src\asn1\pkcs\RC2CbcParameter.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\asn1\pkcs\RSAESOAEPparams.cs">
+    <Compile Include="src\asn1\pkcs\RsaesOaepParameters.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\asn1\pkcs\RSAPrivateKeyStructure.cs">
+    <Compile Include="src\asn1\pkcs\RsaPrivateKeyStructure.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\asn1\pkcs\RSASSAPSSparams.cs">
+    <Compile Include="src\asn1\pkcs\RsassaPssParameters.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="src\asn1\pkcs\SafeBag.cs">
@@ -1402,13 +1402,13 @@
     <Compile Include="src\bcpg\attr\ImageAttrib.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\bcpg\BCPGInputStream.cs">
+    <Compile Include="src\bcpg\BcpgInputStream.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\bcpg\BCPGObject.cs">
+    <Compile Include="src\bcpg\BcpgObject.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\bcpg\BCPGOutputStream.cs">
+    <Compile Include="src\bcpg\BcpgOutputStream.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="src\bcpg\CompressedDataPacket.cs">
@@ -1420,19 +1420,19 @@
     <Compile Include="src\bcpg\ContainedPacket.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\bcpg\CRC24.cs">
+    <Compile Include="src\bcpg\Crc24.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\bcpg\DSAPublicBCPGKey.cs">
+    <Compile Include="src\bcpg\DsaPublicBcpgKey.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\bcpg\DSASecretBCPGKey.cs">
+    <Compile Include="src\bcpg\DsaSecretBcpgKey.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\bcpg\ElGamalPublicBCPGKey.cs">
+    <Compile Include="src\bcpg\ElGamalPublicBcpgKey.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\bcpg\ElGamalSecretBCPGKey.cs">
+    <Compile Include="src\bcpg\ElGamalSecretBcpgKey.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="src\bcpg\ExperimentalPacket.cs">
@@ -1483,13 +1483,13 @@
     <Compile Include="src\bcpg\PublicSubkeyPacket.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\bcpg\RSAPublicBCPGKey.cs">
+    <Compile Include="src\bcpg\RsaPublicBcpgKey.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\bcpg\RSASecretBCPGKey.cs">
+    <Compile Include="src\bcpg\RsaSecretBcpgKey.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\bcpg\S2K.cs">
+    <Compile Include="src\bcpg\S2k.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="src\bcpg\SecretKeyPacket.cs">
@@ -1516,7 +1516,7 @@
     <Compile Include="src\bcpg\sig\Exportable.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\bcpg\sig\IssuerKeyID.cs">
+    <Compile Include="src\bcpg\sig\IssuerKeyId.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="src\bcpg\sig\KeyExpirationTime.cs">
@@ -1531,7 +1531,7 @@
     <Compile Include="src\bcpg\sig\PreferredAlgorithms.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\bcpg\sig\PrimaryUserID.cs">
+    <Compile Include="src\bcpg\sig\PrimaryUserId.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="src\bcpg\sig\Revocable.cs">
@@ -1555,7 +1555,7 @@
     <Compile Include="src\bcpg\sig\SignatureExpirationTime.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\bcpg\sig\SignerUserID.cs">
+    <Compile Include="src\bcpg\sig\SignerUserId.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="src\bcpg\sig\TrustSignature.cs">
@@ -1588,121 +1588,121 @@
     <Compile Include="src\bcpg\UserAttributeSubpackets.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\bcpg\UserIDPacket.cs">
+    <Compile Include="src\bcpg\UserIdPacket.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="src\cms\BaseDigestCalculator.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\cms\CMSAttributeTableGenerationException.cs">
+    <Compile Include="src\cms\CmsAttributeTableGenerationException.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\cms\CMSAttributeTableGenerator.cs">
+    <Compile Include="src\cms\CmsAttributeTableGenerator.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\cms\CMSAuthenticatedData.cs">
+    <Compile Include="src\cms\CmsAuthenticatedData.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\cms\CMSAuthenticatedDataGenerator.cs">
+    <Compile Include="src\cms\CmsAuthenticatedDataGenerator.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\cms\CMSAuthenticatedDataParser.cs">
+    <Compile Include="src\cms\CmsAuthenticatedDataParser.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\cms\CMSAuthenticatedDataStreamGenerator.cs">
+    <Compile Include="src\cms\CmsAuthenticatedDataStreamGenerator.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\cms\CMSAuthenticatedGenerator.cs">
+    <Compile Include="src\cms\CmsAuthenticatedGenerator.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\cms\CMSAuthEnvelopedData.cs">
+    <Compile Include="src\cms\CmsAuthEnvelopedData.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\cms\CMSAuthEnvelopedGenerator.cs">
+    <Compile Include="src\cms\CmsAuthEnvelopedGenerator.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\cms\CMSCompressedData.cs">
+    <Compile Include="src\cms\CmsCompressedData.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\cms\CMSCompressedDataGenerator.cs">
+    <Compile Include="src\cms\CmsCompressedDataGenerator.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\cms\CMSCompressedDataParser.cs">
+    <Compile Include="src\cms\CmsCompressedDataParser.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\cms\CMSCompressedDataStreamGenerator.cs">
+    <Compile Include="src\cms\CmsCompressedDataStreamGenerator.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\cms\CMSContentInfoParser.cs">
+    <Compile Include="src\cms\CmsContentInfoParser.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\cms\CMSEnvelopedData.cs">
+    <Compile Include="src\cms\CmsEnvelopedData.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\cms\CMSEnvelopedDataGenerator.cs">
+    <Compile Include="src\cms\CmsEnvelopedDataGenerator.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\cms\CMSEnvelopedDataParser.cs">
+    <Compile Include="src\cms\CmsEnvelopedDataParser.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\cms\CMSEnvelopedDataStreamGenerator.cs">
+    <Compile Include="src\cms\CmsEnvelopedDataStreamGenerator.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\cms\CMSEnvelopedGenerator.cs">
+    <Compile Include="src\cms\CmsEnvelopedGenerator.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\cms\CMSEnvelopedHelper.cs">
+    <Compile Include="src\cms\CmsEnvelopedHelper.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\cms\CMSException.cs">
+    <Compile Include="src\cms\CmsException.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\cms\CMSPBEKey.cs">
+    <Compile Include="src\cms\CmsPbeKey.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\cms\CMSProcessable.cs">
+    <Compile Include="src\cms\CmsProcessable.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\cms\CMSProcessableByteArray.cs">
+    <Compile Include="src\cms\CmsProcessableByteArray.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\cms\CMSProcessableFile.cs">
+    <Compile Include="src\cms\CmsProcessableFile.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\cms\CMSProcessableInputStream.cs">
+    <Compile Include="src\cms\CmsProcessableInputStream.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\cms\CMSReadable.cs">
+    <Compile Include="src\cms\CmsReadable.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\cms\CMSSecureReadable.cs">
+    <Compile Include="src\cms\CmsSecureReadable.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\cms\CMSSignedData.cs">
+    <Compile Include="src\cms\CmsSignedData.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\cms\CMSSignedDataGenerator.cs">
+    <Compile Include="src\cms\CmsSignedDataGenerator.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\cms\CMSSignedDataParser.cs">
+    <Compile Include="src\cms\CmsSignedDataParser.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\cms\CMSSignedDataStreamGenerator.cs">
+    <Compile Include="src\cms\CmsSignedDataStreamGenerator.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\cms\CMSSignedGenerator.cs">
+    <Compile Include="src\cms\CmsSignedGenerator.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\cms\CMSSignedHelper.cs">
+    <Compile Include="src\cms\CmsSignedHelper.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\cms\CMSStreamException.cs">
+    <Compile Include="src\cms\CmsStreamException.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\cms\CMSTypedStream.cs">
+    <Compile Include="src\cms\CmsTypedStream.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\cms\CMSUtils.cs">
+    <Compile Include="src\cms\CmsUtils.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="src\cms\CounterSignatureDigestCalculator.cs">
@@ -1720,10 +1720,10 @@
     <Compile Include="src\cms\IDigestCalculator.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\cms\KEKRecipientInfoGenerator.cs">
+    <Compile Include="src\cms\KekRecipientInfoGenerator.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\cms\KEKRecipientInformation.cs">
+    <Compile Include="src\cms\KekRecipientInformation.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="src\cms\KeyAgreeRecipientInfoGenerator.cs">
@@ -1756,10 +1756,10 @@
     <Compile Include="src\cms\PasswordRecipientInformation.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\cms\Pkcs5Scheme2PBEKey.cs">
+    <Compile Include="src\cms\Pkcs5Scheme2PbeKey.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\cms\Pkcs5Scheme2UTF8PBEKey.cs">
+    <Compile Include="src\cms\Pkcs5Scheme2Utf8PbeKey.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="src\cms\RecipientId.cs">
@@ -1873,7 +1873,7 @@
     <Compile Include="src\crypto\digests\GeneralDigest.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\crypto\digests\GOST3411Digest.cs">
+    <Compile Include="src\crypto\digests\Gost3411Digest.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="src\crypto\digests\LongDigest.cs">
@@ -1891,16 +1891,16 @@
     <Compile Include="src\crypto\digests\NullDigest.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\crypto\digests\RIPEMD128Digest.cs">
+    <Compile Include="src\crypto\digests\RipeMD128Digest.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\crypto\digests\RIPEMD160Digest.cs">
+    <Compile Include="src\crypto\digests\RipeMD160Digest.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\crypto\digests\RIPEMD256Digest.cs">
+    <Compile Include="src\crypto\digests\RipeMD256Digest.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\crypto\digests\RIPEMD320Digest.cs">
+    <Compile Include="src\crypto\digests\RipeMD320Digest.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="src\crypto\digests\Sha1Digest.cs">
@@ -1945,25 +1945,25 @@
     <Compile Include="src\crypto\ec\CustomNamedCurves.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\crypto\encodings\ISO9796d1Encoding.cs">
+    <Compile Include="src\crypto\encodings\Iso9796d1Encoding.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\crypto\encodings\OAEPEncoding.cs">
+    <Compile Include="src\crypto\encodings\OaepEncoding.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="src\crypto\encodings\Pkcs1Encoding.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\crypto\engines\AESEngine.cs">
+    <Compile Include="src\crypto\engines\AesEngine.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\crypto\engines\AESFastEngine.cs">
+    <Compile Include="src\crypto\engines\AesFastEngine.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\crypto\engines\AESLightEngine.cs">
+    <Compile Include="src\crypto\engines\AesLightEngine.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\crypto\engines\AESWrapEngine.cs">
+    <Compile Include="src\crypto\engines\AesWrapEngine.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="src\crypto\engines\BlowfishEngine.cs">
@@ -1978,19 +1978,19 @@
     <Compile Include="src\crypto\engines\CamelliaWrapEngine.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\crypto\engines\CAST5Engine.cs">
+    <Compile Include="src\crypto\engines\Cast5Engine.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\crypto\engines\CAST6Engine.cs">
+    <Compile Include="src\crypto\engines\Cast6Engine.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="src\crypto\engines\ChaChaEngine.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\crypto\engines\DESedeEngine.cs">
+    <Compile Include="src\crypto\engines\DesEdeEngine.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\crypto\engines\DESedeWrapEngine.cs">
+    <Compile Include="src\crypto\engines\DesEdeWrapEngine.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="src\crypto\engines\DesEngine.cs">
@@ -1999,7 +1999,7 @@
     <Compile Include="src\crypto\engines\ElGamalEngine.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\crypto\engines\GOST28147Engine.cs">
+    <Compile Include="src\crypto\engines\Gost28147Engine.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="src\crypto\engines\HC128Engine.cs">
@@ -2008,13 +2008,13 @@
     <Compile Include="src\crypto\engines\HC256Engine.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\crypto\engines\IDEAEngine.cs">
+    <Compile Include="src\crypto\engines\IdeaEngine.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\crypto\engines\IESEngine.cs">
+    <Compile Include="src\crypto\engines\IesEngine.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\crypto\engines\ISAACEngine.cs">
+    <Compile Include="src\crypto\engines\IsaacEngine.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="src\crypto\engines\NaccacheSternEngine.cs">
@@ -2044,34 +2044,34 @@
     <Compile Include="src\crypto\engines\RC6Engine.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\crypto\engines\RFC3211WrapEngine.cs">
+    <Compile Include="src\crypto\engines\Rfc3211WrapEngine.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\crypto\engines\RFC3394WrapEngine.cs">
+    <Compile Include="src\crypto\engines\Rfc3394WrapEngine.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="src\crypto\engines\RijndaelEngine.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\crypto\engines\RSABlindedEngine.cs">
+    <Compile Include="src\crypto\engines\RsaBlindedEngine.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\crypto\engines\RSABlindingEngine.cs">
+    <Compile Include="src\crypto\engines\RsaBlindingEngine.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\crypto\engines\RSACoreEngine.cs">
+    <Compile Include="src\crypto\engines\RsaCoreEngine.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\crypto\engines\RSAEngine.cs">
+    <Compile Include="src\crypto\engines\RsaEngine.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="src\crypto\engines\Salsa20Engine.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\crypto\engines\SEEDEngine.cs">
+    <Compile Include="src\crypto\engines\SeedEngine.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\crypto\engines\SEEDWrapEngine.cs">
+    <Compile Include="src\crypto\engines\SeedWrapEngine.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="src\crypto\engines\SerpentEngine.cs">
@@ -2080,7 +2080,7 @@
     <Compile Include="src\crypto\engines\SkipjackEngine.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\crypto\engines\TEAEngine.cs">
+    <Compile Include="src\crypto\engines\TeaEngine.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="src\crypto\engines\ThreefishEngine.cs">
@@ -2089,25 +2089,25 @@
     <Compile Include="src\crypto\engines\TwofishEngine.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\crypto\engines\VMPCEngine.cs">
+    <Compile Include="src\crypto\engines\VmpcEngine.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\crypto\engines\VMPCKSA3Engine.cs">
+    <Compile Include="src\crypto\engines\VmpcKsa3Engine.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="src\crypto\engines\XSalsa20Engine.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\crypto\engines\XTEAEngine.cs">
+    <Compile Include="src\crypto\engines\XteaEngine.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\crypto\generators\BaseKDFBytesGenerator.cs">
+    <Compile Include="src\crypto\generators\BaseKdfBytesGenerator.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\crypto\generators\DESedeKeyGenerator.cs">
+    <Compile Include="src\crypto\generators\DesEdeKeyGenerator.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\crypto\generators\DESKeyGenerator.cs">
+    <Compile Include="src\crypto\generators\DesKeyGenerator.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="src\crypto\generators\DHBasicKeyPairGenerator.cs">
@@ -2125,10 +2125,10 @@
     <Compile Include="src\crypto\generators\DHParametersHelper.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\crypto\generators\DSAKeyPairGenerator.cs">
+    <Compile Include="src\crypto\generators\DsaKeyPairGenerator.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\crypto\generators\DSAParametersGenerator.cs">
+    <Compile Include="src\crypto\generators\DsaParametersGenerator.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="src\crypto\generators\ECKeyPairGenerator.cs">
@@ -2140,25 +2140,25 @@
     <Compile Include="src\crypto\generators\ElGamalParametersGenerator.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\crypto\generators\GOST3410KeyPairGenerator.cs">
+    <Compile Include="src\crypto\generators\Gost3410KeyPairGenerator.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\crypto\generators\GOST3410ParametersGenerator.cs">
+    <Compile Include="src\crypto\generators\Gost3410ParametersGenerator.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\crypto\generators\KDF1BytesGenerator.cs">
+    <Compile Include="src\crypto\generators\Kdf1BytesGenerator.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\crypto\generators\KDF2BytesGenerator.cs">
+    <Compile Include="src\crypto\generators\Kdf2BytesGenerator.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\crypto\generators\MGF1BytesGenerator.cs">
+    <Compile Include="src\crypto\generators\Mgf1BytesGenerator.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="src\crypto\generators\NaccacheSternKeyPairGenerator.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\crypto\generators\OpenSSLPBEParametersGenerator.cs">
+    <Compile Include="src\crypto\generators\OpenSslPbeParametersGenerator.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="src\crypto\generators\Pkcs12ParametersGenerator.cs">
@@ -2173,10 +2173,10 @@
     <Compile Include="src\crypto\generators\Poly1305KeyGenerator.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\crypto\generators\RSABlindingFactorGenerator.cs">
+    <Compile Include="src\crypto\generators\RsaBlindingFactorGenerator.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\crypto\generators\RSAKeyPairGenerator.cs">
+    <Compile Include="src\crypto\generators\RsaKeyPairGenerator.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="src\crypto\generators\SCrypt.cs">
@@ -2209,7 +2209,7 @@
     <Compile Include="src\crypto\IDigest.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\crypto\IDSA.cs">
+    <Compile Include="src\crypto\IDsa.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="src\crypto\IMac.cs">
@@ -2245,10 +2245,10 @@
     <Compile Include="src\crypto\KeyGenerationParameters.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\crypto\macs\CBCBlockCipherMac.cs">
+    <Compile Include="src\crypto\macs\CbcBlockCipherMac.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\crypto\macs\CFBBlockCipherMac.cs">
+    <Compile Include="src\crypto\macs\CfbBlockCipherMac.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="src\crypto\macs\CMac.cs">
@@ -2257,13 +2257,13 @@
     <Compile Include="src\crypto\macs\GMac.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\crypto\macs\GOST28147Mac.cs">
+    <Compile Include="src\crypto\macs\Gost28147Mac.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="src\crypto\macs\HMac.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\crypto\macs\ISO9797Alg3Mac.cs">
+    <Compile Include="src\crypto\macs\Iso9797Alg3Mac.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="src\crypto\macs\Poly1305.cs">
@@ -2275,28 +2275,28 @@
     <Compile Include="src\crypto\macs\SkeinMac.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\crypto\macs\VMPCMac.cs">
+    <Compile Include="src\crypto\macs\VmpcMac.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="src\crypto\MaxBytesExceededException.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\crypto\modes\CBCBlockCipher.cs">
+    <Compile Include="src\crypto\modes\CbcBlockCipher.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\crypto\modes\CCMBlockCipher.cs">
+    <Compile Include="src\crypto\modes\CcmBlockCipher.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\crypto\modes\CFBBlockCipher.cs">
+    <Compile Include="src\crypto\modes\CfbBlockCipher.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\crypto\modes\CTSBlockCipher.cs">
+    <Compile Include="src\crypto\modes\CtsBlockCipher.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\crypto\modes\EAXBlockCipher.cs">
+    <Compile Include="src\crypto\modes\EaxBlockCipher.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\crypto\modes\GCMBlockCipher.cs">
+    <Compile Include="src\crypto\modes\GcmBlockCipher.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="src\crypto\modes\gcm\BasicGcmExponentiator.cs">
@@ -2323,31 +2323,31 @@
     <Compile Include="src\crypto\modes\gcm\Tables8kGcmMultiplier.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\crypto\modes\GOFBBlockCipher.cs">
+    <Compile Include="src\crypto\modes\GofbBlockCipher.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="src\crypto\modes\IAeadBlockCipher.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\crypto\modes\OCBBlockCipher.cs">
+    <Compile Include="src\crypto\modes\OcbBlockCipher.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\crypto\modes\OFBBlockCipher.cs">
+    <Compile Include="src\crypto\modes\OfbBlockCipher.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\crypto\modes\OpenPGPCFBBlockCipher.cs">
+    <Compile Include="src\crypto\modes\OpenPgpCfbBlockCipher.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\crypto\modes\SICBlockCipher.cs">
+    <Compile Include="src\crypto\modes\SicBlockCipher.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="src\crypto\paddings\BlockCipherPadding.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\crypto\paddings\ISO10126d2Padding.cs">
+    <Compile Include="src\crypto\paddings\Iso10126d2Padding.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\crypto\paddings\ISO7816d4Padding.cs">
+    <Compile Include="src\crypto\paddings\Iso7816d4Padding.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="src\crypto\paddings\PaddedBufferedBlockCipher.cs">
@@ -2356,7 +2356,7 @@
     <Compile Include="src\crypto\paddings\Pkcs7Padding.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\crypto\paddings\TBCPadding.cs">
+    <Compile Include="src\crypto\paddings\TbcPadding.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="src\crypto\paddings\X923Padding.cs">
@@ -2365,16 +2365,16 @@
     <Compile Include="src\crypto\paddings\ZeroBytePadding.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\crypto\parameters\AEADParameters.cs">
+    <Compile Include="src\crypto\parameters\AeadParameters.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\crypto\parameters\CCMParameters.cs">
+    <Compile Include="src\crypto\parameters\CcmParameters.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\crypto\parameters\DESedeParameters.cs">
+    <Compile Include="src\crypto\parameters\DesEdeParameters.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\crypto\parameters\DESParameters.cs">
+    <Compile Include="src\crypto\parameters\DesParameters.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="src\crypto\parameters\DHKeyGenerationParameters.cs">
@@ -2395,25 +2395,25 @@
     <Compile Include="src\crypto\parameters\DHValidationParameters.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\crypto\parameters\DSAKeyGenerationParameters.cs">
+    <Compile Include="src\crypto\parameters\DsaKeyGenerationParameters.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\crypto\parameters\DSAKeyParameters.cs">
+    <Compile Include="src\crypto\parameters\DsaKeyParameters.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\crypto\parameters\DSAParameterGenerationParameters.cs">
+    <Compile Include="src\crypto\parameters\DsaParameterGenerationParameters.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\crypto\parameters\DSAParameters.cs">
+    <Compile Include="src\crypto\parameters\DsaParameters.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\crypto\parameters\DSAPrivateKeyParameters.cs">
+    <Compile Include="src\crypto\parameters\DsaPrivateKeyParameters.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\crypto\parameters\DSAPublicKeyParameters.cs">
+    <Compile Include="src\crypto\parameters\DsaPublicKeyParameters.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\crypto\parameters\DSAValidationParameters.cs">
+    <Compile Include="src\crypto\parameters\DsaValidationParameters.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="src\crypto\parameters\ECDomainParameters.cs">
@@ -2446,40 +2446,40 @@
     <Compile Include="src\crypto\parameters\ElGamalPublicKeyParameters.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\crypto\parameters\GOST3410KeyGenerationParameters.cs">
+    <Compile Include="src\crypto\parameters\Gost3410KeyGenerationParameters.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\crypto\parameters\GOST3410KeyParameters.cs">
+    <Compile Include="src\crypto\parameters\Gost3410KeyParameters.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\crypto\parameters\GOST3410Parameters.cs">
+    <Compile Include="src\crypto\parameters\Gost3410Parameters.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\crypto\parameters\GOST3410PrivateKeyParameters.cs">
+    <Compile Include="src\crypto\parameters\Gost3410PrivateKeyParameters.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\crypto\parameters\GOST3410PublicKeyParameters.cs">
+    <Compile Include="src\crypto\parameters\Gost3410PublicKeyParameters.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\crypto\parameters\GOST3410ValidationParameters.cs">
+    <Compile Include="src\crypto\parameters\Gost3410ValidationParameters.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\crypto\parameters\IESParameters.cs">
+    <Compile Include="src\crypto\parameters\IesParameters.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\crypto\parameters\IESWithCipherParameters.cs">
+    <Compile Include="src\crypto\parameters\IesWithCipherParameters.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\crypto\parameters\ISO18033KDFParameters.cs">
+    <Compile Include="src\crypto\parameters\Iso18033KdfParameters.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\crypto\parameters\KDFParameters.cs">
+    <Compile Include="src\crypto\parameters\KdfParameters.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="src\crypto\parameters\KeyParameter.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\crypto\parameters\MGFParameters.cs">
+    <Compile Include="src\crypto\parameters\MgfParameters.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="src\crypto\parameters\MqvPrivateParameters.cs">
@@ -2515,16 +2515,16 @@
     <Compile Include="src\crypto\parameters\RC5Parameters.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\crypto\parameters\RSABlindingParameters.cs">
+    <Compile Include="src\crypto\parameters\RsaBlindingParameters.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\crypto\parameters\RSAKeyGenerationParameters.cs">
+    <Compile Include="src\crypto\parameters\RsaKeyGenerationParameters.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\crypto\parameters\RSAKeyParameters.cs">
+    <Compile Include="src\crypto\parameters\RsaKeyParameters.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\crypto\parameters\RSAPrivateCrtKeyParameters.cs">
+    <Compile Include="src\crypto\parameters\RsaPrivateCrtKeyParameters.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="src\crypto\parameters\SkeinParameters.cs">
@@ -2533,7 +2533,7 @@
     <Compile Include="src\crypto\parameters\TweakableBlockCipherParameters.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\crypto\PBEParametersGenerator.cs">
+    <Compile Include="src\crypto\PbeParametersGenerator.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="src\crypto\prng\CryptoApiRandomGenerator.cs">
@@ -2554,16 +2554,16 @@
     <Compile Include="src\crypto\prng\VMPCRandomGenerator.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\crypto\signers\DSADigestSigner.cs">
+    <Compile Include="src\crypto\signers\DsaDigestSigner.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\crypto\signers\DSASigner.cs">
+    <Compile Include="src\crypto\signers\DsaSigner.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\crypto\signers\ECDSASigner.cs">
+    <Compile Include="src\crypto\signers\ECDsaSigner.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\crypto\signers\ECGOST3410Signer.cs">
+    <Compile Include="src\crypto\signers\ECGost3410Signer.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="src\crypto\signers\ECNRSigner.cs">
@@ -2572,10 +2572,10 @@
     <Compile Include="src\crypto\signers\GenericSigner.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\crypto\signers\GOST3410DigestSigner.cs">
+    <Compile Include="src\crypto\signers\Gost3410DigestSigner.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\crypto\signers\GOST3410Signer.cs">
+    <Compile Include="src\crypto\signers\Gost3410Signer.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="src\crypto\signers\HMacDsaKCalculator.cs">
@@ -2584,19 +2584,19 @@
     <Compile Include="src\crypto\signers\IDsaKCalculator.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\crypto\signers\ISO9796d2PSSSigner.cs">
+    <Compile Include="src\crypto\signers\Iso9796d2PssSigner.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\crypto\signers\ISO9796d2Signer.cs">
+    <Compile Include="src\crypto\signers\Iso9796d2Signer.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\crypto\signers\PSSSigner.cs">
+    <Compile Include="src\crypto\signers\PssSigner.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="src\crypto\signers\RandomDsaKCalculator.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\crypto\signers\RSADigestSigner.cs">
+    <Compile Include="src\crypto\signers\RsaDigestSigner.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="src\crypto\StreamBlockCipher.cs">
@@ -4279,7 +4279,7 @@
     <Compile Include="test\src\cms\test\SignedDataTest.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="test\src\crypto\examples\DESExample.cs">
+    <Compile Include="test\src\crypto\examples\DesExample.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="test\src\crypto\io\test\AllTests.cs">
