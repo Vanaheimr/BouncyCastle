@@ -259,7 +259,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
 
             foreach (var sk in secretRing.keys.Values)
             {
-                var pk = publicRing.GetPublicKey(sk.KeyId);
+                var pk = publicRing.PublicKeyByKeyId(sk.KeyId);
                 newList.Add(PgpSecretKey.ReplacePublicKey(sk, pk));
             }
 

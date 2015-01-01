@@ -5017,6 +5017,7 @@
     <Compile Include="test\src\x509\test\TestCertificateGen.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Vanaheimr\OpenPGP.cs" />
     <Content Include="Contributors.html" />
     <Content Include="License.html" />
     <Content Include="Readme.html" />

@@ -25,6 +25,32 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
 
         #endregion
 
+        #region Properties
+
+        #region AllPgpObjects
+
+        /// <summary>
+        /// Return all available objects.
+        /// </summary>
+        public IEnumerable<PgpObject> AllPgpObjects
+        {
+
+            get
+            {
+
+                PgpObject pgpObject;
+
+                while ((pgpObject = NextPgpObject()) != null)
+                    yield return pgpObject;
+
+            }
+
+        }
+
+        #endregion
+
+        #endregion
+
         #region Constructor(s)
 
         public PgpObjectFactory(Stream inputStream)
@@ -134,26 +160,6 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
             throw new IOException("unknown object in stream " + _BcpgInputStream.NextPacketTag());
 
         }
-
-
-        #region AllPgpObjects()
-
-        /// <summary>
-        /// Return all available objects.
-        /// </summary>
-        public IEnumerable<PgpObject> AllPgpObjects()
-        {
-
-            PgpObject pgpObject;
-
-            while ((pgpObject = NextPgpObject()) != null)
-            {
-                yield return pgpObject;
-            }
-
-        }
-
-        #endregion
 
     }
 

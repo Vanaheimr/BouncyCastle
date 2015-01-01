@@ -163,7 +163,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
 
             Stream dIn = p2.GetInputStream();
 
-            ops.InitVerify(pubRing.GetPublicKey());
+            ops.InitVerify(pubRing.PublicKey);
 
             while ((ch = dIn.ReadByte()) >= 0)
             {
@@ -197,7 +197,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
 
             Stream dIn = p2.GetInputStream();
 
-            ops.InitVerify(publicKey.GetPublicKey());
+            ops.InitVerify(publicKey.PublicKey);
 
             int ch;
             while ((ch = dIn.ReadByte()) >= 0)

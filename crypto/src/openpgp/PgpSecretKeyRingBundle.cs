@@ -45,7 +45,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
         /// <exception cref="PgpException">If an object is encountered which isn't a PgpSecretKeyRing.</exception>
         public PgpSecretKeyRingBundle(Stream inputStream)
             : this(new PgpObjectFactory(inputStream).
-                       AllPgpObjects().
+                       AllPgpObjects.
                        Select(po => po as PgpSecretKeyRing).
                        Where (po => po != null))
         { }

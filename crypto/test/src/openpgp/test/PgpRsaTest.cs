@@ -325,7 +325,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
             //
             PgpPublicKeyRing pgpPub = new PgpPublicKeyRing(fingerprintKey);
 
-            PgpPublicKey pubKey = pgpPub.GetPublicKey();
+            PgpPublicKey pubKey = pgpPub.PublicKey;
 
             if (!Arrays.AreEqual(pubKey.GetFingerprint(), Hex.Decode("4FFB9F0884266C715D1CEAC804A3BBFA")))
             {
@@ -337,7 +337,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
             //
             pgpPub = new PgpPublicKeyRing(testPubKey);
 
-            pubKey = pgpPub.GetPublicKey();
+            pubKey = pgpPub.PublicKey;
 
             if (!Arrays.AreEqual(pubKey.GetFingerprint(), Hex.Decode("3062363c1046a01a751946bb35586146fdf3f373")))
             {
@@ -442,7 +442,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
         {
             PgpPublicKeyRing pgpPub = new PgpPublicKeyRing(embeddedJPEGKey);
 
-            PgpPublicKey pubKey = pgpPub.GetPublicKey();
+            PgpPublicKey pubKey = pgpPub.PublicKey;
 
             int count = 0;
             foreach (PgpUserAttributeSubpacketVector attributes in pubKey.GetUserAttributes())
@@ -478,7 +478,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
             PgpPublicKeyRing pgpPub = new PgpPublicKeyRing(testPubKey);
             PgpSecretKeyRing pgpSec = new PgpSecretKeyRing(testPrivKey);
 
-            PgpPublicKey pubKey = pgpPub.GetPublicKey();
+            PgpPublicKey pubKey = pgpPub.PublicKey;
 
             PgpUserAttributeSubpacketVectorGenerator vGen = new PgpUserAttributeSubpacketVectorGenerator();
 
@@ -538,20 +538,20 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
             //
             PgpPublicKeyRing pgpPub = new PgpPublicKeyRing(testPubKey);
 
-            AsymmetricKeyParameter pubKey = pgpPub.GetPublicKey().GetKey();
+            AsymmetricKeyParameter pubKey = pgpPub.PublicKey.GetKey();
 
-            IEnumerator enumerator = pgpPub.GetPublicKey().GetUserIds().GetEnumerator();
+            IEnumerator enumerator = pgpPub.PublicKey.GetUserIds().GetEnumerator();
             enumerator.MoveNext();
             string uid = (string) enumerator.Current;
 
 
-            enumerator = pgpPub.GetPublicKey().GetSignaturesForId(uid).GetEnumerator();
+            enumerator = pgpPub.PublicKey.GetSignaturesForId(uid).GetEnumerator();
             enumerator.MoveNext();
             PgpSignature sig = (PgpSignature) enumerator.Current;
 
-            sig.InitVerify(pgpPub.GetPublicKey());
+            sig.InitVerify(pgpPub.PublicKey);
 
-            if (!sig.VerifyCertification(uid, pgpPub.GetPublicKey()))
+            if (!sig.VerifyCertification(uid, pgpPub.PublicKey))
             {
                 Fail("failed to verify certification");
             }
@@ -573,7 +573,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
             // Read the public key
             //
             PgpPublicKeyRing pgpPubV3 = new PgpPublicKeyRing(testPubKeyV3);
-            AsymmetricKeyParameter pubKeyV3 = pgpPub.GetPublicKey().GetKey();
+            AsymmetricKeyParameter pubKeyV3 = pgpPub.PublicKey.GetKey();
 
             //
             // write a V3 public key
@@ -665,7 +665,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
 
             Stream dIn = p2.GetInputStream();
 
-            ops.InitVerify(pgpPub.GetPublicKey(ops.KeyId));
+            ops.InitVerify(pgpPub.PublicKeyByKeyId(ops.KeyId));
 
             int ch;
             while ((ch = dIn.ReadByte()) >= 0)
@@ -874,7 +874,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
 
             PgpPublicKeyRing tmpRing = new PgpPublicKeyRing(keyEnc);
 
-            key = tmpRing.GetPublicKey();
+            key = tmpRing.PublicKey;
 
             IEnumerator sgEnum = key.GetSignaturesOfType(PgpSignatures.KeyRevocation).GetEnumerator();
             sgEnum.MoveNext();

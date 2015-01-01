@@ -1916,7 +1916,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
 
             try
             {
-                PgpPublicKeyRing.InsertPublicKey(pubRing1, pubRing2.GetPublicKey());
+                PgpPublicKeyRing.InsertPublicKey(pubRing1, pubRing2.PublicKey);
                 Fail("adding second master key (public) should throw an ArgumentException");
             }
             catch (ArgumentException e)

@@ -106,7 +106,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
             PgpObjectFactory pgpFact = new PgpObjectFactory(testPubKeyRing);
             PgpPublicKeyRing pgpPub = (PgpPublicKeyRing)pgpFact.NextPgpObject();
 
-            pubKey = pgpPub.GetPublicKey();
+            pubKey = pgpPub.PublicKey;
 
             if (pubKey.BitStrength != 1024)
             {
@@ -311,7 +311,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
             //
             // note: we use the DSA public key here.
             //
-            ops.InitVerify(pgpPub.GetPublicKey());
+            ops.InitVerify(pgpPub.PublicKey);
 
             while ((ch = inLd.ReadByte()) >= 0)
             {

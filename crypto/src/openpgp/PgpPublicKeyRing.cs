@@ -8,6 +8,7 @@ using System.Collections.Generic;
 
 namespace Org.BouncyCastle.Bcpg.OpenPgp
 {
+
     /// <remarks>
     /// Class to hold a single master public key and its subkeys.
     /// <p>
@@ -66,13 +67,16 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
         }
 
         /// <summary>Return the first public key in the ring.</summary>
-        public virtual PgpPublicKey GetPublicKey()
+        public virtual PgpPublicKey PublicKey
         {
-            return keys[0];
+            get
+            {
+                return keys[0];
+            }
         }
 
         /// <summary>Return the public key referred to by the passed in key ID if it is present.</summary>
-        public virtual PgpPublicKey GetPublicKey(UInt64 keyId)
+        public virtual PgpPublicKey PublicKeyByKeyId(UInt64 keyId)
         {
 
             foreach (var PublicKey in keys)

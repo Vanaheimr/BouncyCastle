@@ -367,7 +367,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
             //
             PgpPublicKeyRing pgpPub = new PgpPublicKeyRing(testPubKey);
 
-            pubKey = pgpPub.GetPublicKey();
+            pubKey = pgpPub.PublicKey;
 
             //
             // Read the private key
@@ -490,7 +490,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
             //
             pgpPub = new PgpPublicKeyRing(testPubWithUserAttr);
 
-            pubKey = pgpPub.GetPublicKey();
+            pubKey = pgpPub.PublicKey;
 
             int count = 0;
             foreach (PgpUserAttributeSubpacketVector attributes in pubKey.GetUserAttributes())
@@ -519,7 +519,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
 
             byte[]  pgpPubBytes = pgpPub.GetEncoded();
             pgpPub = new PgpPublicKeyRing(pgpPubBytes);
-            pubKey = pgpPub.GetPublicKey();
+            pubKey = pgpPub.PublicKey;
             count = 0;
 
             foreach (object ua in pubKey.GetUserAttributes())

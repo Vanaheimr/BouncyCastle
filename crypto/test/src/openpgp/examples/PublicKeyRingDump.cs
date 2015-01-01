@@ -65,8 +65,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Examples
             {
                 try
                 {
-                    //PgpPublicKey pubKey =
-                    pgpPub.GetPublicKey();
+                    PgpPublicKey pubKey = pgpPub.PublicKey;
                 }
                 catch (Exception e)
                 {

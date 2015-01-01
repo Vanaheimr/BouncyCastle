@@ -30,7 +30,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Examples
 
                 PgpPublicKeyRing ring = new PgpPublicKeyRing(
                 PgpUtilities.GetDecoderStream(fis));
-                PgpPublicKey key = ring.GetPublicKey();
+                PgpPublicKey key = ring.PublicKey;
 
                 // iterate through all direct key signautures and look for NotationData subpackets
                 foreach (PgpSignature sig in key.GetSignaturesOfType(PgpSignatures.DirectKey))
@@ -67,7 +67,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Examples
                 sRing = new PgpPublicKeyRing(
                     new MemoryStream(
                         SignPublicKey(secRing.FirstSecretKey, secretKeyPass,
-                            ring.GetPublicKey(), notationName, notationValue, true),
+                            ring.PublicKey, notationName, notationValue, true),
                         false));
                 ring = sRing;
 
