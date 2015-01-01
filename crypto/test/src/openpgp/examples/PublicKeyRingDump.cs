@@ -61,7 +61,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Examples
 
             fs.Close();
 
-            foreach (PgpPublicKeyRing pgpPub in pubRings.GetKeyRings())
+            foreach (PgpPublicKeyRing pgpPub in pubRings.KeyRings)
             {
                 try
                 {
@@ -76,7 +76,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Examples
 
                 bool first = true;
 
-                foreach (PgpPublicKey pgpKey in pgpPub.GetPublicKeys())
+                foreach (PgpPublicKey pgpKey in pgpPub.PublicKeys)
                 {
                     if (first)
                     {

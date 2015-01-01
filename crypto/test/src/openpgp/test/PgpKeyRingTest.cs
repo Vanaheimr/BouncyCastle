@@ -1069,7 +1069,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
 
             int count = 0;
 
-            foreach (PgpPublicKeyRing pgpPub1 in pubRings.GetKeyRings())
+            foreach (PgpPublicKeyRing pgpPub1 in pubRings.KeyRings)
             {
                 count++;
 
@@ -1078,7 +1078,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
 
                 PgpPublicKeyRing pgpPub2 = new PgpPublicKeyRing(bytes);
 
-                foreach (PgpPublicKey pubKey in pgpPub2.GetPublicKeys())
+                foreach (PgpPublicKey pubKey in pgpPub2.PublicKeys)
                 {
                     keyCount++;
 
@@ -1284,7 +1284,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
 
             pubRings = new PgpPublicKeyRingBundle(encRing);
 
-            foreach (PgpPublicKeyRing pgpPub1 in pubRings.GetKeyRings())
+            foreach (PgpPublicKeyRing pgpPub1 in pubRings.KeyRings)
             {
                 count++;
 
@@ -1294,7 +1294,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
 
                 PgpPublicKeyRing pgpPub2 = new PgpPublicKeyRing(bytes);
 
-                foreach (PgpPublicKey pk in pgpPub2.GetPublicKeys())
+                foreach (PgpPublicKey pk in pgpPub2.PublicKeys)
                 {
                     byte[] pkBytes = pk.GetEncoded();
 
@@ -1394,7 +1394,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
 
             pubRings = new PgpPublicKeyRingBundle(encRing);
 
-            foreach (PgpPublicKeyRing pgpPub1 in pubRings.GetKeyRings())
+            foreach (PgpPublicKeyRing pgpPub1 in pubRings.KeyRings)
             {
                 count++;
 
@@ -1404,7 +1404,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
 
                 PgpPublicKeyRing pgpPub2 = new PgpPublicKeyRing(bytes);
 
-                foreach (PgpPublicKey pubK in pgpPub2.GetPublicKeys())
+                foreach (PgpPublicKey pubK in pgpPub2.PublicKeys)
                 {
                     keyCount++;
                     pubK.GetSignatures();
@@ -1507,7 +1507,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
 
             pubRings = new PgpPublicKeyRingBundle(encRing);
 
-            foreach (PgpPublicKeyRing pgpPub1 in pubRings.GetKeyRings())
+            foreach (PgpPublicKeyRing pgpPub1 in pubRings.KeyRings)
             {
                 count++;
 
@@ -1517,7 +1517,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
 
                 PgpPublicKeyRing pgpPub2 = new PgpPublicKeyRing(bytes);
 
-                foreach (PgpPublicKey o in pgpPub2.GetPublicKeys())
+                foreach (PgpPublicKey o in pgpPub2.PublicKeys)
                 {
                     if (o == null)
                         Fail("null keyring found");
@@ -1577,9 +1577,9 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
         {
             PgpPublicKeyRingBundle pubRings = new PgpPublicKeyRingBundle(pub6);
 
-            foreach (PgpPublicKeyRing pgpPub in pubRings.GetKeyRings())
+            foreach (PgpPublicKeyRing pgpPub in pubRings.KeyRings)
             {
-                foreach (PgpPublicKey k in pgpPub.GetPublicKeys())
+                foreach (PgpPublicKey k in pgpPub.PublicKeys)
                 {
                     if (k.KeyId == 0x5ce086b5b5a18ff4L)
                     {
@@ -1610,7 +1610,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
             PgpPublicKeyRing pgpPub = new PgpPublicKeyRing(pub7);
             PgpPublicKey masterKey = null;
 
-            foreach (PgpPublicKey k in pgpPub.GetPublicKeys())
+            foreach (PgpPublicKey k in pgpPub.PublicKeys)
             {
                 if (k.IsMasterKey)
                 {
@@ -1652,7 +1652,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
 
             pubRings = new PgpPublicKeyRingBundle(encRing);
 
-            foreach (PgpPublicKeyRing pgpPub1 in pubRings.GetKeyRings())
+            foreach (PgpPublicKeyRing pgpPub1 in pubRings.KeyRings)
             {
                 count++;
 
@@ -1662,7 +1662,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
 
                 PgpPublicKeyRing pgpPub2 = new PgpPublicKeyRing(bytes);
 
-                foreach (PgpPublicKey o in pgpPub2.GetPublicKeys())
+                foreach (PgpPublicKey o in pgpPub2.PublicKeys)
                 {
                     if (o == null)
                         Fail("null key found");
@@ -1783,7 +1783,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
 
             PgpPublicKeyRing publicRing = new PgpPublicKeyRing(pub10);
 
-            foreach (PgpPublicKey pubKey in publicRing.GetPublicKeys())
+            foreach (PgpPublicKey pubKey in publicRing.PublicKeys)
             {
                 if (pubKey.ValidDays != 28)
                 {
@@ -1802,7 +1802,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
         {
             PgpPublicKeyRing pubRing = new PgpPublicKeyRing(subKeyBindingKey);
 
-            foreach (PgpPublicKey key in pubRing.GetPublicKeys())
+            foreach (PgpPublicKey key in pubRing.PublicKeys)
             {
                 if (key.GetValidSeconds() != 0)
                 {
@@ -1858,7 +1858,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
             PgpPublicKey vKey = null;
             PgpPublicKey sKey = null;
 
-            foreach (PgpPublicKey pk in pubRing.GetPublicKeys())
+            foreach (PgpPublicKey pk in pubRing.PublicKeys)
             {
                 if (pk.IsMasterKey)
                 {
@@ -1993,7 +1993,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
             PgpPublicKey vKey = null;
             PgpPublicKey sKey = null;
 
-            foreach (PgpPublicKey pk in pubRing.GetPublicKeys())
+            foreach (PgpPublicKey pk in pubRing.PublicKeys)
             {
                 if (pk.IsMasterKey)
                 {
@@ -2084,7 +2084,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
             byte[] keyRing)
         {
             PgpPublicKeyRing pubRing = new PgpPublicKeyRing(keyRing);
-            IEnumerator en = pubRing.GetPublicKeys().GetEnumerator();
+            var en = pubRing.PublicKeys.GetEnumerator();
 
             if (en.MoveNext())
             {

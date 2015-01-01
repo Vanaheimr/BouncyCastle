@@ -204,7 +204,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
             var pgpKeyID = 0UL;
             AsymmetricKeyParameter pKey = null;
 
-            foreach (PgpPublicKey pgpKey in pgpPub.GetPublicKeys())
+            foreach (PgpPublicKey pgpKey in pgpPub.PublicKeys)
             {
                 if (pgpKey.Algorithm == PublicKeyAlgorithms.ElGamalEncrypt
                     || pgpKey.Algorithm == PublicKeyAlgorithms.ElGamalGeneral)
@@ -440,7 +440,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
 
             // check sub key encoding
 
-            foreach (PgpPublicKey pgpKey in pgpPub.GetPublicKeys())
+            foreach (PgpPublicKey pgpKey in pgpPub.PublicKeys)
             {
                 if (!pgpKey.IsMasterKey)
                 {

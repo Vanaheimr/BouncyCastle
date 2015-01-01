@@ -41,7 +41,7 @@ namespace org.GraphDefined.Vanaheimr.BouncyCastle
 
             var pgpPub = new PgpPublicKeyRingBundle(PgpUtilities.GetDecoderStream(input));
 
-            foreach (var keyRing in pgpPub.GetKeyRings())
+            foreach (var keyRing in pgpPub.KeyRings)
             {
                 return keyRing.PublicKey;
             }

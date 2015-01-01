@@ -62,9 +62,9 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Examples
 
             // we just loop through the collection till we find a key suitable for encryption, in the real
             // world you would probably want to be a bit smarter about this.
-            foreach (PgpPublicKeyRing keyRing in pgpPub.GetKeyRings())
+            foreach (PgpPublicKeyRing keyRing in pgpPub.KeyRings)
             {
-                foreach (PgpPublicKey key in keyRing.GetPublicKeys())
+                foreach (PgpPublicKey key in keyRing.PublicKeys)
                 {
                     if (key.IsEncryptionKey)
                     {

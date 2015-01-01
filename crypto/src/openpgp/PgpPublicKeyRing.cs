@@ -19,7 +19,26 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
     public class PgpPublicKeyRing : PgpKeyRing
     {
 
+        #region Data
+
         private readonly List<PgpPublicKey> keys;
+
+        #endregion
+
+        #region Properties
+
+        /// <summary>Return the first public key in the ring.</summary>
+        public virtual PgpPublicKey PublicKey
+        {
+            get
+            {
+                return keys[0];
+            }
+        }
+
+        #endregion
+
+        #region Constructor(s)
 
         public PgpPublicKeyRing(Byte[] encoding)
             : this(new MemoryStream(encoding, false))
@@ -66,14 +85,11 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
 
         }
 
-        /// <summary>Return the first public key in the ring.</summary>
-        public virtual PgpPublicKey PublicKey
-        {
-            get
-            {
-                return keys[0];
-            }
-        }
+        #endregion
+
+
+
+
 
         /// <summary>Return the public key referred to by the passed in key ID if it is present.</summary>
         public virtual PgpPublicKey PublicKeyByKeyId(UInt64 keyId)
@@ -91,9 +107,12 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
 
         /// <summary>Allows enumeration of all the public keys.</summary>
         /// <returns>An <c>IEnumerable</c> of <c>PgpPublicKey</c> objects.</returns>
-        public virtual IEnumerable GetPublicKeys()
+        public virtual IEnumerable<PgpPublicKey> PublicKeys
         {
-            return new EnumerableProxy(keys);
+            get
+            {
+                return keys;
+            }
         }
 
         public virtual byte[] GetEncoded()
