@@ -22,7 +22,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
 
         public PgpLiteralData(BcpgInputStream bcpgInput)
         {
-            data = (LiteralDataPacket) bcpgInput.ReadPacket();
+            data = bcpgInput.ReadPacket<LiteralDataPacket>();
         }
 
         /// <summary>The format of the data stream - Binary or Text</summary>

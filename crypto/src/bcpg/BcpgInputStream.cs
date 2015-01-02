@@ -128,6 +128,12 @@ namespace Org.BouncyCastle.Bcpg
 
         }
 
+        public T ReadPacket<T>()
+            where T : Packet
+        {
+            return ReadPacket() as T;
+        }
+
         public Packet ReadPacket()
         {
 

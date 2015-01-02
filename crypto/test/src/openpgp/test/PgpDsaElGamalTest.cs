@@ -230,7 +230,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
             byte[] inBytes = Encoding.ASCII.GetBytes("hello world");
             byte[] outBytes = c.DoFinal(inBytes);
 
-            pgpPrivKey = sKey.GetSecretKey(pgpKeyID).ExtractPrivateKey(pass);
+            pgpPrivKey = sKey.GetSecretKeyByKeyId(pgpKeyID).ExtractPrivateKey(pass);
 
             c.Init(false, pgpPrivKey.Key);
 
@@ -337,7 +337,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
             MemoryStream cbOut = new MemoryStream();
             PgpEncryptedDataGenerator cPk = new PgpEncryptedDataGenerator(
                 SymmetricKeyAlgorithms.TripleDes, random);
-            PgpPublicKey puK = sKey.GetSecretKey(pgpKeyID).PublicKey;
+            PgpPublicKey puK = sKey.GetSecretKeyByKeyId(pgpKeyID).PublicKey;
 
             cPk.AddMethod(puK);
 
@@ -353,7 +353,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
 
             encP = (PgpPublicKeyEncryptedData)encList[0];
 
-            pgpPrivKey = sKey.GetSecretKey(pgpKeyID).ExtractPrivateKey(pass);
+            pgpPrivKey = sKey.GetSecretKeyByKeyId(pgpKeyID).ExtractPrivateKey(pass);
 
             clear = encP.GetDataStream(pgpPrivKey);
             outBytes = Streams.ReadAll(clear);

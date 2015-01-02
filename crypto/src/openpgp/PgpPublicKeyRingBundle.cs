@@ -103,28 +103,6 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
         #endregion
 
 
-
-
-        /// <summary>
-        /// Allow enumeration of the key rings associated with the passed in userId.
-        /// </summary>
-        /// <param name="userId">The user ID to be matched.</param>
-        public IEnumerable<PgpPublicKeyRing> GetKeyRings(String userId)
-        {
-            return GetKeyRings(userId, false, false);
-        }
-
-        /// <summary>
-        /// Allow enumeration of the key rings associated with the passed in userId.
-        /// </summary>
-        /// <param name="userId">The user ID to be matched.</param>
-        /// <param name="matchPartial">If true, userId need only be a substring of an actual ID string to match.</param>
-        public IEnumerable<PgpPublicKeyRing> GetKeyRings(String   userId,
-                                                         Boolean  matchPartial)
-        {
-            return GetKeyRings(userId, matchPartial, false);
-        }
-
         /// <summary>
         /// Allow enumeration of the key rings associated with the passed in userId.
         /// </summary>
@@ -132,8 +110,8 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
         /// <param name="matchPartial">If true, userId need only be a substring of an actual ID string to match.</param>
         /// <param name="ignoreCase">If true, case is ignored in user ID comparisons.</param>
         public IEnumerable<PgpPublicKeyRing> GetKeyRings(String   userId,
-                                                         Boolean  matchPartial,
-                                                         Boolean  ignoreCase)
+                                                         Boolean  matchPartial = false,
+                                                         Boolean  ignoreCase   = false)
         {
 
             var rings = new List<PgpPublicKeyRing>();
@@ -174,14 +152,14 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
         /// <summary>
         /// Return the PGP public key associated with the given key id.
         /// </summary>
-        /// <param name="keyId">The ID of the public key to return.</param>
-        public PgpPublicKey GetPublicKey(UInt64 keyId)
+        /// <param name="KeyId">The ID of the public key to return.</param>
+        public PgpPublicKey GetPublicKey(UInt64 KeyId)
         {
 
             foreach (var pubRing in KeyRings)
             {
 
-                var pub = pubRing.PublicKeyByKeyId(keyId);
+                var pub = pubRing.GetPublicKeyByKeyId(KeyId);
 
                 if (pub != null)
                     return pub;
@@ -195,17 +173,17 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
         /// <summary>
         /// Return the public key ring which contains the key referred to by keyId.
         /// </summary>
-        /// <param name="keyId">key ID to match against</param>
-        public PgpPublicKeyRing GetPublicKeyRing(UInt64 keyId)
+        /// <param name="KeyId">key ID to match against</param>
+        public PgpPublicKeyRing GetPublicKeyRing(UInt64 KeyId)
         {
 
-            if (pubRings.ContainsKey(keyId))
-                return pubRings[keyId];
+            if (pubRings.ContainsKey(KeyId))
+                return pubRings[KeyId];
 
             foreach (var pubRing in KeyRings)
             {
 
-                var pub = pubRing.PublicKeyByKeyId(keyId);
+                var pub = pubRing.GetPublicKeyByKeyId(KeyId);
 
                 if (pub != null)
                     return pubRing;
@@ -219,10 +197,10 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
         /// <summary>
         /// Return true if a key matching the passed in key ID is present, false otherwise.
         /// </summary>
-        /// <param name="keyID">key ID to look for.</param>
-        public Boolean Contains(UInt64 keyID)
+        /// <param name="KeyId">key ID to look for.</param>
+        public Boolean Contains(UInt64 KeyId)
         {
-            return GetPublicKey(keyID) != null;
+            return GetPublicKey(KeyId) != null;
         }
 
 

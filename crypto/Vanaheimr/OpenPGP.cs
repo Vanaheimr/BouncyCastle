@@ -79,7 +79,7 @@ namespace org.GraphDefined.Vanaheimr.BouncyCastle
                                                    String          Passphrase,
                                                    HashAlgorithms  HashAlgorithm  = HashAlgorithms.Sha512,
                                                    Boolean         ArmoredOutput  = true,
-                                                   UInt32          BufferSize     = 2*1024*1024) // 2 MByte
+                                                   UInt32          BufferSize     = 2*1024*1024) // Bytes
         {
 
             #region Init signature generator

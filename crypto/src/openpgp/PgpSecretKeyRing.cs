@@ -127,7 +127,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
                 throw new IOException("secret key ring doesn't start with secret key tag: "
                     + "tag 0x" + ((int)initialTag).ToString("X"));
 
-            var secret = (SecretKeyPacket) bcpgInput.ReadPacket();
+            var secret = bcpgInput.ReadPacket<SecretKeyPacket>();
 
             // ignore GPG comment packets if found.
             while (bcpgInput.NextPacketTag() == PacketTag.Experimental2)
@@ -136,12 +136,12 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
             var trust = ReadOptionalTrustPacket(bcpgInput);
 
             // revocation and direct signatures
-            var keySigs = ReadSignaturesAndTrust(bcpgInput);
+            var keySigs = new List<PgpSignature>(ReadSignaturesAndTrust(bcpgInput));
 
             List<Object>              ids;
             List<TrustPacket>         idTrusts;
             List<List<PgpSignature>>  idSigs;
-            ReadUserIDs(bcpgInput, out ids, out idTrusts, out idSigs);
+            ReadUserIds(bcpgInput, out ids, out idTrusts, out idSigs);
 
             var newSecretKey = new PgpSecretKey(secret, new PgpPublicKey(secret.PublicKeyPacket, trust, keySigs, ids, idTrusts, idSigs));
             keys.Add(newSecretKey.KeyId, newSecretKey);
@@ -155,18 +155,14 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
                 if (bcpgInput.NextPacketTag() == PacketTag.SecretSubkey)
                 {
 
-                    var sub = (SecretSubkeyPacket) bcpgInput.ReadPacket();
+                    var sub = bcpgInput.ReadPacket<SecretSubkeyPacket>();
 
-                    //
                     // ignore GPG comment packets if found.
-                    //
                     while (bcpgInput.NextPacketTag() == PacketTag.Experimental2)
-                    {
                         bcpgInput.ReadPacket();
-                    }
 
                     var subTrust = ReadOptionalTrustPacket(bcpgInput);
-                    var sigList = ReadSignaturesAndTrust(bcpgInput);
+                    var sigList  = new List<PgpSignature>(ReadSignaturesAndTrust(bcpgInput));
 
                     var newSecretKey2 = new PgpSecretKey(sub, new PgpPublicKey(sub.PublicKeyPacket, subTrust, sigList));
                     keys.Add(newSecretKey2.KeyId, newSecretKey2);
@@ -176,9 +172,9 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
                 else
                 {
 
-                    var sub      = bcpgInput.ReadPacket() as PublicSubkeyPacket;
+                    var sub      = bcpgInput.ReadPacket<PublicSubkeyPacket>();
                     var subTrust = ReadOptionalTrustPacket(bcpgInput);
-                    var sigList  = ReadSignaturesAndTrust(bcpgInput);
+                    var sigList  = new List<PgpSignature>(ReadSignaturesAndTrust(bcpgInput));
 
                     var newPublicKey = new PgpPublicKey(sub, subTrust, sigList);
                     extraPubKeys.Add(newPublicKey.KeyId, newPublicKey);
@@ -225,22 +221,30 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
 
 
 
+        #region GetSecretKeyByKeyId(KeyId)
 
-
-        public PgpSecretKey GetSecretKey(UInt64 keyId)
+        public PgpSecretKey GetSecretKeyByKeyId(UInt64 KeyId)
         {
 
-            foreach (var k in keys.Values)
-            {
-                if (keyId == k.KeyId)
-                    return k;
-            }
+            PgpSecretKey _PgpSecretKey = null;
+
+            if (keys.TryGetValue(KeyId, out _PgpSecretKey))
+                return _PgpSecretKey;
 
             return null;
 
         }
 
+        #endregion
 
+        #region TryGetSecretKeyByKeyId(KeyId, out PgpSecretKey)
+
+        public Boolean TryGetSecretKeyByKeyId(UInt64 KeyId, out PgpSecretKey PgpSecretKey)
+        {
+            return keys.TryGetValue(KeyId, out PgpSecretKey);
+        }
+
+        #endregion
 
 
 
@@ -249,17 +253,17 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
         /// <summary>
         /// Replace the public key set on the secret ring with the corresponding key off the public ring.
         /// </summary>
-        /// <param name="secretRing">Secret ring to be changed.</param>
-        /// <param name="publicRing">Public ring containing the new public key set.</param>
-        public static PgpSecretKeyRing ReplacePublicKeys(PgpSecretKeyRing  secretRing,
-                                                         PgpPublicKeyRing  publicRing)
+        /// <param name="SecretRing">Secret ring to be changed.</param>
+        /// <param name="PublicRing">Public ring containing the new public key set.</param>
+        public static PgpSecretKeyRing ReplacePublicKeys(PgpSecretKeyRing  SecretRing,
+                                                         PgpPublicKeyRing  PublicRing)
         {
 
             var newList = new List<PgpSecretKey>();
 
-            foreach (var sk in secretRing.keys.Values)
+            foreach (var sk in SecretRing.keys.Values)
             {
-                var pk = publicRing.PublicKeyByKeyId(sk.KeyId);
+                var pk = PublicRing.GetPublicKeyByKeyId(sk.KeyId);
                 newList.Add(PgpSecretKey.ReplacePublicKey(sk, pk));
             }
 

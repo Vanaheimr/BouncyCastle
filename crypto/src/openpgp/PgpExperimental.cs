@@ -2,15 +2,24 @@ using System;
 
 namespace Org.BouncyCastle.Bcpg.OpenPgp
 {
+
     public class PgpExperimental : PgpObject
     {
 
-        private readonly ExperimentalPacket p;
+        #region Data
 
-        public PgpExperimental(BcpgInputStream bcpgIn)
+        private readonly ExperimentalPacket _ExperimentalPacket;
+
+        #endregion
+
+        #region Constructor(s)
+
+        public PgpExperimental(BcpgInputStream BCPGInputStream)
         {
-            p = (ExperimentalPacket) bcpgIn.ReadPacket();
+            _ExperimentalPacket = BCPGInputStream.ReadPacket<ExperimentalPacket>();
         }
+
+        #endregion
 
     }
 

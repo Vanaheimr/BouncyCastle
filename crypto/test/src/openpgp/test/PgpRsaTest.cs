@@ -665,7 +665,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
 
             Stream dIn = p2.GetInputStream();
 
-            ops.InitVerify(pgpPub.PublicKeyByKeyId(ops.KeyId));
+            ops.InitVerify(pgpPub.GetPublicKeyByKeyId(ops.KeyId));
 
             int ch;
             while ((ch = dIn.ReadByte()) >= 0)
@@ -696,7 +696,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
 
             PgpPublicKeyEncryptedData encP = (PgpPublicKeyEncryptedData)encList[0];
 
-            pgpPrivKey = pgpPriv.GetSecretKey(encP.KeyId).ExtractPrivateKey(pass);
+            pgpPrivKey = pgpPriv.GetSecretKeyByKeyId(encP.KeyId).ExtractPrivateKey(pass);
 
             Stream clear = encP.GetDataStream(pgpPrivKey);
 
@@ -728,7 +728,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
 
             MemoryStream cbOut = new UncloseableMemoryStream();
             PgpEncryptedDataGenerator cPk = new PgpEncryptedDataGenerator(SymmetricKeyAlgorithms.Cast5, new SecureRandom());
-            PgpPublicKey puK = pgpPriv.GetSecretKey(encP.KeyId).PublicKey;
+            PgpPublicKey puK = pgpPriv.GetSecretKeyByKeyId(encP.KeyId).PublicKey;
 
             cPk.AddMethod(puK);
 
@@ -744,7 +744,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
 
             encP = (PgpPublicKeyEncryptedData)encList[0];
 
-            pgpPrivKey = pgpPriv.GetSecretKey(encP.KeyId).ExtractPrivateKey(pass);
+            pgpPrivKey = pgpPriv.GetSecretKeyByKeyId(encP.KeyId).ExtractPrivateKey(pass);
 
             if (encP.GetSymmetricAlgorithm(pgpPrivKey) != SymmetricKeyAlgorithms.Cast5)
             {
@@ -764,7 +764,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
             //
             cbOut = new UncloseableMemoryStream();
             cPk = new PgpEncryptedDataGenerator(SymmetricKeyAlgorithms.Cast5, new SecureRandom());
-            puK = pgpPriv.GetSecretKey(encP.KeyId).PublicKey;
+            puK = pgpPriv.GetSecretKeyByKeyId(encP.KeyId).PublicKey;
 
             cPk.AddMethod(puK);
 
@@ -780,7 +780,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
 
             encP = (PgpPublicKeyEncryptedData)encList[0];
 
-            pgpPrivKey = pgpPriv.GetSecretKey(encP.KeyId).ExtractPrivateKey(pass);
+            pgpPrivKey = pgpPriv.GetSecretKeyByKeyId(encP.KeyId).ExtractPrivateKey(pass);
 
             clear = encP.GetDataStream(pgpPrivKey);
             outBytes = Streams.ReadAll(clear);

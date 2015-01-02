@@ -14,7 +14,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
 		public PgpCompressedData(
             BcpgInputStream bcpgInput)
         {
-            data = (CompressedDataPacket) bcpgInput.ReadPacket();
+            data = bcpgInput.ReadPacket<CompressedDataPacket>();
         }
 
 		/// <summary>The algorithm used for compression</summary>

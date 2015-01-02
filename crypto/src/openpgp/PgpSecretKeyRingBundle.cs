@@ -161,7 +161,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
             foreach (var secRing in GetKeyRings())
             {
 
-                var sec = secRing.GetSecretKey(keyId);
+                var sec = secRing.GetSecretKeyByKeyId(keyId);
 
                 if (sec != null)
                     return sec;
@@ -185,7 +185,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
             foreach (var secretRing in GetKeyRings())
             {
 
-                var secret = secretRing.GetSecretKey(keyId);
+                var secret = secretRing.GetSecretKeyByKeyId(keyId);
 
                 if (secret != null)
                     return secretRing;
