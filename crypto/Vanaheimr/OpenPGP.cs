@@ -32,9 +32,8 @@ using Org.BouncyCastle.Bcpg.OpenPgp;
 namespace org.GraphDefined.Vanaheimr.BouncyCastle
 {
 
-    public static class OpenGPG
+    public static class OpenPGP
     {
-
 
         public static PgpPublicKey ReadPublicKey(Stream input)
         {
@@ -74,12 +73,10 @@ namespace org.GraphDefined.Vanaheimr.BouncyCastle
 
 
         public static PgpSignature CreateSignature(Stream          InputStream,
-                                                   Stream          OutputStream,
                                                    PgpSecretKey    SecretKey,
                                                    String          Passphrase,
-                                                   HashAlgorithms  HashAlgorithm  = HashAlgorithms.Sha512,
-                                                   Boolean         ArmoredOutput  = true,
-                                                   UInt32          BufferSize     = 2*1024*1024) // Bytes
+                                                   HashAlgorithms  HashAlgorithm      = HashAlgorithms.Sha512,
+                                                   UInt32          BufferSize         = 2*1024*1024) // Bytes
         {
 
             #region Init signature generator
@@ -109,7 +106,20 @@ namespace org.GraphDefined.Vanaheimr.BouncyCastle
 
             #endregion
 
-            #region Write signature to output stream
+            return SignatureGenerator.Generate();
+
+        }
+
+        public static T WriteTo<T>(this PgpSignature  Signature,
+                                   T                  OutputStream,
+                                   Boolean            ArmoredOutput      = true,
+                                   Boolean            CloseOutputStream  = true)
+
+            where T : Stream
+
+        {
+
+            #region Open/create output streams
 
             BcpgOutputStream WrappedOutputStream = null;
 
@@ -118,22 +128,25 @@ namespace org.GraphDefined.Vanaheimr.BouncyCastle
             else
                 WrappedOutputStream = new BcpgOutputStream(OutputStream);
 
-            var Signature = SignatureGenerator.Generate();
+            #endregion
+
             Signature.Encode(WrappedOutputStream);
+
+            #region Close streams, if requested
 
             WrappedOutputStream.Flush();
             WrappedOutputStream.Close();
 
             // ArmoredOutputStream will not close the underlying stream!
             if (ArmoredOutput)
-            {
                 OutputStream.Flush();
+
+            if (CloseOutputStream)
                 OutputStream.Close();
-            }
 
             #endregion
 
-            return Signature;
+            return OutputStream;
 
         }
 

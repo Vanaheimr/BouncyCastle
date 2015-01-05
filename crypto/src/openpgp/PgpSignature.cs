@@ -306,7 +306,6 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
         #endregion
 
 
-
         #region Encode<T>(OutputStream)
 
         public T Encode<T>(T OutputStream)

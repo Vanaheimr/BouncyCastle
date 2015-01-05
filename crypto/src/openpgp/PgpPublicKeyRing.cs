@@ -35,7 +35,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
         {
             get
             {
-                return keys[0];
+                return keys.Values.First();
             }
         }
 
