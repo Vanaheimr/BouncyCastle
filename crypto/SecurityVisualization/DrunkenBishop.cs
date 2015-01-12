@@ -54,6 +54,7 @@ namespace org.GraphDefined.Vanaheimr.BouncyCastle
             return SecurityVisualization.DrunkenBishop(Fingerprint.
                                                            Replace(":", "").
                                                            Replace("-", "").
+                                                           Replace(" ", "").
                                                            ToLower().
                                                            HexStringToByteArray(),
                                                        SizeX,
@@ -100,6 +101,7 @@ namespace org.GraphDefined.Vanaheimr.BouncyCastle
             return SecurityVisualization.DrunkenBishop(Fingerprint.
                                                            Replace(":", "").
                                                            Replace("-", "").
+                                                           Replace(" ", "").
                                                            ToLower().
                                                            HexStringToByteArray(),
                                                        new List<UInt32>() { SizeY/2*SizeX + SizeX/2 },
@@ -150,6 +152,7 @@ namespace org.GraphDefined.Vanaheimr.BouncyCastle
             return SecurityVisualization.DrunkenBishop(Fingerprint.
                                                            Replace(":", "").
                                                            Replace("-", "").
+                                                           Replace(" ", "").
                                                            ToLower().
                                                            HexStringToByteArray(),
                                                        Data,
