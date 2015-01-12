@@ -49,6 +49,18 @@ namespace org.GraphDefined.Vanaheimr.BouncyCastle
 
         }
 
+        public static PgpPublicKey ReadPublicKey(String input)
+        {
+
+            var inputstream = new MemoryStream();
+            var Bytes       = Encoding.UTF8.GetBytes(input);
+            inputstream.Write(Bytes, 0, Bytes.Length);
+            inputstream.Seek(0, SeekOrigin.Begin);
+
+            return ReadPublicKey(inputstream);
+
+        }
+
         public static PgpSecretKey ReadSecretKey(Stream input)
         {
 
@@ -66,6 +78,18 @@ namespace org.GraphDefined.Vanaheimr.BouncyCastle
             }
 
             throw new ArgumentException("Can't find signing key in key ring.");
+
+        }
+
+        public static PgpSecretKey ReadSecretKey(String input)
+        {
+
+            var inputstream = new MemoryStream();
+            var Bytes       = Encoding.UTF8.GetBytes(input);
+            inputstream.Write(Bytes, 0, Bytes.Length);
+            inputstream.Seek(0, SeekOrigin.Begin);
+
+            return ReadSecretKey(inputstream);
 
         }
 
