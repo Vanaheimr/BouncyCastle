@@ -1,52 +1,76 @@
 using System;
 
-
-
 namespace Org.BouncyCastle.Bcpg.Sig
 {
-    /**
-    * packet giving the User ID of the signer.
-    */
-    public class SignerUserId
-        : SignatureSubpacket
+
+    /// <summary>
+    /// packet giving the User ID of the signer.
+    /// </summary>
+    public class SignerUserId : SignatureSubpacket
     {
-        private static byte[] UserIdToBytes(
-            string id)
+
+        #region Properties
+
+        #region Id
+
+        public String Id
         {
-            byte[] idData = new byte[id.Length];
-
-            for (int i = 0; i != id.Length; i++)
+            get
             {
-                idData[i] = (byte)id[i];
+
+                var chars = new Char[_Data.Length];
+
+                for (var i = 0; i != chars.Length; i++)
+                    chars[i] = (Char) (_Data[i] & 0xff);
+
+                return new String(chars);
+
             }
-
-			return idData;
         }
 
-        public SignerUserId(
-            bool	critical,
-            byte[]	data)
-            : base(SignatureSubpackets.SignerUserId, critical, data)
-		{
-		}
+        #endregion
 
-		public SignerUserId(
-            bool	critical,
-            string	userId)
-            : base(SignatureSubpackets.SignerUserId, critical, UserIdToBytes(userId))
-		{
-        }
+        #endregion
 
-		public string GetId()
+        #region Constructor(s)
+
+        #region SignerUserId(IsCritical, Data)
+
+        public SignerUserId(Boolean  IsCritical,
+                            Byte[]   Data)
+
+            : base(SignatureSubpackets.SignerUserId, IsCritical, Data)
+
+        { }
+
+        #endregion
+
+        #region SignerUserId(IsCritical, UserId)
+
+        public SignerUserId(Boolean  IsCritical,
+                            String   UserId)
+
+            : base(SignatureSubpackets.SignerUserId, IsCritical, UserIdToBytes(UserId))
+
+        { }
+
+        #endregion
+
+        #endregion
+
+
+        private static Byte[] UserIdToBytes(String UserId)
         {
-            char[] chars = new char[data.Length];
 
-			for (int i = 0; i != chars.Length; i++)
-            {
-                chars[i] = (char)(data[i] & 0xff);
-            }
+            var idData = new Byte[UserId.Length];
 
-			return new string(chars);
+            for (int i = 0; i != UserId.Length; i++)
+                idData[i] = (Byte) UserId[i];
+
+            return idData;
+
         }
+
     }
+
 }

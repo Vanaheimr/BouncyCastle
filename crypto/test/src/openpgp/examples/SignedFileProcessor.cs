@@ -96,8 +96,8 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Examples
             var pgpPrivKey  = pgpSec.ExtractPrivateKey(pass);
             var sGen        = new PgpSignatureGenerator(pgpSec.PublicKey.Algorithm, HashAlgorithms.Sha1);
 
-            sGen.InitSign(PgpSignatures.BinaryDocument, pgpPrivKey);
-            foreach (string userId in pgpSec.PublicKey.GetUserIds())
+            sGen.InitSign(PgpSignatureTypes.BinaryDocument, pgpPrivKey);
+            foreach (string userId in pgpSec.PublicKey.UserIds)
             {
                 PgpSignatureSubpacketGenerator spGen = new PgpSignatureSubpacketGenerator();
                 spGen.SetSignerUserId(false, userId);

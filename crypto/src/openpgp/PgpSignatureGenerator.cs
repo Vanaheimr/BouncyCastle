@@ -24,7 +24,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
         private readonly HashAlgorithms          HashAlgorithm;
         private readonly ISigner                 Signer;
         private readonly IDigest                 Digest;
-        private          PgpSignatures           SignatureType;
+        private          PgpSignatureTypes           SignatureType;
         private          PgpPrivateKey           PrivateKey;
         private          Byte                    lastb;
 
@@ -63,7 +63,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
         /// <summary>
         /// Initialise the generator for signing.
         /// </summary>
-        public void InitSign(PgpSignatures  SignatureType,
+        public void InitSign(PgpSignatureTypes  SignatureType,
                              PgpPrivateKey  PrivateKey,
                              SecureRandom   Random  = null)
         {
@@ -143,7 +143,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
         public void Update(Byte SingleByte)
         {
 
-            if (SignatureType == PgpSignatures.CanonicalTextDocument)
+            if (SignatureType == PgpSignatureTypes.CanonicalTextDocument)
                 doCanonicalUpdateByte(SingleByte);
 
             else
@@ -169,7 +169,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
                            Int32   Length)
         {
 
-            if (SignatureType == PgpSignatures.CanonicalTextDocument)
+            if (SignatureType == PgpSignatureTypes.CanonicalTextDocument)
             {
 
                 var finish = Offset + Length;
@@ -466,7 +466,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
 
             try
             {
-                return PublicKey.publicPk.GetEncodedContents();
+                return PublicKey._PublicKeyPacket.GetEncodedContents();
             }
             catch (IOException e)
             {

@@ -73,7 +73,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
 
         #region Constructor(s)
 
-        public PgpKeyPair(PublicKeyAlgorithms    algorithm,
+        public PgpKeyPair(PublicKeyAlgorithms      algorithm,
                           AsymmetricCipherKeyPair  keyPair,
                           DateTime                 time)
 
@@ -103,6 +103,12 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
         }
 
         #endregion
+
+
+        public override String ToString()
+        {
+            return "KeyPair : " + _PublicKey.KeyId + " / " + _PrivateKey.KeyId;
+        }
 
     }
 

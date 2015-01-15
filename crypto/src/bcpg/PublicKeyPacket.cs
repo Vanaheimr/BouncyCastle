@@ -5,111 +5,188 @@ using Org.BouncyCastle.Utilities.Date;
 
 namespace Org.BouncyCastle.Bcpg
 {
-    /// <remarks>Basic packet for a PGP public key.</remarks>
-    public class PublicKeyPacket
-        : ContainedPacket //, PublicKeyAlgorithmTag
+
+    /// <remarks>
+    /// Basic packet for a PGP public key.
+    /// </remarks>
+    public class PublicKeyPacket : ContainedPacket //, PublicKeyAlgorithmTag
     {
-        private int version;
-        private long time;
-        private int validDays;
-        private PublicKeyAlgorithms algorithm;
+
+        #region Properties
+
+        #region Version
+
+        private readonly Int32 _Version;
+
+        public Int32 Version
+        {
+            get
+            {
+                return _Version;
+            }
+        }
+
+        #endregion
+
+        #region Algorithm
+
+        private readonly PublicKeyAlgorithms _Algorithm;
+
+        public PublicKeyAlgorithms Algorithm
+        {
+            get
+            {
+                return _Algorithm;
+            }
+        }
+
+        #endregion
+
+        #region ValidDays
+
+        private readonly UInt64 _ValidDays;
+
+        public UInt64 ValidDays
+        {
+            get
+            {
+                return _ValidDays;
+            }
+        }
+
+        #endregion
+
+        #region Time
+
+        private readonly Int64 time;
+
+        public DateTime Time
+        {
+            get
+            {
+                return DateTimeUtilities.UnixMsToDateTime(time * 1000L);
+            }
+        }
+
+        #endregion
+
+        #region Key
+
         private IBcpgKey key;
 
-        internal PublicKeyPacket(
-            BcpgInputStream bcpgIn)
+        public IBcpgKey Key
         {
-            version = bcpgIn.ReadByte();
-
-            time = ((uint)bcpgIn.ReadByte() << 24) | ((uint)bcpgIn.ReadByte() << 16)
-                | ((uint)bcpgIn.ReadByte() << 8) | (uint)bcpgIn.ReadByte();
-
-            if (version <= 3)
+            get
             {
-                validDays = (bcpgIn.ReadByte() << 8) | bcpgIn.ReadByte();
+                return key;
             }
+        }
 
-            algorithm = (PublicKeyAlgorithms) bcpgIn.ReadByte();
+        #endregion
 
-            switch ((PublicKeyAlgorithms) algorithm)
+        #endregion
+
+        #region Constructor(s)
+
+        #region (internal) PublicKeyPacket(BCPGInputStream)
+
+        internal PublicKeyPacket(BcpgInputStream BCPGInputStream)
+        {
+
+            _Version = BCPGInputStream.ReadByte();
+
+            time = ((uint) BCPGInputStream.ReadByte() << 24) |
+                   ((uint) BCPGInputStream.ReadByte() << 16) |
+                   ((uint) BCPGInputStream.ReadByte() <<  8) |
+                    (uint) BCPGInputStream.ReadByte();
+
+            if (_Version <= 3)
+                _ValidDays = (UInt64) ((BCPGInputStream.ReadByte() << 8) |
+                                        BCPGInputStream.ReadByte());
+
+            _Algorithm = (PublicKeyAlgorithms) BCPGInputStream.ReadByte();
+
+            switch ((PublicKeyAlgorithms) _Algorithm)
             {
+
                 case PublicKeyAlgorithms.RsaEncrypt:
                 case PublicKeyAlgorithms.RsaGeneral:
                 case PublicKeyAlgorithms.RsaSign:
-                    key = new RsaPublicBcpgKey(bcpgIn);
+                    key = new RsaPublicBcpgKey(BCPGInputStream);
                     break;
+
                 case PublicKeyAlgorithms.Dsa:
-                    key = new DsaPublicBcpgKey(bcpgIn);
+                    key = new DsaPublicBcpgKey(BCPGInputStream);
                     break;
+
                 case PublicKeyAlgorithms.ElGamalEncrypt:
                 case PublicKeyAlgorithms.ElGamalGeneral:
-                    key = new ElGamalPublicBcpgKey(bcpgIn);
+                    key = new ElGamalPublicBcpgKey(BCPGInputStream);
                     break;
+
                 default:
                     throw new IOException("unknown PGP public key algorithm encountered");
-            }
-        }
 
-        /// <summary>Construct a version 4 public key packet.</summary>
-        public PublicKeyPacket(
-            PublicKeyAlgorithms	algorithm,
-            DateTime				time,
-            IBcpgKey				key)
-        {
-            this.version = 4;
-            this.time = DateTimeUtilities.DateTimeToUnixMs(time) / 1000L;
-            this.algorithm = algorithm;
-            this.key = key;
-        }
-
-        public virtual int Version
-        {
-            get { return version; }
-        }
-
-        public virtual PublicKeyAlgorithms Algorithm
-        {
-            get { return algorithm; }
-        }
-
-        public virtual int ValidDays
-        {
-            get { return validDays; }
-        }
-
-        public virtual DateTime GetTime()
-        {
-            return DateTimeUtilities.UnixMsToDateTime(time * 1000L);
-        }
-
-        public virtual IBcpgKey Key
-        {
-            get { return key; }
-        }
-
-        public virtual byte[] GetEncodedContents()
-        {
-            MemoryStream bOut = new MemoryStream();
-            BcpgOutputStream pOut = new BcpgOutputStream(bOut);
-
-            pOut.WriteByte((byte) version);
-            pOut.WriteInt((int) time);
-
-            if (version <= 3)
-            {
-                pOut.WriteShort((short) validDays);
             }
 
-            pOut.WriteByte((byte) algorithm);
-
-            pOut.WriteObject((BcpgObject)key);
-
-            return bOut.ToArray();
         }
 
-        public override void Encode(
-            BcpgOutputStream bcpgOut)
+        #endregion
+
+        #region PublicKeyPacket(PublicKeyPacket, Time, Key)
+
+        /// <summary>
+        /// Construct a version 4 public key packet.
+        /// </summary>
+        public PublicKeyPacket(PublicKeyAlgorithms  Algorithm,
+                               DateTime             Time,
+                               IBcpgKey             Key)
+        {
+
+            this._Version    = 4;
+            this.time        = DateTimeUtilities.DateTimeToUnixMs(Time) / 1000L;
+            this._Algorithm  = Algorithm;
+            this.key         = Key;
+
+        }
+
+        #endregion
+
+        #endregion
+
+
+        #region GetEncodedContents()
+
+        public virtual Byte[] GetEncodedContents()
+        {
+
+            var _MemoryStream      = new MemoryStream();
+            var _BCPGOutputStream  = new BcpgOutputStream(_MemoryStream);
+
+            _BCPGOutputStream.WriteByte((byte) _Version);
+            _BCPGOutputStream.WriteInt((int) time);
+
+            if (_Version <= 3)
+                _BCPGOutputStream.WriteShort((short) _ValidDays);
+
+            _BCPGOutputStream.WriteByte((byte) _Algorithm);
+            _BCPGOutputStream.WriteObject((BcpgObject)key);
+
+            return _MemoryStream.ToArray();
+
+        }
+
+        #endregion
+
+        #region Encode
+
+        public override void Encode(BcpgOutputStream bcpgOut)
         {
             bcpgOut.WritePacket(PacketTag.PublicKey, GetEncodedContents(), true);
         }
+
+        #endregion
+
     }
+
 }

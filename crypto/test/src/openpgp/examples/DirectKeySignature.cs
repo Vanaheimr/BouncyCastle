@@ -21,27 +21,27 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Examples
     */
     public class DirectKeySignature
     {
-        public static void Main(
-            string[] args)
+
+        public static void Main(String[] args)
         {
+
             if (args.Length == 1)
             {
-                Stream fis = File.OpenRead(args[0]);
 
-                PgpPublicKeyRing ring = new PgpPublicKeyRing(
-                PgpUtilities.GetDecoderStream(fis));
-                PgpPublicKey key = ring.PublicKey;
+                var fis  = File.OpenRead(args[0]);
+                var ring = new PgpPublicKeyRing(PgpUtilities.GetDecoderStream(fis));
+                var key  = ring.PublicKey;
 
                 // iterate through all direct key signautures and look for NotationData subpackets
-                foreach (PgpSignature sig in key.GetSignaturesOfType(PgpSignatures.DirectKey))
+                foreach (PgpSignature sig in key.SignaturesOfType(PgpSignatureTypes.DirectKey))
                 {
-                    Console.WriteLine("Signature date is: "
-                        + sig.HashedSubPackets.GetSignatureCreationTime());
 
-                    foreach (var data in sig.HashedSubPackets.GetNotationDataOccurences())
+                    Console.WriteLine("Signature date is: " + sig.HashedSubPackets.SignatureCreationTime);
+
+                    foreach (var data in sig.HashedSubPackets.NotationDataOccurences)
                     {
-                        Console.WriteLine("Found Notaion named '" + data.GetNotationName()
-                            +"' with content '" + data.GetNotationValue() + "'.");
+                        Console.WriteLine("Found Notation named '" + data.NotationName
+                            +"' with content '" + data.NotationValue + "'.");
                     }
 
                 }
@@ -109,7 +109,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Examples
 
             var sGen = new PgpSignatureGenerator(secretKey.PublicKey.Algorithm, HashAlgorithms.Sha1);
 
-            sGen.InitSign(PgpSignatures.DirectKey, pgpPrivKey);
+            sGen.InitSign(PgpSignatureTypes.DirectKey, pgpPrivKey);
 
             var bOut = new BcpgOutputStream(os);
 

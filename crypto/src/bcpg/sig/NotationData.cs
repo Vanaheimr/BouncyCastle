@@ -4,109 +4,141 @@ using System.Text;
 
 namespace Org.BouncyCastle.Bcpg.Sig
 {
-	/**
-	* Class provided a NotationData object according to
-	* RFC2440, Chapter 5.2.3.15. Notation Data
-	*/
-	public class NotationData
-		: SignatureSubpacket
-	{
-		public const int HeaderFlagLength = 4;
-		public const int HeaderNameLength = 2;
-		public const int HeaderValueLength = 2;
 
-		public NotationData(
-			bool	critical,
-			byte[]	data)
-			: base(SignatureSubpackets.NotationData, critical, data)
-		{
-		}
+    /// <summary>
+    /// Class provided a NotationData object according to
+    /// RFC2440, Chapter 5.2.3.15. Notation Data
+    /// </summary>
+    public class NotationData : SignatureSubpacket
+    {
 
-		public NotationData(
-			bool	critical,
-			bool	humanReadable,
-			string	notationName,
-			string	notationValue)
-			: base(SignatureSubpackets.NotationData, critical,
-				createData(humanReadable, notationName, notationValue))
-		{
-		}
+        #region Data
 
-		private static byte[] createData(
-			bool	humanReadable,
-			string	notationName,
-			string	notationValue)
-		{
-			MemoryStream os = new MemoryStream();
+        public const Byte HeaderFlagLength   = 4;
+        public const Byte HeaderNameLength   = 2;
+        public const Byte HeaderValueLength  = 2;
 
-			// (4 octets of flags, 2 octets of name length (M),
-			// 2 octets of value length (N),
-			// M octets of name data,
-			// N octets of value data)
+        #endregion
 
-			// flags
-			os.WriteByte(humanReadable ? (byte)0x80 : (byte)0x00);
-			os.WriteByte(0x0);
-			os.WriteByte(0x0);
-			os.WriteByte(0x0);
+        #region Properties
 
-			byte[] nameData, valueData = null;
-			int nameLength, valueLength;
+        #region IsHumanReadable
 
-			nameData = Encoding.UTF8.GetBytes(notationName);
-			nameLength = System.Math.Min(nameData.Length, 0xFF);
+        public Boolean IsHumanReadable
+        {
+            get
+            {
+                return _Data[0] == (byte) 0x80;
+            }
+        }
 
-			valueData = Encoding.UTF8.GetBytes(notationValue);
-			valueLength = System.Math.Min(valueData.Length, 0xFF);
+        #endregion
 
-			// name length
-			os.WriteByte((byte)(nameLength >> 8));
-			os.WriteByte((byte)(nameLength >> 0));
+        #region NotationName
 
-			// value length
-			os.WriteByte((byte)(valueLength >> 8));
-			os.WriteByte((byte)(valueLength >> 0));
+        public String NotationName
+        {
+            get
+            {
 
-			// name
-			os.Write(nameData, 0, nameLength);
+                return Encoding.UTF8.GetString(_Data,
+                                               HeaderFlagLength + HeaderNameLength + HeaderValueLength,
+                                               ((_Data[HeaderFlagLength    ] << 8) +
+                                                (_Data[HeaderFlagLength + 1] << 0)));
 
-			// value
-			os.Write(valueData, 0, valueLength);
+            }
+        }
 
-			return os.ToArray();
-		}
+        #endregion
 
-		public bool IsHumanReadable
-		{
-			get { return data[0] == (byte)0x80; }
-		}
+        #region NotationValue
 
-		public string GetNotationName()
-		{
-			int nameLength = ((data[HeaderFlagLength] << 8) + (data[HeaderFlagLength + 1] << 0));
-			int namePos = HeaderFlagLength + HeaderNameLength + HeaderValueLength;
+        public String NotationValue
+        {
+            get
+            {
+                return Encoding.UTF8.GetString(_Data,
+                                               HeaderFlagLength + HeaderNameLength + HeaderValueLength + ((_Data[HeaderFlagLength    ] << 8) +
+                                                                                                          (_Data[HeaderFlagLength + 1] << 0)),
+                                               ((_Data[HeaderFlagLength + HeaderNameLength    ] << 8) +
+                                                (_Data[HeaderFlagLength + HeaderNameLength + 1] << 0)));
+            }
+        }
 
-			return Encoding.UTF8.GetString(data, namePos, nameLength);
-		}
+        #endregion
 
-		public string GetNotationValue()
-		{
-			int nameLength = ((data[HeaderFlagLength] << 8) + (data[HeaderFlagLength + 1] << 0));
-			int valueLength = ((data[HeaderFlagLength + HeaderNameLength] << 8) + (data[HeaderFlagLength + HeaderNameLength + 1] << 0));
-			int valuePos = HeaderFlagLength + HeaderNameLength + HeaderValueLength + nameLength;
+        #endregion
 
-			return Encoding.UTF8.GetString(data, valuePos, valueLength);
-		}
+        #region Constructor(s)
 
-		public byte[] GetNotationValueBytes()
-		{
-			int nameLength = ((data[HeaderFlagLength] << 8) + (data[HeaderFlagLength + 1] << 0));
-			int valueLength = ((data[HeaderFlagLength + HeaderNameLength] << 8) + (data[HeaderFlagLength + HeaderNameLength + 1] << 0));
-			int valuePos = HeaderFlagLength + HeaderNameLength + HeaderValueLength + nameLength;
+        #region NotationData(IsCritical, Data)
 
-			byte[] bytes = new byte[valueLength];
-			Array.Copy(data, valuePos, bytes, 0, valueLength);
-			return bytes;
-		}
-	}
+        public NotationData(Boolean  IsCritical,
+                            Byte[]   Data)
+
+            : base(SignatureSubpackets.NotationData, IsCritical, Data)
+
+        { }
+
+        #endregion
+
+        #region NotationData(IsCritical, IsHumanReadable, NotationName, NotationValue)
+
+        public NotationData(Boolean  IsCritical,
+                            Boolean  IsHumanReadable,
+                            String   NotationName,
+                            String   NotationValue)
+
+            : base(SignatureSubpackets.NotationData, IsCritical, createData(IsHumanReadable, NotationName, NotationValue))
+
+        { }
+
+        #endregion
+
+        #endregion
+
+
+        private static Byte[] createData(Boolean  IsHumanReadable,
+                                         String   NotationName,
+                                         String   NotationValue)
+        {
+
+            var _MemoryStream = new MemoryStream();
+
+            // (4 octets of flags, 2 octets of name length (M),
+            // 2 octets of value length (N),
+            // M octets of name data,
+            // N octets of value data)
+
+            // flags
+            _MemoryStream.WriteByte(IsHumanReadable ? (byte) 0x80 : (byte) 0x00);
+            _MemoryStream.WriteByte(0x0);
+            _MemoryStream.WriteByte(0x0);
+            _MemoryStream.WriteByte(0x0);
+
+            var nameData     = Encoding.UTF8.GetBytes(NotationName);
+            var nameLength   = System.Math.Min(nameData.Length, 0xFF);
+            var valueData    = Encoding.UTF8.GetBytes(NotationValue);
+            var valueLength  = System.Math.Min(valueData.Length, 0xFF);
+
+            // name length
+            _MemoryStream.WriteByte((byte)(nameLength >> 8));
+            _MemoryStream.WriteByte((byte)(nameLength >> 0));
+
+            // value length
+            _MemoryStream.WriteByte((byte)(valueLength >> 8));
+            _MemoryStream.WriteByte((byte)(valueLength >> 0));
+
+            // name
+            _MemoryStream.Write(nameData, 0, nameLength);
+
+            // value
+            _MemoryStream.Write(valueData, 0, valueLength);
+
+            return _MemoryStream.ToArray();
+
+        }
+
+    }
+
 }

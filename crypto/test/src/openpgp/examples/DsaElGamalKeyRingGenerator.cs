@@ -46,8 +46,8 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Examples
             PgpKeyPair dsaKeyPair = new PgpKeyPair(PublicKeyAlgorithms.Dsa, dsaKp, DateTime.UtcNow);
             PgpKeyPair elgKeyPair = new PgpKeyPair(PublicKeyAlgorithms.ElGamalEncrypt, elgKp, DateTime.UtcNow);
 
-            PgpKeyRingGenerator keyRingGen = new PgpKeyRingGenerator(PgpSignatures.PositiveCertification, dsaKeyPair,
-                identity, SymmetricKeyAlgorithms.Aes256, passPhrase, true, null, null, new SecureRandom());
+            PgpKeyRingGenerator keyRingGen = new PgpKeyRingGenerator(PgpSignatureTypes.PositiveCertification, dsaKeyPair,
+                identity, SymmetricKeyAlgorithms.Aes256, passPhrase, null, null, new SecureRandom());
 
             keyRingGen.AddSubKey(elgKeyPair);
 

@@ -4,53 +4,77 @@ using System;
 
 namespace Org.BouncyCastle.Bcpg.Sig
 {
-    /**
-    * packet giving time after creation at which the key expires.
-    */
-    public class KeyExpirationTime
-        : SignatureSubpacket
+
+    /// <summary>
+    /// Packet giving time after creation at which the key expires.
+    /// </summary>
+    public class KeyExpirationTime : SignatureSubpacket
     {
-        protected static byte[] TimeToBytes(
-            long    t)
+
+        #region Properties
+
+        #region Time
+
+        /// <summary>
+        /// The number of seconds after creation time a key is valid for.
+        /// </summary>
+        public UInt64 Time
         {
-            byte[]    data = new byte[4];
+            get
+            {
 
-            data[0] = (byte)(t >> 24);
-            data[1] = (byte)(t >> 16);
-            data[2] = (byte)(t >> 8);
-            data[3] = (byte)t;
+                return (UInt64) (((long) (_Data[0] & 0xff) << 24) |
+                                 ((long) (_Data[1] & 0xff) << 16) |
+                                 ((long) (_Data[2] & 0xff) <<  8) |
+                                 ((long)  _Data[3] & 0xff));
 
-            return data;
+            }
         }
 
-        public KeyExpirationTime(
-            bool    critical,
-            byte[]     data)
-            : base(SignatureSubpackets.KeyExpireTime, critical, data)
+        #endregion
+
+        #endregion
+
+        #region Constructor(s)
+
+        #region KeyExpirationTime(IsCritical, Data)
+
+        public KeyExpirationTime(Boolean  IsCritical,
+                                 Byte[]   Data)
+
+            : base(SignatureSubpackets.KeyExpireTime, IsCritical, Data)
+
+        { }
+
+        #endregion
+
+        #region KeyExpirationTime(IsCritical, Seconds)
+
+        public KeyExpirationTime(Boolean  IsCritical,
+                                 UInt64   Seconds)
+
+            : base(SignatureSubpackets.KeyExpireTime, IsCritical, TimeToBytes(Seconds))
+
+        { }
+
+        #endregion
+
+        #endregion
+
+
+        protected static Byte[] TimeToBytes(UInt64 Time)
         {
+
+            return new Byte[] {
+                (byte) (Time >> 24),
+                (byte) (Time >> 16),
+                (byte) (Time >>  8),
+                (byte)  Time
+            };
+
         }
 
-        public KeyExpirationTime(
-            bool    critical,
-            long       seconds)
-            : base(SignatureSubpackets.KeyExpireTime, critical, TimeToBytes(seconds))
-        {
-        }
 
-        /**
-        * Return the number of seconds after creation time a key is valid for.
-        *
-        * @return second count for key validity.
-        */
-        public long Time
-        {
-			get
-			{
-				long time = ((long)(data[0] & 0xff) << 24) | ((long)(data[1] & 0xff) << 16)
-					| ((long)(data[2] & 0xff) << 8) | ((long)data[3] & 0xff);
-
-				return time;
-			}
-        }
     }
+
 }

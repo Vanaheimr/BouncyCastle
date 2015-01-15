@@ -8,7 +8,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
     public abstract class PgpKeyRing : PgpObject
     {
 
-        #region Constructor(s)
+        #region (internal) Constructor(s)
 
         internal PgpKeyRing()
         { }
@@ -16,7 +16,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
         #endregion
 
 
-        #region ReadOptionalTrustPacket(BCPGInputStream)
+        #region (internal) ReadOptionalTrustPacket(BCPGInputStream)
 
         internal static TrustPacket ReadOptionalTrustPacket(BcpgInputStream BCPGInputStream)
         {
@@ -29,7 +29,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
 
         #endregion
 
-        #region ReadSignaturesAndTrust(BCPGInputStream)
+        #region (internal) ReadSignaturesAndTrust(BCPGInputStream)
 
         internal static IEnumerable<PgpSignature> ReadSignaturesAndTrust(BcpgInputStream BCPGInputStream)
         {
@@ -60,7 +60,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
 
         #endregion
 
-        #region ReadUserIds(BCPGInputStream)
+        #region (internal) ReadUserIds(BCPGInputStream)
 
         internal static void ReadUserIds(BcpgInputStream               BCPGInputStream,
                                          out List<Object>              Ids,
@@ -89,7 +89,10 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
                 else
                     throw new Exception("Unknown packet received!");
 
-                IdTrusts.Add(                       ReadOptionalTrustPacket(BCPGInputStream));
+                var optioalTrustPacket = ReadOptionalTrustPacket(BCPGInputStream);
+                if (optioalTrustPacket != null)
+                    IdTrusts.Add(optioalTrustPacket);
+
                 IdSigs.  Add(new List<PgpSignature>(ReadSignaturesAndTrust (BCPGInputStream)));
 
             }

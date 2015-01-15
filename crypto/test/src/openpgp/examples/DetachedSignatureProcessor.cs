@@ -113,7 +113,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Examples
             var pgpPrivKey  = pgpSec.ExtractPrivateKey(passphrase);
             var sGen        = new PgpSignatureGenerator(pgpSec.PublicKey.Algorithm, HashAlgorithms.Sha512);
 
-            sGen.InitSign(PgpSignatures.BinaryDocument, pgpPrivKey);
+            sGen.InitSign(PgpSignatureTypes.BinaryDocument, pgpPrivKey);
 
             var bOut        = new BcpgOutputStream(outputStream);
 

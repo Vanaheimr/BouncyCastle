@@ -40,9 +40,9 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Examples
 
         internal static PgpPublicKey ReadPublicKey(String fileName)
         {
-            using (Stream keyIn = File.OpenRead(fileName))
+            using (var KeyStream = File.OpenRead(fileName))
             {
-                return ReadPublicKey(keyIn);
+                return ReadPublicKey(KeyStream);
             }
         }
 
@@ -58,18 +58,16 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Examples
         internal static PgpPublicKey ReadPublicKey(Stream input)
         {
 
-            var pgpPub = new PgpPublicKeyRingBundle(PgpUtilities.GetDecoderStream(input));
+            var PublicKeyRingBundle = new PgpPublicKeyRingBundle(PgpUtilities.GetDecoderStream(input));
 
             // we just loop through the collection till we find a key suitable for encryption, in the real
             // world you would probably want to be a bit smarter about this.
-            foreach (PgpPublicKeyRing keyRing in pgpPub.KeyRings)
+            foreach (var PublicKeyRing in PublicKeyRingBundle)
             {
-                foreach (PgpPublicKey key in keyRing.PublicKeys)
+                foreach (var PublicKey in PublicKeyRing)
                 {
-                    if (key.IsEncryptionKey)
-                    {
-                        return key;
-                    }
+                    if (PublicKey.IsEncryptionKey)
+                        return PublicKey;
                 }
             }
 
@@ -79,9 +77,9 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Examples
 
         internal static PgpSecretKey ReadSecretKey(String fileName)
         {
-            using (Stream keyIn = File.OpenRead(fileName))
+            using (var KeyStream = File.OpenRead(fileName))
             {
-                return ReadSecretKey(keyIn);
+                return ReadSecretKey(KeyStream);
             }
         }
 
@@ -97,16 +95,16 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Examples
         internal static PgpSecretKey ReadSecretKey(Stream input)
         {
 
-            var pgpSec = new PgpSecretKeyRingBundle(PgpUtilities.GetDecoderStream(input));
+            var SecretKeyRingBundle = new PgpSecretKeyRingBundle(PgpUtilities.GetDecoderStream(input));
 
             // we just loop through the collection till we find a key suitable for encryption, in the real
             // world you would probably want to be a bit smarter about this.
-            foreach (var keyRing in pgpSec.GetKeyRings())
+            foreach (var SecretKeyRing in SecretKeyRingBundle)
             {
-                foreach (var key in keyRing.SecretKeys)
+                foreach (var SecretKey in SecretKeyRing)
                 {
-                    if (key.IsSigningKey)
-                        return key;
+                    if (SecretKey.IsSigningKey)
+                        return SecretKey;
                 }
             }
 

@@ -209,9 +209,9 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Examples
             var SignatureGenerator           = new PgpSignatureGenerator(SecretKey.PublicKey.Algorithm, HashAlgorithm);
             var SignatureSubpacketGenerator  = new PgpSignatureSubpacketGenerator();
 
-            SignatureGenerator.InitSign(PgpSignatures.CanonicalTextDocument, PrivateKey);
+            SignatureGenerator.InitSign(PgpSignatureTypes.CanonicalTextDocument, PrivateKey);
 
-            foreach (var UserId in SecretKey.PublicKey.GetUserIds())
+            foreach (var UserId in SecretKey.PublicKey.UserIds)
             {
                 SignatureSubpacketGenerator.SetSignerUserId(false, UserId);
                 SignatureGenerator.SetHashedSubpackets(SignatureSubpacketGenerator.Generate());

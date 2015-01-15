@@ -361,29 +361,27 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
             //
             // certifications
             //
-            PgpSignatureGenerator sGen = new PgpSignatureGenerator(PublicKeyAlgorithms.RsaGeneral, HashAlgorithms.Sha1);
+            var sGen = new PgpSignatureGenerator(PublicKeyAlgorithms.RsaGeneral, HashAlgorithms.Sha1);
 
-            sGen.InitSign(PgpSignatures.KeyRevocation, pgpPrivKey);
+            sGen.InitSign(PgpSignatureTypes.KeyRevocation, pgpPrivKey);
 
-            PgpSignature sig = sGen.GenerateCertification(secretKey.PublicKey);
+            var sig = sGen.GenerateCertification(secretKey.PublicKey);
 
             sig.InitVerify(secretKey.PublicKey);
 
             if (!sig.VerifyCertification(secretKey.PublicKey))
-            {
                 Fail("revocation verification failed.");
-            }
 
-            PgpSecretKeyRing pgpDSAPriv = new PgpSecretKeyRing(dsaKeyRing);
-            PgpSecretKey secretDSAKey = pgpDSAPriv.FirstSecretKey;
-            PgpPrivateKey pgpPrivDSAKey = secretDSAKey.ExtractPrivateKey(dsaPass);
+            var pgpDSAPriv     = new PgpSecretKeyRing(dsaKeyRing);
+            var secretDSAKey   = pgpDSAPriv.FirstSecretKey;
+            var pgpPrivDSAKey  = secretDSAKey.ExtractPrivateKey(dsaPass);
 
             sGen = new PgpSignatureGenerator(PublicKeyAlgorithms.Dsa, HashAlgorithms.Sha1);
 
-            sGen.InitSign(PgpSignatures.SubkeyBinding, pgpPrivDSAKey);
+            sGen.InitSign(PgpSignatureTypes.SubkeyBinding, pgpPrivDSAKey);
 
-            PgpSignatureSubpacketGenerator    unhashedGen = new PgpSignatureSubpacketGenerator();
-            PgpSignatureSubpacketGenerator    hashedGen = new PgpSignatureSubpacketGenerator();
+            var unhashedGen = new PgpSignatureSubpacketGenerator();
+            var hashedGen   = new PgpSignatureSubpacketGenerator();
 
             hashedGen.SetSignatureExpirationTime(false, TEST_EXPIRATION_TIME);
             hashedGen.SetSignerUserId(true, TEST_USER_ID);
@@ -405,65 +403,49 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
             sig.InitVerify(secretDSAKey.PublicKey);
 
             if (!sig.VerifyCertification(secretDSAKey.PublicKey, secretKey.PublicKey))
-            {
                 Fail("subkey binding verification failed.");
-            }
 
             var hashedPcks   = sig.HashedSubPackets;
             var unhashedPcks = sig.UnhashedSubPackets;
 
             if (hashedPcks.Count != 6)
-            {
                 Fail("wrong number of hashed packets found.");
-            }
 
             if (unhashedPcks.Count != 1)
-            {
                 Fail("wrong number of unhashed packets found.");
-            }
 
-            if (!hashedPcks.GetSignerUserId().Equals(TEST_USER_ID))
-            {
+            if (!hashedPcks.SignerUserId.Equals(TEST_USER_ID))
                 Fail("test userid not matching");
-            }
 
-            if (hashedPcks.GetSignatureExpirationTime() != TEST_EXPIRATION_TIME)
-            {
+            if (hashedPcks.SignatureExpirationTime != TEST_EXPIRATION_TIME)
                 Fail("test signature expiration time not matching");
-            }
 
-            if (unhashedPcks.GetIssuerKeyId() != secretDSAKey.KeyId)
-            {
+            if (unhashedPcks.IssuerKeyId != secretDSAKey.KeyId)
                 Fail("wrong issuer key ID found in certification");
-            }
 
-            int[] prefAlgs = hashedPcks.GetPreferredCompressionAlgorithms();
+            int[] prefAlgs = hashedPcks.PreferredCompressionAlgorithms;
             preferredAlgorithmCheck("compression", PREFERRED_COMPRESSION_ALGORITHMS, prefAlgs);
 
-            prefAlgs = hashedPcks.GetPreferredHashAlgorithms();
+            prefAlgs = hashedPcks.PreferredHashAlgorithms;
             preferredAlgorithmCheck("hash", PREFERRED_HASH_ALGORITHMS, prefAlgs);
 
-            prefAlgs = hashedPcks.GetPreferredSymmetricAlgorithms();
+            prefAlgs = hashedPcks.PreferredSymmetricAlgorithms;
             preferredAlgorithmCheck("symmetric", PREFERRED_SYMMETRIC_ALGORITHMS, prefAlgs);
 
             var criticalHashed = hashedPcks.CriticalTags;
 
             if (criticalHashed.Count() != 1)
-            {
                 Fail("wrong number of critical packets found.");
-            }
 
             if (criticalHashed.First() != SignatureSubpackets.SignerUserId)
-            {
                 Fail("wrong critical packet found in tag list.");
-            }
 
             //
             // no packets passed
             //
             sGen = new PgpSignatureGenerator(PublicKeyAlgorithms.Dsa, HashAlgorithms.Sha1);
 
-            sGen.InitSign(PgpSignatures.SubkeyBinding, pgpPrivDSAKey);
+            sGen.InitSign(PgpSignatureTypes.SubkeyBinding, pgpPrivDSAKey);
 
             sGen.SetHashedSubpackets(null);
             sGen.SetUnhashedSubpackets(null);
@@ -473,28 +455,21 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
             sig.InitVerify(secretDSAKey.PublicKey);
 
             if (!sig.VerifyCertification(TEST_USER_ID, secretKey.PublicKey))
-            {
                 Fail("subkey binding verification failed.");
-            }
 
             hashedPcks = sig.HashedSubPackets;
 
             if (hashedPcks.Count != 1)
-            {
                 Fail("found wrong number of hashed packets");
-            }
 
             unhashedPcks = sig.UnhashedSubPackets;
 
             if (unhashedPcks.Count != 1)
-            {
                 Fail("found wrong number of unhashed packets");
-            }
 
             try
             {
                 sig.VerifyCertification(secretKey.PublicKey);
-
                 Fail("failed to detect non-key signature.");
             }
             catch (InvalidOperationException)
@@ -507,7 +482,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
             //
             sGen = new PgpSignatureGenerator(PublicKeyAlgorithms.Dsa, HashAlgorithms.Sha1);
 
-            sGen.InitSign(PgpSignatures.SubkeyBinding, pgpPrivDSAKey);
+            sGen.InitSign(PgpSignatureTypes.SubkeyBinding, pgpPrivDSAKey);
 
             hashedGen = new PgpSignatureSubpacketGenerator();
 
@@ -523,65 +498,47 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
             sig.InitVerify(secretDSAKey.PublicKey);
 
             if (!sig.VerifyCertification(TEST_USER_ID, secretKey.PublicKey))
-            {
                 Fail("subkey binding verification failed.");
-            }
 
             hashedPcks = sig.HashedSubPackets;
 
             if (hashedPcks.Count != 1)
-            {
                 Fail("found wrong number of hashed packets in override test");
-            }
 
             if (!hashedPcks.HasSubpacket(SignatureSubpackets.CreationTime))
-            {
                 Fail("hasSubpacket test for creation time failed");
-            }
 
-            DateTime sigCreationTime = hashedPcks.GetSignatureCreationTime();
+            DateTime sigCreationTime = hashedPcks.SignatureCreationTime;
             if (!sigCreationTime.Equals(creationTime))
-            {
                 Fail("creation of overridden date failed.");
-            }
 
-            prefAlgs = hashedPcks.GetPreferredCompressionAlgorithms();
+            prefAlgs = hashedPcks.PreferredCompressionAlgorithms;
             preferredAlgorithmCheck("compression", NO_PREFERENCES, prefAlgs);
 
-            prefAlgs = hashedPcks.GetPreferredHashAlgorithms();
+            prefAlgs = hashedPcks.PreferredHashAlgorithms;
             preferredAlgorithmCheck("hash", NO_PREFERENCES, prefAlgs);
 
-            prefAlgs = hashedPcks.GetPreferredSymmetricAlgorithms();
+            prefAlgs = hashedPcks.PreferredSymmetricAlgorithms;
             preferredAlgorithmCheck("symmetric", NO_PREFERENCES, prefAlgs);
 
-            if (hashedPcks.GetKeyExpirationTime() != 0)
-            {
+            if (hashedPcks.KeyExpirationTime != 0)
                 Fail("unexpected key expiration time found");
-            }
 
-            if (hashedPcks.GetSignatureExpirationTime() != 0)
-            {
+            if (hashedPcks.SignatureExpirationTime != 0)
                 Fail("unexpected signature expiration time found");
-            }
 
-            if (hashedPcks.GetSignerUserId() != null)
-            {
+            if (hashedPcks.SignerUserId != null)
                 Fail("unexpected signer user ID found");
-            }
 
             criticalHashed = hashedPcks.CriticalTags;
 
             if (criticalHashed.Count() != 0)
-            {
                 Fail("critical packets found when none expected");
-            }
 
             unhashedPcks = sig.UnhashedSubPackets;
 
             if (unhashedPcks.Count != 1)
-            {
                 Fail("found wrong number of unhashed packets in override test");
-            }
 
             //
             // general signatures
@@ -605,7 +562,6 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
             try
             {
                 doTestSig(PublicKeyAlgorithms.RsaGeneral, HashAlgorithms.Sha1, secretKey.PublicKey, pgpPrivKey);
-
                 Fail("DSA wrong key test failed.");
             }
             catch (PgpException)
@@ -616,7 +572,6 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
             try
             {
                 doTestSigV3(PublicKeyAlgorithms.RsaGeneral, HashAlgorithms.Sha1, secretKey.PublicKey, pgpPrivKey);
-
                 Fail("DSA V3 wrong key test failed.");
             }
             catch (PgpException)
@@ -689,27 +644,28 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
 
         private void checkValue(int flag, int val)
         {
-            KeyFlags f = new KeyFlags(true, flag);
+
+            var f = new KeyFlags(true, flag);
 
             if (f.Flags != val)
-            {
                 Fail("flag value mismatch");
-            }
+
         }
 
         private void checkValue(byte[] flag, int val)
         {
-            KeyFlags f = new KeyFlags(true, flag);
+
+            var f = new KeyFlags(true, flag);
 
             if (f.Flags != val)
-            {
                 Fail("flag value mismatch");
-            }
+
         }
 
         private void doTestMissingSubpackets(byte[] signature)
         {
-            PgpObjectFactory f = new PgpObjectFactory(signature);
+
+            var f = new PgpObjectFactory(signature);
             object obj = f.NextPgpObject();
 
             while (!(obj is PgpSignatureList))
@@ -722,70 +678,60 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
                 }
             }
 
-            PgpSignature sig = ((PgpSignatureList)obj)[0];
+            var sig = ((PgpSignatureList)obj)[0];
 
             if (sig.Version > 3)
             {
 
                 var v = sig.HashedSubPackets;
 
-                if (v.GetKeyExpirationTime() != 0)
-                {
+                if (v.KeyExpirationTime != 0)
                     Fail("key expiration time not zero for missing subpackets");
-                }
 
                 if (!sig.HasSubpackets)
-                {
                     Fail("HasSubpackets property was false with packets");
-                }
 
             }
             else
             {
+
                 if (sig.HashedSubPackets != null)
-                {
                     Fail("hashed sub packets found when none expected");
-                }
 
                 if (sig.UnhashedSubPackets != null)
-                {
                     Fail("unhashed sub packets found when none expected");
-                }
 
                 if (sig.HasSubpackets)
-                {
                     Fail("HasSubpackets property was true with no packets");
-                }
+
             }
         }
 
-        private void preferredAlgorithmCheck(
-            string    type,
-            int[]    expected,
-            int[]    prefAlgs)
+        private void preferredAlgorithmCheck(String   type,
+                                             Int32[]  expected,
+                                             Int32[]  prefAlgs)
         {
+
             if (expected == null)
             {
                 if (prefAlgs != null)
-                {
                     Fail("preferences for " + type + " found when none expected");
-                }
             }
+
             else
             {
+
                 if (prefAlgs.Length != expected.Length)
-                {
                     Fail("wrong number of preferred " + type + " algorithms found");
-                }
 
                 for (int i = 0; i != expected.Length; i++)
                 {
                     if (expected[i] != prefAlgs[i])
-                    {
                         Fail("wrong algorithm found for " + type + ": expected " + expected[i] + " got " + prefAlgs);
-                    }
                 }
+
             }
+
         }
 
         private void doTestSig(
@@ -798,7 +744,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
             MemoryStream testIn = new MemoryStream(TEST_DATA, false);
             PgpSignatureGenerator sGen = new PgpSignatureGenerator(encAlgorithm, hashAlgorithm);
 
-            sGen.InitSign(PgpSignatures.BinaryDocument, privKey);
+            sGen.InitSign(PgpSignatureTypes.BinaryDocument, privKey);
             sGen.GenerateOnePassVersion(false).Encode(bOut);
 
             PgpLiteralDataGenerator lGen = new PgpLiteralDataGenerator();
@@ -839,7 +785,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
             MemoryStream testIn = new MemoryStream(data, false);
             DateTime creationTime = DateTime.UtcNow;
 
-            sGen.InitSign(PgpSignatures.CanonicalTextDocument, privKey);
+            sGen.InitSign(PgpSignatureTypes.CanonicalTextDocument, privKey);
             sGen.GenerateOnePassVersion(false).Encode(bOut);
 
             PgpLiteralDataGenerator lGen = new PgpLiteralDataGenerator();
@@ -894,7 +840,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
             MemoryStream testIn = new MemoryStream(TEST_DATA, false);
             PgpV3SignatureGenerator sGen = new PgpV3SignatureGenerator(encAlgorithm, hashAlgorithm);
 
-            sGen.InitSign(PgpSignatures.BinaryDocument, privKey);
+            sGen.InitSign(PgpSignatureTypes.BinaryDocument, privKey);
             sGen.GenerateOnePassVersion(false).Encode(bOut);
 
             PgpLiteralDataGenerator lGen = new PgpLiteralDataGenerator();
@@ -934,7 +880,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
             MemoryStream bOut = new MemoryStream();
             MemoryStream testIn = new MemoryStream(data, false);
 
-            sGen.InitSign(PgpSignatures.CanonicalTextDocument, privKey);
+            sGen.InitSign(PgpSignatureTypes.CanonicalTextDocument, privKey);
             sGen.GenerateOnePassVersion(false).Encode(bOut);
 
             PgpLiteralDataGenerator lGen = new PgpLiteralDataGenerator();

@@ -1,76 +1,117 @@
+using System;
 using System.IO;
 
 namespace Org.BouncyCastle.Bcpg
 {
-	/// <remarks>Basic type for a PGP Signature sub-packet.</remarks>
+
+    /// <summary>
+    /// Basic type for a PGP Signature sub-packet.
+    /// </summary>
     public class SignatureSubpacket
     {
-        private readonly SignatureSubpackets type;
-        private readonly bool critical;
 
-		internal readonly byte[] data;
+        #region Data
 
-		protected internal SignatureSubpacket(
-            SignatureSubpackets	type,
-            bool					critical,
-            byte[]					data)
+        internal readonly Byte[] _Data;
+
+        #endregion
+
+        #region Properties
+
+        #region SubpacketType
+
+        private readonly SignatureSubpackets _SubpacketType;
+
+        public SignatureSubpackets SubpacketType
         {
-            this.type = type;
-            this.critical = critical;
-            this.data = data;
+            get
+            {
+                return _SubpacketType;
+            }
         }
 
-		public SignatureSubpackets SubpacketType
+        #endregion
+
+        #region IsCritical
+
+        private readonly Boolean _IsCritical;
+
+        public Boolean IsCritical
         {
-			get { return type; }
+            get
+            {
+                return _IsCritical;
+            }
         }
 
-        public bool IsCritical()
+        #endregion
+
+        #endregion
+
+        #region (internal) Constructor(s)
+
+        protected internal SignatureSubpacket(SignatureSubpackets  SubpacketType,
+                                              Boolean                  IsCritical,
+                                              Byte[]                   Data)
         {
-            return critical;
+            this._SubpacketType  = SubpacketType;
+            this._IsCritical     = IsCritical;
+            this._Data           = Data;
         }
 
-		/// <summary>Return the generic data making up the packet.</summary>
-        public byte[] GetData()
-        {
-            return (byte[]) data.Clone();
-        }
+        #endregion
 
-		public void Encode(
-            Stream os)
+
+        #region Encode(OutputStream)
+
+        public void Encode(Stream OutputStream)
         {
-            int bodyLen = data.Length + 1;
+
+            var bodyLen = _Data.Length + 1;
 
             if (bodyLen < 192)
-            {
-                os.WriteByte((byte)bodyLen);
-            }
+                OutputStream.WriteByte((byte) bodyLen);
+
             else if (bodyLen <= 8383)
             {
                 bodyLen -= 192;
-
-                os.WriteByte((byte)(((bodyLen >> 8) & 0xff) + 192));
-                os.WriteByte((byte)bodyLen);
+                OutputStream.WriteByte((byte) (((bodyLen >> 8) & 0xff) + 192));
+                OutputStream.WriteByte((byte) bodyLen);
             }
+
             else
             {
-                os.WriteByte(0xff);
-                os.WriteByte((byte)(bodyLen >> 24));
-                os.WriteByte((byte)(bodyLen >> 16));
-                os.WriteByte((byte)(bodyLen >> 8));
-                os.WriteByte((byte)bodyLen);
+                OutputStream.WriteByte(0xff);
+                OutputStream.WriteByte((byte) (bodyLen >> 24));
+                OutputStream.WriteByte((byte) (bodyLen >> 16));
+                OutputStream.WriteByte((byte) (bodyLen >>  8));
+                OutputStream.WriteByte((byte)  bodyLen);
             }
 
-            if (critical)
-            {
-                os.WriteByte((byte)(0x80 | (int) type));
-            }
+            if (IsCritical)
+                OutputStream.WriteByte((byte) (0x80 | (int) _SubpacketType));
+
             else
-            {
-                os.WriteByte((byte) type);
-            }
+                OutputStream.WriteByte((byte) _SubpacketType);
 
-            os.Write(data, 0, data.Length);
+            OutputStream.Write(_Data, 0, _Data.Length);
+
         }
+
+        #endregion
+
+        #region GetData()
+
+        /// <summary>
+        /// Return the generic data making up the packet.
+        /// </summary>
+        public Byte[] GetData()
+        {
+            return (Byte[])_Data.Clone();
+        }
+
+        #endregion
+
     }
+
 }

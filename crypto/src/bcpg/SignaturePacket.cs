@@ -51,9 +51,9 @@ namespace Org.BouncyCastle.Bcpg
 
         #region SignatureType
 
-        private readonly PgpSignatures signatureType;
+        private readonly PgpSignatureTypes signatureType;
 
-        public PgpSignatures SignatureType
+        public PgpSignatureTypes SignatureType
         {
             get
             {
@@ -263,7 +263,7 @@ namespace Org.BouncyCastle.Bcpg
 
                 bcpgIn.ReadByte();
 
-                signatureType = (PgpSignatures) bcpgIn.ReadByte();
+                signatureType = (PgpSignatureTypes) bcpgIn.ReadByte();
                 creationTime  = (((long) bcpgIn.ReadByte() << 24) |
                                  ((long) bcpgIn.ReadByte() << 16) |
                                  ((long) bcpgIn.ReadByte() <<  8) |
@@ -286,7 +286,7 @@ namespace Org.BouncyCastle.Bcpg
             else if (version == 4)
             {
 
-                signatureType     = (PgpSignatures)       bcpgIn.ReadByte();
+                signatureType     = (PgpSignatureTypes)       bcpgIn.ReadByte();
                 keyAlgorithm      = (PublicKeyAlgorithms) bcpgIn.ReadByte();
                 hashAlgorithm     = (HashAlgorithms)      bcpgIn.ReadByte();
 
@@ -318,7 +318,7 @@ namespace Org.BouncyCastle.Bcpg
                         keyId = ((IssuerKeyId) _SignatureSubpacket).KeyId;
 
                     else if (_SignatureSubpacket is SignatureCreationTime)
-                        creationTime = DateTimeUtilities.DateTimeToUnixMs(((SignatureCreationTime) _SignatureSubpacket).GetTime());
+                        creationTime = DateTimeUtilities.DateTimeToUnixMs(((SignatureCreationTime) _SignatureSubpacket).Time);
 
                     _hashedSubPackets.Add(_SignatureSubpacket);
 
@@ -424,7 +424,7 @@ namespace Org.BouncyCastle.Bcpg
         /// <summary>
         /// Generate a version 4 signature packet.
         /// </summary>
-        public SignaturePacket(PgpSignatures                    signatureType,
+        public SignaturePacket(PgpSignatureTypes                    signatureType,
                                UInt64                           keyId,
                                PublicKeyAlgorithms              keyAlgorithm,
                                HashAlgorithms                   hashAlgorithm,
@@ -445,7 +445,7 @@ namespace Org.BouncyCastle.Bcpg
         /// Generate a version 2/3 signature packet.
         /// </summary>
         public SignaturePacket(Byte                 version,
-                               PgpSignatures        signatureType,
+                               PgpSignatureTypes        signatureType,
                                UInt64               keyId,
                                PublicKeyAlgorithms  keyAlgorithm,
                                HashAlgorithms       hashAlgorithm,
@@ -464,7 +464,7 @@ namespace Org.BouncyCastle.Bcpg
         #region SignaturePacket(...)
 
         public SignaturePacket(Byte                             version,
-                               PgpSignatures                    signatureType,
+                               PgpSignatureTypes                signatureType,
                                UInt64                           keyId,
                                PublicKeyAlgorithms              keyAlgorithm,
                                HashAlgorithms                   hashAlgorithm,
@@ -490,7 +490,7 @@ namespace Org.BouncyCastle.Bcpg
                 {
                     if (SignatureSubpacket is SignatureCreationTime)
                     {
-                        creationTime = DateTimeUtilities.DateTimeToUnixMs(((SignatureCreationTime)SignatureSubpacket).GetTime());
+                        creationTime = DateTimeUtilities.DateTimeToUnixMs(((SignatureCreationTime) SignatureSubpacket).Time);
                         break;
                     }
                 }

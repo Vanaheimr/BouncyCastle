@@ -9,7 +9,7 @@ namespace Org.BouncyCastle.Bcpg
     {
 
         private Int32                   version;
-        private PgpSignatures           sigType;
+        private PgpSignatureTypes           sigType;
         private HashAlgorithms          hashAlgorithm;
         private PublicKeyAlgorithms     keyAlgorithm;
         private UInt64                  keyId;
@@ -19,7 +19,7 @@ namespace Org.BouncyCastle.Bcpg
         {
 
             version        = bcpgIn.ReadByte();
-            sigType        = (PgpSignatures)       bcpgIn.ReadByte();
+            sigType        = (PgpSignatureTypes)       bcpgIn.ReadByte();
             hashAlgorithm  = (HashAlgorithms)      bcpgIn.ReadByte();
             keyAlgorithm   = (PublicKeyAlgorithms) bcpgIn.ReadByte();
 
@@ -37,7 +37,7 @@ namespace Org.BouncyCastle.Bcpg
         }
 
         public OnePassSignaturePacket(
-            PgpSignatures           sigType,
+            PgpSignatureTypes           sigType,
             HashAlgorithms          hashAlgorithm,
             PublicKeyAlgorithms     keyAlgorithm,
             UInt64                  keyId,
@@ -53,7 +53,7 @@ namespace Org.BouncyCastle.Bcpg
 
         }
 
-        public PgpSignatures SignatureType
+        public PgpSignatureTypes SignatureType
         {
             get { return sigType; }
         }

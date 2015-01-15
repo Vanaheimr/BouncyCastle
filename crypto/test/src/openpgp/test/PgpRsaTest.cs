@@ -327,7 +327,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
 
             PgpPublicKey pubKey = pgpPub.PublicKey;
 
-            if (!Arrays.AreEqual(pubKey.GetFingerprint(), Hex.Decode("4FFB9F0884266C715D1CEAC804A3BBFA")))
+            if (!Arrays.AreEqual(pubKey.Fingerprint, Hex.Decode("4FFB9F0884266C715D1CEAC804A3BBFA")))
             {
                 Fail("version 3 fingerprint test failed");
             }
@@ -339,7 +339,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
 
             pubKey = pgpPub.PublicKey;
 
-            if (!Arrays.AreEqual(pubKey.GetFingerprint(), Hex.Decode("3062363c1046a01a751946bb35586146fdf3f373")))
+            if (!Arrays.AreEqual(pubKey.Fingerprint, Hex.Decode("3062363c1046a01a751946bb35586146fdf3f373")))
             {
                Fail("version 4 fingerprint test failed");
             }
@@ -440,203 +440,177 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
 
         private void ExistingEmbeddedJpegTest()
         {
-            PgpPublicKeyRing pgpPub = new PgpPublicKeyRing(embeddedJPEGKey);
 
-            PgpPublicKey pubKey = pgpPub.PublicKey;
+            var pgpPub  = new PgpPublicKeyRing(embeddedJPEGKey);
+            var pubKey  = pgpPub.PublicKey;
 
             int count = 0;
-            foreach (PgpUserAttributeSubpacketVector attributes in pubKey.GetUserAttributes())
+            foreach (var attributes in pubKey.UserAttributes)
             {
+
                 int sigCount = 0;
-                foreach (PgpSignature sig in pubKey.GetSignaturesForUserAttribute(attributes))
+
+                foreach (var sig in pubKey.SignaturesForUserAttribute(attributes))
                 {
+
                     sig.InitVerify(pubKey);
 
                     if (!sig.VerifyCertification(attributes, pubKey))
-                    {
                         Fail("signature failed verification");
-                    }
 
                     sigCount++;
+
                 }
 
                 if (sigCount != 1)
-                {
                     Fail("Failed user attributes signature check");
-                }
+
                 count++;
+
             }
 
             if (count != 1)
-            {
                 Fail("didn't find user attributes");
-            }
+
         }
 
         private void EmbeddedJpegTest()
         {
-            PgpPublicKeyRing pgpPub = new PgpPublicKeyRing(testPubKey);
-            PgpSecretKeyRing pgpSec = new PgpSecretKeyRing(testPrivKey);
 
-            PgpPublicKey pubKey = pgpPub.PublicKey;
-
-            PgpUserAttributeSubpacketVectorGenerator vGen = new PgpUserAttributeSubpacketVectorGenerator();
+            var pgpPub  = new PgpPublicKeyRing(testPubKey);
+            var pgpSec  = new PgpSecretKeyRing(testPrivKey);
+            var pubKey  = pgpPub.PublicKey;
+            var vGen    = new PgpUserAttributeSubpacketVectorGenerator();
 
             vGen.SetImageAttribute(ImageAttrib.Format.Jpeg, jpegImage);
 
-            PgpUserAttributeSubpacketVector uVec = vGen.Generate();
+            var uVec    = vGen.Generate();
+            var sGen    = new PgpSignatureGenerator(PublicKeyAlgorithms.RsaGeneral, HashAlgorithms.Sha1);
 
-            PgpSignatureGenerator sGen = new PgpSignatureGenerator(
-                PublicKeyAlgorithms.RsaGeneral, HashAlgorithms.Sha1);
+            sGen.InitSign(PgpSignatureTypes.PositiveCertification, pgpSec.FirstSecretKey.ExtractPrivateKey(pass));
 
-            sGen.InitSign(PgpSignatures.PositiveCertification, pgpSec.FirstSecretKey.ExtractPrivateKey(pass));
-
-            PgpSignature sig = sGen.GenerateCertification(uVec, pubKey);
-
-            PgpPublicKey nKey = PgpPublicKey.AddCertification(pubKey, uVec, sig);
+            var sig     = sGen.GenerateCertification(uVec, pubKey);
+            var nKey    = PgpPublicKey.AddCertification(pubKey, uVec, sig);
 
             int count = 0;
-            foreach (PgpUserAttributeSubpacketVector attributes in nKey.GetUserAttributes())
+            foreach (var attributes in nKey.UserAttributes)
             {
+
                 int sigCount = 0;
-                foreach (PgpSignature s in nKey.GetSignaturesForUserAttribute(attributes))
+
+                foreach (var s in nKey.SignaturesForUserAttribute(attributes))
                 {
+
                     s.InitVerify(pubKey);
 
                     if (!s.VerifyCertification(attributes, pubKey))
-                    {
                         Fail("added signature failed verification");
-                    }
 
                     sigCount++;
+
                 }
 
                 if (sigCount != 1)
-                {
                     Fail("Failed added user attributes signature check");
-                }
+
                 count++;
+
             }
 
             if (count != 1)
-            {
                 Fail("didn't find added user attributes");
-            }
 
             nKey = PgpPublicKey.RemoveCertification(nKey, uVec);
 
-            if (nKey.GetUserAttributes().GetEnumerator().MoveNext())
-            {
+            if (nKey.UserAttributes.GetEnumerator().MoveNext())
                 Fail("found attributes where none expected");
-            }
+
         }
 
         public override void PerformTest()
         {
-            //
+
             // Read the public key
-            //
-            PgpPublicKeyRing pgpPub = new PgpPublicKeyRing(testPubKey);
+            var pgpPub = new PgpPublicKeyRing(testPubKey);
 
-            AsymmetricKeyParameter pubKey = pgpPub.PublicKey.GetKey();
+            var pubKey = pgpPub.PublicKey.Key;
 
-            IEnumerator enumerator = pgpPub.PublicKey.GetUserIds().GetEnumerator();
+            var enumerator = pgpPub.PublicKey.UserIds.GetEnumerator();
             enumerator.MoveNext();
-            string uid = (string) enumerator.Current;
+            var uid = enumerator.Current;
 
 
-            enumerator = pgpPub.PublicKey.GetSignaturesForId(uid).GetEnumerator();
-            enumerator.MoveNext();
-            PgpSignature sig = (PgpSignature) enumerator.Current;
+            var enumerator2 = pgpPub.PublicKey.SignaturesForUserId(uid).GetEnumerator();
+            enumerator2.MoveNext();
+            var sig = enumerator2.Current;
 
             sig.InitVerify(pgpPub.PublicKey);
 
             if (!sig.VerifyCertification(uid, pgpPub.PublicKey))
-            {
                 Fail("failed to verify certification");
-            }
 
-            //
             // write a public key
-            //
-            MemoryStream bOut = new UncloseableMemoryStream();
-            BcpgOutputStream pOut = new BcpgOutputStream(bOut);
+            var bOut = new UncloseableMemoryStream();
+            var pOut = new BcpgOutputStream(bOut);
 
             pgpPub.Encode(pOut);
 
             if (!Arrays.AreEqual(bOut.ToArray(), testPubKey))
-            {
                 Fail("public key rewrite failed");
-            }
 
-            //
             // Read the public key
-            //
-            PgpPublicKeyRing pgpPubV3 = new PgpPublicKeyRing(testPubKeyV3);
-            AsymmetricKeyParameter pubKeyV3 = pgpPub.PublicKey.GetKey();
+            var pgpPubV3 = new PgpPublicKeyRing(testPubKeyV3);
+            var pubKeyV3 = pgpPub.PublicKey.Key;
 
-            //
             // write a V3 public key
-            //
             bOut = new UncloseableMemoryStream();
             pOut = new BcpgOutputStream(bOut);
 
             pgpPubV3.Encode(pOut);
 
-            //
             // Read a v3 private key
-            //
-            String passP = "FIXCITY_QA";
+            var passP = "FIXCITY_QA";
 
             {
-                PgpSecretKeyRing pgpPriv2 = new PgpSecretKeyRing(testPrivKeyV3);
-                PgpSecretKey pgpPrivSecretKey = pgpPriv2.FirstSecretKey;
-                PgpPrivateKey pgpPrivKey2 = pgpPrivSecretKey.ExtractPrivateKey(passP);
 
-                //
+                var pgpPriv2          = new PgpSecretKeyRing(testPrivKeyV3);
+                var pgpPrivSecretKey  = pgpPriv2.FirstSecretKey;
+                var pgpPrivKey2       = pgpPrivSecretKey.ExtractPrivateKey(passP);
+
                 // write a v3 private key
-                //
                 bOut = new UncloseableMemoryStream();
                 pOut = new BcpgOutputStream(bOut);
 
                 pgpPriv2.EncodeToStream(pOut);
 
-                byte[] result = bOut.ToArray();
+                var result = bOut.ToArray();
+
                 if (!Arrays.AreEqual(result, testPrivKeyV3))
-                {
                     Fail("private key V3 rewrite failed");
-                }
+
             }
 
-            //
             // Read the private key
-            //
-            PgpSecretKeyRing pgpPriv = new PgpSecretKeyRing(testPrivKey);
-            PgpPrivateKey pgpPrivKey = pgpPriv.FirstSecretKey.ExtractPrivateKey(pass);
+            var pgpPriv     = new PgpSecretKeyRing(testPrivKey);
+            var pgpPrivKey  = pgpPriv.FirstSecretKey.ExtractPrivateKey(pass);
 
-            //
             // write a private key
-            //
             bOut = new UncloseableMemoryStream();
             pOut = new BcpgOutputStream(bOut);
 
             pgpPriv.EncodeToStream(pOut);
 
             if (!Arrays.AreEqual(bOut.ToArray(), testPrivKey))
-            {
                 Fail("private key rewrite failed");
-            }
 
-            //
             // test encryption
-            //
-            IBufferedCipher c = CipherUtilities.GetCipher("RSA");
+            var c = CipherUtilities.GetCipher("RSA");
 
 //                c.Init(Cipher.ENCRYPT_MODE, pubKey);
             c.Init(true, pubKey);
 
-            byte[] inBytes = Encoding.ASCII.GetBytes("hello world");
-            byte[] outBytes = c.DoFinal(inBytes);
+            var inBytes  = Encoding.ASCII.GetBytes("hello world");
+            var outBytes = c.DoFinal(inBytes);
 
 //                c.Init(Cipher.DECRYPT_MODE, pgpPrivKey.GetKey());
             c.Init(false, pgpPrivKey.Key);
@@ -644,16 +618,12 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
             outBytes = c.DoFinal(outBytes);
 
             if (!Arrays.AreEqual(inBytes, outBytes))
-            {
                 Fail("decryption failed.");
-            }
 
-            //
             // test signature message
-            //
-            PgpObjectFactory pgpFact = new PgpObjectFactory(sig1);
+            var pgpFact = new PgpObjectFactory(sig1);
 
-            PgpCompressedData c1 = (PgpCompressedData)pgpFact.NextPgpObject();
+            var c1 = (PgpCompressedData)pgpFact.NextPgpObject();
 
             pgpFact = new PgpObjectFactory(c1.GetDataStream());
 
@@ -815,7 +785,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
             AsymmetricCipherKeyPair kp = kpg.GenerateKeyPair();
 
             PgpSecretKey secretKey = new PgpSecretKey(
-                PgpSignatures.DefaultCertification,
+                PgpSignatureTypes.DefaultCertification,
                 PublicKeyAlgorithms.RsaGeneral,
                 kp.Public,
                 kp.Private,
@@ -831,32 +801,28 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
             PgpPublicKey key = secretKey.PublicKey;
 
 
-            enumerator = key.GetUserIds().GetEnumerator();
+            enumerator = key.UserIds.GetEnumerator();
             enumerator.MoveNext();
-            uid = (string) enumerator.Current;
+            uid = enumerator.Current;
 
 
-            enumerator = key.GetSignaturesForId(uid).GetEnumerator();
-            enumerator.MoveNext();
-            sig = (PgpSignature) enumerator.Current;
+            enumerator2 = key.SignaturesForUserId(uid).GetEnumerator();
+            enumerator2.MoveNext();
+            sig = enumerator2.Current;
 
             sig.InitVerify(key);
 
             if (!sig.VerifyCertification(uid, key))
-            {
                 Fail("failed to verify certification");
-            }
 
             pgpPrivKey = secretKey.ExtractPrivateKey(passPhrase);
 
             key = PgpPublicKey.RemoveCertification(key, uid, sig);
 
             if (key == null)
-            {
                 Fail("failed certification removal");
-            }
 
-            byte[] keyEnc = key.GetEncoded();
+            var keyEnc = key.GetEncoded();
 
             key = PgpPublicKey.AddCertification(key, uid, sig);
 
@@ -864,7 +830,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
 
             PgpSignatureGenerator sGen = new PgpSignatureGenerator(PublicKeyAlgorithms.RsaGeneral, HashAlgorithms.Sha1);
 
-            sGen.InitSign(PgpSignatures.KeyRevocation, secretKey.ExtractPrivateKey(passPhrase));
+            sGen.InitSign(PgpSignatureTypes.KeyRevocation, secretKey.ExtractPrivateKey(passPhrase));
 
             sig = sGen.GenerateCertification(key);
 
@@ -876,7 +842,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
 
             key = tmpRing.PublicKey;
 
-            IEnumerator sgEnum = key.GetSignaturesOfType(PgpSignatures.KeyRevocation).GetEnumerator();
+            IEnumerator sgEnum = key.SignaturesOfType(PgpSignatureTypes.KeyRevocation).GetEnumerator();
             sgEnum.MoveNext();
             sig = (PgpSignature) sgEnum.Current;
 
@@ -905,7 +871,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
             //
             kp = kpg.GenerateKeyPair();
 
-            secretKey = new PgpSecretKey(PgpSignatures.DefaultCertification,
+            secretKey = new PgpSecretKey(PgpSignatureTypes.DefaultCertification,
                 PublicKeyAlgorithms.RsaGeneral,
                 kp.Public,
                 kp.Private,
@@ -934,21 +900,19 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
             key.Encode(new UncloseableMemoryStream());
 
 
-            enumerator = key.GetUserIds().GetEnumerator();
+            enumerator = key.UserIds.GetEnumerator();
             enumerator.MoveNext();
             uid = (string) enumerator.Current;
 
 
-            enumerator = key.GetSignaturesForId(uid).GetEnumerator();
-            enumerator.MoveNext();
-            sig = (PgpSignature) enumerator.Current;
+            enumerator2 = key.SignaturesForUserId(uid).GetEnumerator();
+            enumerator2.MoveNext();
+            sig = enumerator2.Current;
 
             sig.InitVerify(key);
 
             if (!sig.VerifyCertification(uid, key))
-            {
                 Fail("failed to verify certification");
-            }
 
             pgpPrivKey = secretKey.ExtractPrivateKey(newPass);
 
@@ -965,7 +929,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
             sGen = new PgpSignatureGenerator(
                 PublicKeyAlgorithms.RsaGeneral, HashAlgorithms.Sha1);
 
-            sGen.InitSign(PgpSignatures.BinaryDocument, pgpPrivKey);
+            sGen.InitSign(PgpSignatureTypes.BinaryDocument, pgpPrivKey);
 
             PgpCompressedDataGenerator cGen = new PgpCompressedDataGenerator(
                 CompressionAlgorithms.Zip);
@@ -1040,7 +1004,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
             PgpV3SignatureGenerator sGenV3 = new PgpV3SignatureGenerator(
                 PublicKeyAlgorithms.RsaGeneral, HashAlgorithms.Sha1);
 
-            sGen.InitSign(PgpSignatures.BinaryDocument, pgpPrivKey);
+            sGen.InitSign(PgpSignatureTypes.BinaryDocument, pgpPrivKey);
 
             cGen = new PgpCompressedDataGenerator(CompressionAlgorithms.Zip);
 
@@ -1139,7 +1103,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
             MemoryStream testIn = new MemoryStream(dataBytes, false);
             PgpSignatureGenerator sGen = new PgpSignatureGenerator(PublicKeyAlgorithms.RsaGeneral, hashAlgorithm);
 
-            sGen.InitSign(PgpSignatures.BinaryDocument, privKey);
+            sGen.InitSign(PgpSignatureTypes.BinaryDocument, privKey);
 
             PgpCompressedDataGenerator cGen = new PgpCompressedDataGenerator(CompressionAlgorithms.Zip);
 

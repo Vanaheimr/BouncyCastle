@@ -2,17 +2,20 @@ using System;
 
 namespace Org.BouncyCastle.Bcpg.Sig
 {
-	/**
-	 * Packet embedded signature
-	 */
-	public class EmbeddedSignature
-		: SignatureSubpacket
-	{
-		public EmbeddedSignature(
-			bool	critical,
-			byte[]	data)
-			: base(SignatureSubpackets.EmbeddedSignature, critical, data)
-		{
-		}
-	}
+
+    /// <summary>
+    /// Packet embedded signature
+    /// </summary>
+    public class EmbeddedSignature : SignatureSubpacket
+    {
+
+        public EmbeddedSignature(Boolean  IsCritical,
+                                 Byte[]   Data)
+
+            : base(SignatureSubpackets.EmbeddedSignature, IsCritical, Data)
+
+        { }
+
+    }
+
 }

@@ -94,8 +94,7 @@ namespace Org.BouncyCastle.Utilities
             return Encoding.UTF8.GetBytes(cs);
         }
 
-        public static byte[] ToUtf8ByteArray(
-            string s)
+        public static byte[] ToUtf8ByteArray(String s)
         {
             return Encoding.UTF8.GetBytes(s);
         }

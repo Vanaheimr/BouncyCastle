@@ -229,7 +229,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
         private PgpSecretKey ReadSecretKey(Stream  inputStream)
         {
 
-            var pgpSec = new PgpSecretKeyRingBundle(inputStream);
+            var SecretKeyRingBundle = new PgpSecretKeyRingBundle(inputStream);
 
             //
             // we just loop through the collection till we find a key suitable for encryption, in the real
@@ -238,12 +238,12 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
             //
             // iterate through the key rings.
             //
-            foreach (var kRing in pgpSec.GetKeyRings())
+            foreach (var SecretKeyRing in SecretKeyRingBundle)
             {
-                foreach (var k in kRing.SecretKeys)
+                foreach (var SecretKey in SecretKeyRing)
                 {
-                    if (k.IsSigningKey)
-                        return k;
+                    if (SecretKey.IsSigningKey)
+                        return SecretKey;
                 }
             }
 
@@ -260,9 +260,9 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
             PgpSignatureGenerator           sGen        = new PgpSignatureGenerator(pgpSecKey.PublicKey.Algorithm, HashAlgorithms.Sha256);
             PgpSignatureSubpacketGenerator  spGen       = new PgpSignatureSubpacketGenerator();
 
-            sGen.InitSign(PgpSignatures.CanonicalTextDocument, pgpPrivKey);
+            sGen.InitSign(PgpSignatureTypes.CanonicalTextDocument, pgpPrivKey);
 
-            IEnumerator    it = pgpSecKey.PublicKey.GetUserIds().GetEnumerator();
+            IEnumerator    it = pgpSecKey.PublicKey.UserIds.GetEnumerator();
             if (it.MoveNext())
             {
                 spGen.SetSignerUserId(false, (string)it.Current);

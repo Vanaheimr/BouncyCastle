@@ -17,12 +17,13 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
     /// or construct one of these you should use the <c>PgpPublicKeyRingBundle</c> class.
     /// </p>
     /// </remarks>
-    public class PgpPublicKeyRing : PgpKeyRing
+    public class PgpPublicKeyRing : PgpKeyRing,
+                                    IEnumerable<PgpPublicKey>
     {
 
         #region Data
 
-        private readonly Dictionary<UInt64, PgpPublicKey> keys;
+        private readonly Dictionary<UInt64, PgpPublicKey> _PublicKeys;
 
         #endregion
 
@@ -35,19 +36,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
         {
             get
             {
-                return keys.Values.First();
-            }
-        }
-
-        /// <summary>
-        /// Allows enumeration of all the public keys.
-        /// </summary>
-        /// <returns>An <c>IEnumerable</c> of <c>PgpPublicKey</c> objects.</returns>
-        public virtual IEnumerable<PgpPublicKey> PublicKeys
-        {
-            get
-            {
-                return keys.Values;
+                return _PublicKeys.Values.First();
             }
         }
 
@@ -59,7 +48,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
 
         internal PgpPublicKeyRing(IEnumerable<PgpPublicKey> PublicKeys)
         {
-            this.keys = PublicKeys.ToDictionary(item => item.KeyId, item => item);
+            this._PublicKeys = PublicKeys.ToDictionary(item => item.KeyId, item => item);
         }
 
         #endregion
@@ -97,15 +86,15 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
             List<List<PgpSignature>>  IdSigs;
             ReadUserIds(BCPGInputStream, out Ids, out IdTrusts, out IdSigs);
 
-            this.keys = new Dictionary<UInt64, PgpPublicKey>();
+            this._PublicKeys = new Dictionary<UInt64, PgpPublicKey>();
             var pubKey = new PgpPublicKey(pubPk, trustPk, keySigs, Ids, IdTrusts, IdSigs);
-            this.keys.Add(pubKey.KeyId, pubKey);
+            this._PublicKeys.Add(pubKey.KeyId, pubKey);
 
             // Read subkeys
             while (BCPGInputStream.NextPacketTag() == PacketTag.PublicSubkey)
             {
                 var SubKey = ReadSubkey(BCPGInputStream);
-                keys.Add(SubKey.KeyId, SubKey);
+                _PublicKeys.Add(SubKey.KeyId, SubKey);
             }
 
         }
@@ -125,7 +114,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
 
             PgpPublicKey _PgpPublicKey = null;
 
-            if (keys.TryGetValue(KeyId, out _PgpPublicKey))
+            if (_PublicKeys.TryGetValue(KeyId, out _PgpPublicKey))
                 return _PgpPublicKey;
 
             return null;
@@ -138,14 +127,14 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
 
         public Boolean TryGetPublicKeyByKeyId(UInt64 KeyId, out PgpPublicKey PgpPublicKey)
         {
-            return keys.TryGetValue(KeyId, out PgpPublicKey);
+            return _PublicKeys.TryGetValue(KeyId, out PgpPublicKey);
         }
 
         #endregion
 
 
 
-        public virtual byte[] GetEncoded()
+        public byte[] GetEncoded()
         {
 
             var bOut = new MemoryStream();
@@ -155,32 +144,35 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
 
         }
 
-        public virtual void Encode(Stream outStr)
+        public void Encode(Stream outStr)
         {
 
             if (outStr == null)
                 throw new ArgumentNullException("outStr");
 
-            foreach (var PublicKey in keys.Values)
+            foreach (var PublicKey in _PublicKeys.Values)
             {
                 PublicKey.Encode(outStr);
             }
 
         }
 
+
+        #region (static) InsertPublicKey(PublicKeyRing, PublicKey)
+
         /// <summary>
         /// Returns a new key ring with the public key passed in either added or
         /// replacing an existing one.
         /// </summary>
-        /// <param name="pubRing">The public key ring to be modified.</param>
-        /// <param name="pubKey">The public key to be inserted.</param>
+        /// <param name="PublicKeyRing">The public key ring to be modified.</param>
+        /// <param name="PublicKey">The public key to be inserted.</param>
         /// <returns>A new <c>PgpPublicKeyRing</c></returns>
-        public static PgpPublicKeyRing InsertPublicKey(PgpPublicKeyRing  pubRing,
-                                                       PgpPublicKey      pubKey)
+        public static PgpPublicKeyRing InsertPublicKey(PgpPublicKeyRing  PublicKeyRing,
+                                                       PgpPublicKey      PublicKey)
 
         {
 
-            var keys         = new List<PgpPublicKey>(pubRing.keys.Values);
+            var keys         = new List<PgpPublicKey>(PublicKeyRing._PublicKeys.Values);
             var found        = false;
             var masterFound  = false;
 
@@ -189,10 +181,10 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
 
                 var key = keys[i];
 
-                if (key.KeyId == pubKey.KeyId)
+                if (key.KeyId == PublicKey.KeyId)
                 {
                     found = true;
-                    keys[i] = pubKey;
+                    keys[i] = PublicKey;
                 }
 
                 if (key.IsMasterKey)
@@ -205,16 +197,16 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
             if (!found)
             {
 
-                if (pubKey.IsMasterKey)
+                if (PublicKey.IsMasterKey)
                 {
                     if (masterFound)
                         throw new ArgumentException("cannot add a master key to a ring that already has one");
 
-                    keys.Insert(0, pubKey);
+                    keys.Insert(0, PublicKey);
                 }
 
                 else
-                    keys.Add(pubKey);
+                    keys.Add(PublicKey);
 
             }
 
@@ -222,15 +214,19 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
 
         }
 
+        #endregion
+
+        #region (static) RemovePublicKey(PublicKeyRing, PublicKey)
+
         /// <summary>Returns a new key ring with the public key passed in removed from the key ring.</summary>
-        /// <param name="pubRing">The public key ring to be modified.</param>
-        /// <param name="pubKey">The public key to be removed.</param>
+        /// <param name="PublicKeyRing">The public key ring to be modified.</param>
+        /// <param name="PublicKey">The public key to be removed.</param>
         /// <returns>A new <c>PgpPublicKeyRing</c>, or null if pubKey is not found.</returns>
-        public static PgpPublicKeyRing RemovePublicKey(PgpPublicKeyRing  pubRing,
-                                                       PgpPublicKey      pubKey)
+        public static PgpPublicKeyRing RemovePublicKey(PgpPublicKeyRing  PublicKeyRing,
+                                                       PgpPublicKey      PublicKey)
         {
 
-            var keys   = new List<PgpPublicKey>(pubRing.keys.Values);
+            var keys   = new List<PgpPublicKey>(PublicKeyRing._PublicKeys.Values);
             var found  = false;
 
             for (int i = 0; i < keys.Count; i++)
@@ -238,7 +234,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
 
                 var key = keys[i];
 
-                if (key.KeyId == pubKey.KeyId)
+                if (key.KeyId == PublicKey.KeyId)
                 {
                     found = true;
                     keys.RemoveAt(i);
@@ -249,6 +245,10 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
             return found ? new PgpPublicKeyRing(keys) : null;
 
         }
+
+        #endregion
+
+        #region (internal, static) ReadSubkey(bcpgInput)
 
         internal static PgpPublicKey ReadSubkey(BcpgInputStream bcpgInput)
         {
@@ -262,6 +262,23 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
             return new PgpPublicKey(pk, kTrust, sigList);
 
         }
+
+        #endregion
+
+
+        #region GetEnumerator()
+
+        public IEnumerator<PgpPublicKey> GetEnumerator()
+        {
+            return _PublicKeys.Values.GetEnumerator();
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return _PublicKeys.Values.GetEnumerator();
+        }
+
+        #endregion
 
     }
 

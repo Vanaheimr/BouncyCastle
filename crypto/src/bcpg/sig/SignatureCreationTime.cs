@@ -4,44 +4,76 @@ using Org.BouncyCastle.Utilities.Date;
 
 namespace Org.BouncyCastle.Bcpg.Sig
 {
-    /**
-    * packet giving signature creation time.
-    */
-    public class SignatureCreationTime
-        : SignatureSubpacket
+
+    /// <summary>
+    /// Packet giving signature creation time.
+    /// </summary>
+    public class SignatureCreationTime : SignatureSubpacket
     {
-		protected static byte[] TimeToBytes(
-            DateTime time)
+
+        #region Properties
+
+        #region Time
+
+        public DateTime Time
         {
-			long t = DateTimeUtilities.DateTimeToUnixMs(time) / 1000L;
-			byte[] data = new byte[4];
-			data[0] = (byte)(t >> 24);
-            data[1] = (byte)(t >> 16);
-            data[2] = (byte)(t >> 8);
-            data[3] = (byte)t;
-            return data;
+            get
+            {
+
+                return DateTimeUtilities.UnixMsToDateTime((long)(((uint) _Data[0] << 24) |
+                                                                 ((uint) _Data[1] << 16) |
+                                                                 ((uint) _Data[2] <<  8) |
+                                                                 ((uint) _Data[3])
+                                                                ) * 1000L);
+
+            }
         }
-        public SignatureCreationTime(
-            bool	critical,
-            byte[]	data)
-            : base(SignatureSubpackets.CreationTime, critical, data)
+
+        #endregion
+
+        #endregion
+
+        #region Constructor(s)
+
+        #region SignatureCreationTime(IsCritical, Data)
+
+        public SignatureCreationTime(Boolean  IsCritical,
+                                     Byte[]   Data)
+
+            : base(SignatureSubpackets.CreationTime, IsCritical, Data)
+
+        { }
+
+        #endregion
+
+        #region SignatureCreationTime(IsCritical, Date)
+
+        public SignatureCreationTime(Boolean   IsCritical,
+                                     DateTime  Date)
+
+            : base(SignatureSubpackets.CreationTime, IsCritical, TimeToBytes(Date))
+
+        { }
+
+        #endregion
+
+        #endregion
+
+
+        protected static Byte[] TimeToBytes(DateTime Time)
         {
+
+            var t = DateTimeUtilities.DateTimeToUnixMs(Time) / 1000L;
+
+            return new Byte[] {
+                (byte) (t >> 24),
+                (byte) (t >> 16),
+                (byte) (t >>  8),
+                (byte)  t
+            };
+
         }
-        public SignatureCreationTime(
-            bool		critical,
-            DateTime	date)
-            : base(SignatureSubpackets.CreationTime, critical, TimeToBytes(date))
-        {
-        }
-        public DateTime GetTime()
-        {
-			long time = (long)(
-					((uint)data[0] << 24)
-				|	((uint)data[1] << 16)
-				|	((uint)data[2] << 8)
-				|	((uint)data[3])
-				);
-			return DateTimeUtilities.UnixMsToDateTime(time * 1000L);
-        }
+
     }
+
 }

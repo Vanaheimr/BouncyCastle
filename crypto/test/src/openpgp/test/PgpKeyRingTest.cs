@@ -1065,46 +1065,46 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
         [Test]
         public void PerformTest1()
         {
-            PgpPublicKeyRingBundle pubRings = new PgpPublicKeyRingBundle(pub1);
+
+            var PublicKeyRingBundle = new PgpPublicKeyRingBundle(pub1);
 
             int count = 0;
 
-            foreach (PgpPublicKeyRing pgpPub1 in pubRings.KeyRings)
+            foreach (var pgpPub1 in PublicKeyRingBundle)
             {
                 count++;
 
                 int keyCount = 0;
                 byte[] bytes = pgpPub1.GetEncoded();
 
-                PgpPublicKeyRing pgpPub2 = new PgpPublicKeyRing(bytes);
+                var PublicKeyRing2 = new PgpPublicKeyRing(bytes);
 
-                foreach (PgpPublicKey pubKey in pgpPub2.PublicKeys)
+                foreach (var pubKey in PublicKeyRing2)
                 {
+
                     keyCount++;
 
-                    foreach (PgpSignature sig in pubKey.GetSignatures())
+                    foreach (var Signature in pubKey.Signatures)
                     {
-                        if (sig == null)
+                        if (Signature == null)
                             Fail("null signature found");
                     }
+
                 }
 
                 if (keyCount != 2)
-                {
                     Fail("wrong number of public keys");
-                }
+
             }
 
             if (count != 1)
-            {
                 Fail("wrong number of public keyrings");
-            }
 
             //
             // exact match
             //
             count = 0;
-            foreach (PgpPublicKeyRing pgpPub3 in pubRings.GetKeyRings("test (Test key) <test@ubicall.com>"))
+            foreach (PgpPublicKeyRing pgpPub3 in PublicKeyRingBundle.Search("test (Test key) <test@ubicall.com>"))
             {
                 if (pgpPub3 == null)
                     Fail("null keyring found");
@@ -1113,15 +1113,13 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
             }
 
             if (count != 1)
-            {
                 Fail("wrong number of public keyrings on exact match");
-            }
 
             //
             // partial match 1 expected
             //
             count = 0;
-            foreach (PgpPublicKeyRing pgpPub4 in pubRings.GetKeyRings("test", true))
+            foreach (PgpPublicKeyRing pgpPub4 in PublicKeyRingBundle.Search("test", true))
             {
                 if (pgpPub4 == null)
                     Fail("null keyring found");
@@ -1130,15 +1128,13 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
             }
 
             if (count != 1)
-            {
                 Fail("wrong number of public keyrings on partial match 1");
-            }
 
             //
             // partial match 0 expected
             //
             count = 0;
-            foreach (PgpPublicKeyRing pgpPub5 in pubRings.GetKeyRings("XXX", true))
+            foreach (PgpPublicKeyRing pgpPub5 in PublicKeyRingBundle.Search("XXX", true))
             {
                 if (pgpPub5 == null)
                     Fail("null keyring found");
@@ -1147,15 +1143,13 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
             }
 
             if (count != 0)
-            {
                 Fail("wrong number of public keyrings on partial match 0");
-            }
 
             //
             // case-insensitive partial match
             //
             count = 0;
-            foreach (PgpPublicKeyRing pgpPub6 in pubRings.GetKeyRings("TEST@ubicall.com", true, true))
+            foreach (PgpPublicKeyRing pgpPub6 in PublicKeyRingBundle.Search("TEST@ubicall.com", true, true))
             {
                 if (pgpPub6 == null)
                     Fail("null keyring found");
@@ -1164,33 +1158,34 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
             }
 
             if (count != 1)
-            {
                 Fail("wrong number of public keyrings on case-insensitive partial match");
-            }
 
-            PgpSecretKeyRingBundle secretRings = new PgpSecretKeyRingBundle(sec1);
+            var SecretKeyRingBundle = new PgpSecretKeyRingBundle(sec1);
             count = 0;
 
-            foreach (PgpSecretKeyRing pgpSec1 in secretRings.GetKeyRings())
+            foreach (var SecretKeyRing1 in SecretKeyRingBundle)
             {
+
                 count++;
 
                 int keyCount = 0;
 
-                byte[] bytes = pgpSec1.GetEncoded();
+                byte[] bytes = SecretKeyRing1.GetEncoded();
 
-                PgpSecretKeyRing pgpSec2 = new PgpSecretKeyRing(bytes);
+                var pgpSec2 = new PgpSecretKeyRing(bytes);
 
-                foreach (PgpSecretKey k in pgpSec2.SecretKeys)
+                foreach (var SecretKey in pgpSec2)
                 {
-                    keyCount++;
-                    PgpPublicKey pk = k.PublicKey;
 
-                    pk.GetSignatures();
+                    keyCount++;
+                    var pk = SecretKey.PublicKey;
+
+                    //var aa = pk.Signatures;
 
                     byte[] pkBytes = pk.GetEncoded();
 
-                    PgpPublicKeyRing pkR = new PgpPublicKeyRing(pkBytes);
+                    var pkR = new PgpPublicKeyRing(pkBytes);
+
                 }
 
                 if (keyCount != 2)
@@ -1208,9 +1203,9 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
             // exact match
             //
             count = 0;
-            foreach (PgpSecretKeyRing o1 in secretRings.GetKeyRings("test (Test key) <test@ubicall.com>"))
+            foreach (var PgpSecretKeyRing_o1 in SecretKeyRingBundle.GetKeyRings("test (Test key) <test@ubicall.com>"))
             {
-                if (o1 == null)
+                if (PgpSecretKeyRing_o1 == null)
                     Fail("null keyring found");
 
                 count++;
@@ -1225,9 +1220,9 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
             // partial match 1 expected
             //
             count = 0;
-            foreach (PgpSecretKeyRing o2 in secretRings.GetKeyRings("test", true))
+            foreach (var PgpSecretKeyRing_o2 in SecretKeyRingBundle.GetKeyRings("test", true))
             {
-                if (o2 == null)
+                if (PgpSecretKeyRing_o2 == null)
                     Fail("null keyring found");
 
                 count++;
@@ -1242,9 +1237,9 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
             // exact match 0 expected
             //
             count = 0;
-            foreach (PgpSecretKeyRing o3 in secretRings.GetKeyRings("test", false))
+            foreach (var PgpSecretKeyRing_o3 in SecretKeyRingBundle.GetKeyRings("test", false))
             {
-                if (o3 == null)
+                if (PgpSecretKeyRing_o3 == null)
                     Fail("null keyring found");
 
                 count++;
@@ -1259,9 +1254,9 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
             // case-insensitive partial match
             //
             count = 0;
-            foreach (PgpSecretKeyRing o4 in secretRings.GetKeyRings("TEST@ubicall.com", true, true))
+            foreach (var PgpSecretKeyRing_o4 in SecretKeyRingBundle.GetKeyRings("TEST@ubicall.com", true, true))
             {
-                if (o4 == null)
+                if (PgpSecretKeyRing_o4 == null)
                     Fail("null keyring found");
 
                 count++;
@@ -1276,30 +1271,30 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
         [Test]
         public void PerformTest2()
         {
-            PgpPublicKeyRingBundle pubRings = new PgpPublicKeyRingBundle(pub2);
+
+            var PublicKeyRingBundle = new PgpPublicKeyRingBundle(pub2);
 
             int count = 0;
 
-            byte[] encRing = pubRings.GetEncoded();
+            byte[] encRing = PublicKeyRingBundle.GetEncoded();
 
-            pubRings = new PgpPublicKeyRingBundle(encRing);
+            PublicKeyRingBundle = new PgpPublicKeyRingBundle(encRing);
 
-            foreach (PgpPublicKeyRing pgpPub1 in pubRings.KeyRings)
+            foreach (var pgpPub1 in PublicKeyRingBundle)
             {
+
                 count++;
 
                 int keyCount = 0;
 
                 byte[] bytes = pgpPub1.GetEncoded();
 
-                PgpPublicKeyRing pgpPub2 = new PgpPublicKeyRing(bytes);
+                var pgpPub2 = new PgpPublicKeyRing(bytes);
 
-                foreach (PgpPublicKey pk in pgpPub2.PublicKeys)
+                foreach (var pk in pgpPub2)
                 {
-                    byte[] pkBytes = pk.GetEncoded();
-
-                    PgpPublicKeyRing pkR = new PgpPublicKeyRing(pkBytes);
-
+                    var pkBytes = pk.GetEncoded();
+                    var pkR = new PgpPublicKeyRing(pkBytes);
                     keyCount++;
                 }
 
@@ -1314,38 +1309,40 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
                 Fail("wrong number of public keyrings");
             }
 
-            PgpSecretKeyRingBundle secretRings2 = new PgpSecretKeyRingBundle(sec2);
+            var secretRings2 = new PgpSecretKeyRingBundle(sec2);
 
             count = 0;
 
 
             encRing = secretRings2.GetEncoded();
-            PgpSecretKeyRingBundle secretRings = new PgpSecretKeyRingBundle(encRing);
+            var SecretKeyRingBundle = new PgpSecretKeyRingBundle(encRing);
 
-            foreach (PgpSecretKeyRing pgpSec1 in secretRings2.GetKeyRings())
+            foreach (var secretRing1 in secretRings2)
             {
+
                 count++;
 
                 int keyCount = 0;
 
-                byte[] bytes = pgpSec1.GetEncoded();
+                byte[] bytes = secretRing1.GetEncoded();
 
-                PgpSecretKeyRing pgpSec2 = new PgpSecretKeyRing(bytes);
+                var pgpSec2 = new PgpSecretKeyRing(bytes);
 
-                foreach (PgpSecretKey k in pgpSec2.SecretKeys)
+                foreach (var SecretKey in pgpSec2)
                 {
+
                     keyCount++;
-                    PgpPublicKey pk = k.PublicKey;
+                    var pk = SecretKey.PublicKey;
 
                     if (((Int64)pk.KeyId) == -1413891222336124627L)
                     {
                         int sCount = 0;
 
-                        foreach (PgpSignature pgpSignature in pk.GetSignaturesOfType(PgpSignatures.SubkeyBinding))
+                        foreach (var pgpSignature in pk.SignaturesOfType(PgpSignatureTypes.SubkeyBinding))
                         {
 
                             var type = pgpSignature.SignatureType;
-                            if (type != PgpSignatures.SubkeyBinding)
+                            if (type != PgpSignatureTypes.SubkeyBinding)
                                 Fail("failed to return correct signature type");
 
                             sCount++;
@@ -1357,18 +1354,18 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
 
                     }
 
-                    pk.GetSignatures();
+                    //pk.GetSignatures();
 
-                    if (((Int64) k.KeyId) == -4049084404703773049L ||
-                        ((Int64) k.KeyId) == -1413891222336124627L)
+                    if (((Int64) SecretKey.KeyId) == -4049084404703773049L ||
+                        ((Int64) SecretKey.KeyId) == -1413891222336124627L)
                     {
-                        k.ExtractPrivateKey(sec2pass1);
+                        SecretKey.ExtractPrivateKey(sec2pass1);
                     }
 
-                    else if (((Int64) k.KeyId) == -6498553574938125416L ||
-                                      k.KeyId  == 59034765524361024L)
+                    else if (((Int64) SecretKey.KeyId) == -6498553574938125416L ||
+                                      SecretKey.KeyId  == 59034765524361024L)
                     {
-                        k.ExtractPrivateKey(sec2pass2);
+                        SecretKey.ExtractPrivateKey(sec2pass2);
                     }
 
                 }
@@ -1386,34 +1383,37 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
         [Test]
         public void PerformTest3()
         {
-            PgpPublicKeyRingBundle pubRings = new PgpPublicKeyRingBundle(pub3);
+
+            var PublicKeyRingBundle = new PgpPublicKeyRingBundle(pub3);
 
             int count = 0;
 
-            byte[] encRing = pubRings.GetEncoded();
+            byte[] encRing = PublicKeyRingBundle.GetEncoded();
 
-            pubRings = new PgpPublicKeyRingBundle(encRing);
+            PublicKeyRingBundle = new PgpPublicKeyRingBundle(encRing);
 
-            foreach (PgpPublicKeyRing pgpPub1 in pubRings.KeyRings)
+            foreach (var pgpPub1 in PublicKeyRingBundle)
             {
+
                 count++;
 
                 int keyCount = 0;
 
                 byte[] bytes = pgpPub1.GetEncoded();
 
-                PgpPublicKeyRing pgpPub2 = new PgpPublicKeyRing(bytes);
+                var pgpPub2 = new PgpPublicKeyRing(bytes);
 
-                foreach (PgpPublicKey pubK in pgpPub2.PublicKeys)
+                foreach (var pubK in pgpPub2)
                 {
                     keyCount++;
-                    pubK.GetSignatures();
+                    //pubK.GetSignatures();
                 }
 
                 if (keyCount != 2)
                 {
                     Fail("wrong number of public keys");
                 }
+
             }
 
             if (count != 1)
@@ -1421,34 +1421,35 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
                 Fail("wrong number of public keyrings");
             }
 
-            PgpSecretKeyRingBundle secretRings2 = new PgpSecretKeyRingBundle(sec3);
+            var secretRings2 = new PgpSecretKeyRingBundle(sec3);
 
             count = 0;
 
             encRing = secretRings2.GetEncoded();
 
-            PgpSecretKeyRingBundle secretRings = new PgpSecretKeyRingBundle(encRing);
+            var secretRings = new PgpSecretKeyRingBundle(encRing);
 
-            foreach (PgpSecretKeyRing pgpSec1 in secretRings2.GetKeyRings())
+            foreach (var SecretKeyRing1 in secretRings2)
             {
                 count++;
 
                 int keyCount = 0;
 
-                byte[] bytes = pgpSec1.GetEncoded();
+                byte[] bytes = SecretKeyRing1.GetEncoded();
 
-                PgpSecretKeyRing pgpSec2 = new PgpSecretKeyRing(bytes);
+                var pgpSec2 = new PgpSecretKeyRing(bytes);
 
-                foreach (PgpSecretKey k in pgpSec2.SecretKeys)
+                foreach (var SecretKey in pgpSec2)
                 {
                     keyCount++;
-                    k.ExtractPrivateKey(sec3pass1);
+                    SecretKey.ExtractPrivateKey(sec3pass1);
                 }
 
                 if (keyCount != 2)
                 {
                     Fail("wrong number of secret keys");
                 }
+
             }
 
             if (count != 1)
@@ -1460,64 +1461,69 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
         [Test]
         public void PerformTest4()
         {
-            PgpSecretKeyRingBundle secretRings1 = new PgpSecretKeyRingBundle(sec4);
+
+            var SecretKeyRingBundle1 = new PgpSecretKeyRingBundle(sec4);
             int count = 0;
 
 
-            byte[] encRing = secretRings1.GetEncoded();
+            byte[] encRing = SecretKeyRingBundle1.GetEncoded();
 
-            PgpSecretKeyRingBundle secretRings2 = new PgpSecretKeyRingBundle(encRing);
+            var secretRings2 = new PgpSecretKeyRingBundle(encRing);
 
-            foreach (PgpSecretKeyRing pgpSec1 in secretRings1.GetKeyRings())
+            foreach (var SecretKeyRing1 in SecretKeyRingBundle1)
             {
                 count++;
 
                 int keyCount = 0;
 
-                byte[] bytes = pgpSec1.GetEncoded();
+                byte[] bytes = SecretKeyRing1.GetEncoded();
 
-                PgpSecretKeyRing pgpSec2 = new PgpSecretKeyRing(bytes);
+                var SecretKeyRing2 = new PgpSecretKeyRing(bytes);
 
-                foreach (PgpSecretKey k in pgpSec2.SecretKeys)
+                foreach (var SecretKey in SecretKeyRing2)
                 {
                     keyCount++;
-                    k.ExtractPrivateKey(sec3pass1);
+                    SecretKey.ExtractPrivateKey(sec3pass1);
                 }
 
                 if (keyCount != 2)
                 {
                     Fail("wrong number of secret keys");
                 }
+
             }
 
             if (count != 1)
             {
                 Fail("wrong number of secret keyrings");
             }
+
         }
 
         [Test]
         public void PerformTest5()
         {
-            PgpPublicKeyRingBundle pubRings = new PgpPublicKeyRingBundle(pub5);
+
+            var PublicKeyRingBundle = new PgpPublicKeyRingBundle(pub5);
 
             int count = 0;
 
-            byte[] encRing = pubRings.GetEncoded();
+            byte[] encRing = PublicKeyRingBundle.GetEncoded();
 
-            pubRings = new PgpPublicKeyRingBundle(encRing);
+            PublicKeyRingBundle = new PgpPublicKeyRingBundle(encRing);
 
-            foreach (PgpPublicKeyRing pgpPub1 in pubRings.KeyRings)
+            foreach (var pgpPub1 in PublicKeyRingBundle)
             {
+
                 count++;
 
                 int keyCount = 0;
 
                 byte[] bytes = pgpPub1.GetEncoded();
 
-                PgpPublicKeyRing pgpPub2 = new PgpPublicKeyRing(bytes);
+                var pgpPub2 = new PgpPublicKeyRing(bytes);
 
-                foreach (PgpPublicKey o in pgpPub2.PublicKeys)
+                foreach (var o in pgpPub2)
                 {
                     if (o == null)
                         Fail("null keyring found");
@@ -1529,6 +1535,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
                 {
                     Fail("wrong number of public keys");
                 }
+
             }
 
             if (count != 1)
@@ -1536,81 +1543,90 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
                 Fail("wrong number of public keyrings");
             }
 
-            PgpSecretKeyRingBundle secretRings1 = new PgpSecretKeyRingBundle(sec5);
+            var SecretKeyRingBundle1 = new PgpSecretKeyRingBundle(sec5);
 
             count = 0;
 
-            encRing = secretRings1.GetEncoded();
+            encRing = SecretKeyRingBundle1.GetEncoded();
 
-            PgpSecretKeyRingBundle secretRings2 = new PgpSecretKeyRingBundle(encRing);
+            var SecretKeyRingBundle2 = new PgpSecretKeyRingBundle(encRing);
 
-            foreach (PgpSecretKeyRing pgpSec1 in secretRings1.GetKeyRings())
+            foreach (var SecretKeyRing1 in SecretKeyRingBundle1)
             {
+
                 count++;
 
                 int keyCount = 0;
 
-                byte[] bytes = pgpSec1.GetEncoded();
+                byte[] bytes = SecretKeyRing1.GetEncoded();
 
-                PgpSecretKeyRing pgpSec2 = new PgpSecretKeyRing(bytes);
+                var pgpSec2 = new PgpSecretKeyRing(bytes);
 
-                foreach (PgpSecretKey k in pgpSec2.SecretKeys)
+                foreach (var SecretKey in pgpSec2)
                 {
                     keyCount++;
-                    k.ExtractPrivateKey(sec5pass1);
+                    SecretKey.ExtractPrivateKey(sec5pass1);
                 }
 
                 if (keyCount != 2)
                 {
                     Fail("wrong number of secret keys");
                 }
+
             }
 
             if (count != 1)
             {
                 Fail("wrong number of secret keyrings");
             }
+
         }
 
         [Test]
         public void PerformTest6()
         {
-            PgpPublicKeyRingBundle pubRings = new PgpPublicKeyRingBundle(pub6);
 
-            foreach (PgpPublicKeyRing pgpPub in pubRings.KeyRings)
+            var PublicKeyRingBundle = new PgpPublicKeyRingBundle(pub6);
+
+            foreach (var pgpPub in PublicKeyRingBundle)
             {
-                foreach (PgpPublicKey k in pgpPub.PublicKeys)
+                foreach (var PublicKey in pgpPub)
                 {
-                    if (k.KeyId == 0x5ce086b5b5a18ff4L)
+                    if (PublicKey.KeyId == 0x5ce086b5b5a18ff4L)
                     {
+
                         int count = 0;
 
-                        foreach (PgpSignature sig in k.GetSignaturesOfType(PgpSignatures.SubkeyRevocation))
+                        foreach (var PgpSignature in PublicKey.SignaturesOfType(PgpSignatureTypes.SubkeyRevocation))
                         {
-                            if (sig == null)
+
+                            if (PgpSignature == null)
                                 Fail("null signature found");
 
                             count++;
+
                         }
 
                         if (count != 1)
                         {
                             Fail("wrong number of revocations in test6.");
                         }
+
                     }
                 }
             }
 
-            byte[] encRing = pubRings.GetEncoded();
+            byte[] encRing = PublicKeyRingBundle.GetEncoded();
         }
 
         [Test, Explicit]
         public void PerformTest7()
         {
-            PgpPublicKeyRing pgpPub = new PgpPublicKeyRing(pub7);
-            PgpPublicKey masterKey = null;
 
-            foreach (PgpPublicKey k in pgpPub.PublicKeys)
+            PgpPublicKeyRing pgpPub     = new PgpPublicKeyRing(pub7);
+            PgpPublicKey     masterKey  = null;
+
+            foreach (var k in pgpPub)
             {
                 if (k.IsMasterKey)
                 {
@@ -1621,7 +1637,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
                 int count = 0;
                 PgpSignature sig = null;
 
-                foreach (PgpSignature sigTemp in k.GetSignaturesOfType(PgpSignatures.SubkeyRevocation))
+                foreach (var sigTemp in k.SignaturesOfType(PgpSignatureTypes.SubkeyRevocation))
                 {
                     sig = sigTemp;
                     count++;
@@ -1638,31 +1654,34 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
                 {
                     Fail("failed to verify revocation certification");
                 }
+
             }
         }
 
         [Test]
         public void PerformTest8()
         {
-            PgpPublicKeyRingBundle pubRings = new PgpPublicKeyRingBundle(pub8);
+
+            var PublicKeyRingBundle = new PgpPublicKeyRingBundle(pub8);
 
             int count = 0;
 
-            byte[] encRing = pubRings.GetEncoded();
+            byte[] encRing = PublicKeyRingBundle.GetEncoded();
 
-            pubRings = new PgpPublicKeyRingBundle(encRing);
+            PublicKeyRingBundle = new PgpPublicKeyRingBundle(encRing);
 
-            foreach (PgpPublicKeyRing pgpPub1 in pubRings.KeyRings)
+            foreach (var pgpPub1 in PublicKeyRingBundle)
             {
+
                 count++;
 
                 int keyCount = 0;
 
                 byte[] bytes = pgpPub1.GetEncoded();
 
-                PgpPublicKeyRing pgpPub2 = new PgpPublicKeyRing(bytes);
+                var pgpPub2 = new PgpPublicKeyRing(bytes);
 
-                foreach (PgpPublicKey o in pgpPub2.PublicKeys)
+                foreach (var o in pgpPub2)
                 {
                     if (o == null)
                         Fail("null key found");
@@ -1681,145 +1700,142 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
                 Fail("wrong number of public keyrings");
             }
 
-            PgpSecretKeyRingBundle secretRings1 = new PgpSecretKeyRingBundle(sec8);
+            var SecretKeyRingBundle1 = new PgpSecretKeyRingBundle(sec8);
 
             count = 0;
 
-            encRing = secretRings1.GetEncoded();
+            encRing = SecretKeyRingBundle1.GetEncoded();
 
-            PgpSecretKeyRingBundle secretRings2 = new PgpSecretKeyRingBundle(encRing);
+            var SecretKeyRingBundle2 = new PgpSecretKeyRingBundle(encRing);
 
-            foreach (PgpSecretKeyRing pgpSec1 in secretRings1.GetKeyRings())
+            foreach (var SecretKeyRing1 in SecretKeyRingBundle1)
             {
+
                 count++;
 
                 int keyCount = 0;
 
-                byte[] bytes = pgpSec1.GetEncoded();
+                var bytes = SecretKeyRing1.GetEncoded();
 
-                PgpSecretKeyRing pgpSec2 = new PgpSecretKeyRing(bytes);
+                var pgpSec2 = new PgpSecretKeyRing(bytes);
 
-                foreach (PgpSecretKey k in pgpSec2.SecretKeys)
+                foreach (var SecretKey in pgpSec2)
                 {
                     keyCount++;
-                    k.ExtractPrivateKey(sec8pass);
+                    SecretKey.ExtractPrivateKey(sec8pass);
                 }
 
                 if (keyCount != 2)
-                {
                     Fail("wrong number of secret keys");
-                }
+
             }
 
             if (count != 1)
-            {
                 Fail("wrong number of secret keyrings");
-            }
+
         }
 
         [Test]
         public void PerformTest9()
         {
-            PgpSecretKeyRingBundle secretRings1 = new PgpSecretKeyRingBundle(sec9);
+
+            var SecretKeyRingBundle1 = new PgpSecretKeyRingBundle(sec9);
 
             int count = 0;
 
-            byte[] encRing = secretRings1.GetEncoded();
+            byte[] encRing = SecretKeyRingBundle1.GetEncoded();
 
-            PgpSecretKeyRingBundle secretRings2 = new PgpSecretKeyRingBundle(encRing);
+            var SecretKeyRingBundle2 = new PgpSecretKeyRingBundle(encRing);
 
-            foreach (PgpSecretKeyRing pgpSec1 in secretRings1.GetKeyRings())
+            foreach (var pgpSec1 in SecretKeyRingBundle1)
             {
+
                 count++;
 
                 int keyCount = 0;
 
-                byte[] bytes = pgpSec1.GetEncoded();
+                var bytes = pgpSec1.GetEncoded();
 
-                PgpSecretKeyRing pgpSec2 = new PgpSecretKeyRing(bytes);
+                var SecretKeyRing2 = new PgpSecretKeyRing(bytes);
 
-                foreach (PgpSecretKey k in pgpSec2.SecretKeys)
+                foreach (var SecretKey in SecretKeyRing2)
                 {
+
                     keyCount++;
 
-                    PgpPrivateKey pKey = k.ExtractPrivateKey(sec9pass);
+                    var pKey = SecretKey.ExtractPrivateKey(sec9pass);
+
                     if (keyCount == 1 && pKey != null)
-                    {
                         Fail("primary secret key found, null expected");
-                    }
+
                 }
 
                 if (keyCount != 3)
-                {
                     Fail("wrong number of secret keys");
-                }
+
             }
 
             if (count != 1)
-            {
                 Fail("wrong number of secret keyrings");
-            }
+
         }
 
         [Test]
         public void PerformTest10()
         {
-            PgpSecretKeyRing secretRing = new PgpSecretKeyRing(sec10);
 
-            foreach (PgpSecretKey secretKey in secretRing.SecretKeys)
+            var SecretKeyRing = new PgpSecretKeyRing(sec10);
+
+            foreach (var SecretKey in SecretKeyRing)
             {
-                PgpPublicKey pubKey = secretKey.PublicKey;
+
+                var pubKey = SecretKey.PublicKey;
 
                 if (pubKey.ValidDays != 28)
-                {
                     Fail("days wrong on secret key ring");
-                }
 
-                if (pubKey.GetValidSeconds() != 28 * 24 * 60 * 60)
-                {
+                if (pubKey.ValidSeconds != 28 * 24 * 60 * 60)
                     Fail("seconds wrong on secret key ring");
-                }
+
             }
 
-            PgpPublicKeyRing publicRing = new PgpPublicKeyRing(pub10);
+            var publicRing = new PgpPublicKeyRing(pub10);
 
-            foreach (PgpPublicKey pubKey in publicRing.PublicKeys)
+            foreach (var pubKey in publicRing)
             {
-                if (pubKey.ValidDays != 28)
-                {
-                    Fail("days wrong on public key ring");
-                }
 
-                if (pubKey.GetValidSeconds() != 28 * 24 * 60 * 60)
-                {
+                if (pubKey.ValidDays != 28)
+                    Fail("days wrong on public key ring");
+
+                if (pubKey.ValidSeconds != 28 * 24 * 60 * 60)
                     Fail("seconds wrong on public key ring");
-                }
+
             }
         }
 
         [Test]
         public void PerformTest11()
         {
-            PgpPublicKeyRing pubRing = new PgpPublicKeyRing(subKeyBindingKey);
 
-            foreach (PgpPublicKey key in pubRing.PublicKeys)
+            var pubRing = new PgpPublicKeyRing(subKeyBindingKey);
+
+            foreach (var key in pubRing)
             {
-                if (key.GetValidSeconds() != 0)
-                {
+                if (key.ValidSeconds != 0)
                     Fail("expiration time non-zero");
-                }
             }
+
         }
 
         [Test]
         public void GenerateTest()
         {
             String passPhrase = "hello";
-            DsaParametersGenerator pGen = new DsaParametersGenerator();
+            var pGen        = new DsaParametersGenerator();
             pGen.Init(512, 80, new SecureRandom());
-            DsaParameters dsaParams = pGen.GenerateParameters();
-            DsaKeyGenerationParameters dsaKgp = new DsaKeyGenerationParameters(new SecureRandom(), dsaParams);
-            IAsymmetricCipherKeyPairGenerator dsaKpg = GeneratorUtilities.GetKeyPairGenerator("DSA");
+            var dsaParams   = pGen.GenerateParameters();
+            var dsaKgp      = new DsaKeyGenerationParameters(new SecureRandom(), dsaParams);
+            var dsaKpg      = GeneratorUtilities.GetKeyPairGenerator("DSA");
             dsaKpg.Init(dsaKgp);
 
 
@@ -1827,11 +1843,11 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
             // this takes a while as the key generator has to Generate some DSA parameters
             // before it Generates the key.
             //
-            AsymmetricCipherKeyPair dsaKp = dsaKpg.GenerateKeyPair();
-            IAsymmetricCipherKeyPairGenerator elgKpg = GeneratorUtilities.GetKeyPairGenerator("ELGAMAL");
+            var dsaKp   = dsaKpg.GenerateKeyPair();
+            var elgKpg  = GeneratorUtilities.GetKeyPairGenerator("ELGAMAL");
 
-            BigInteger g = new BigInteger("153d5d6172adb43045b68ae8e1de1070b6137005686d29d3d73a7749199681ee5b212c9b96bfdcfa5b20cd5e3fd2044895d609cf9b410b7a0f12ca1cb9a428cc", 16);
-            BigInteger p = new BigInteger("9494fec095f3b85ee286542b3836fc81a5dd0a0349b4c239dd38744d488cf8e31db8bcb7d33b41abb9e5a33cca9144b1cef332c94bf0573bf047a3aca98cdf3b", 16);
+            var g       = new BigInteger("153d5d6172adb43045b68ae8e1de1070b6137005686d29d3d73a7749199681ee5b212c9b96bfdcfa5b20cd5e3fd2044895d609cf9b410b7a0f12ca1cb9a428cc", 16);
+            var p       = new BigInteger("9494fec095f3b85ee286542b3836fc81a5dd0a0349b4c239dd38744d488cf8e31db8bcb7d33b41abb9e5a33cca9144b1cef332c94bf0573bf047a3aca98cdf3b", 16);
 
             ElGamalParameters elParams = new ElGamalParameters(p, g);
             ElGamalKeyGenerationParameters elKgp = new ElGamalKeyGenerationParameters(new SecureRandom(), elParams);
@@ -1844,8 +1860,8 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
             PgpKeyPair dsaKeyPair = new PgpKeyPair(PublicKeyAlgorithms.Dsa, dsaKp, DateTime.UtcNow);
             PgpKeyPair elgKeyPair = new PgpKeyPair(PublicKeyAlgorithms.ElGamalEncrypt, elgKp, DateTime.UtcNow);
 
-            PgpKeyRingGenerator keyRingGen = new PgpKeyRingGenerator(PgpSignatures.PositiveCertification, dsaKeyPair,
-                "test", SymmetricKeyAlgorithms.Aes256, passPhrase, null, null, new SecureRandom());
+            PgpKeyRingGenerator keyRingGen = new PgpKeyRingGenerator(PgpSignatureTypes.PositiveCertification, dsaKeyPair,
+                "test", SymmetricKeyAlgorithms.Aes256, passPhrase, null, null, new SecureRandom(), false);
 
             keyRingGen.AddSubKey(elgKeyPair);
 
@@ -1858,36 +1874,39 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
             PgpPublicKey vKey = null;
             PgpPublicKey sKey = null;
 
-            foreach (PgpPublicKey pk in pubRing.PublicKeys)
+            foreach (var pk in pubRing)
             {
+
                 if (pk.IsMasterKey)
-                {
                     vKey = pk;
-                }
+
                 else
-                {
                     sKey = pk;
-                }
+
             }
 
-            foreach (PgpSignature sig in sKey.GetSignatures())
+            foreach (var Signature in sKey.Signatures)
             {
-                if (sig.KeyId == vKey.KeyId
-                    && sig.SignatureType == PgpSignatures.SubkeyBinding)
-                {
-                    sig.InitVerify(vKey);
 
-                    if (!sig.VerifyCertification(vKey, sKey))
-                    {
+                if (Signature.KeyId         == vKey.KeyId &&
+                    Signature.SignatureType == PgpSignatureTypes.SubkeyBinding)
+                {
+
+                    Signature.InitVerify(vKey);
+
+                    if (!Signature.VerifyCertification(vKey, sKey))
                         Fail("failed to verify sub-key signature.");
-                    }
+
                 }
+
             }
+
         }
 
         [Test]
         public void InsertMasterTest()
         {
+
             SecureRandom random = new SecureRandom();
 
             String passPhrase = "hello";
@@ -1904,13 +1923,13 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
             rsaKp = rsaKpg.GenerateKeyPair();
             PgpKeyPair rsaKeyPair2 = new PgpKeyPair(PublicKeyAlgorithms.RsaGeneral, rsaKp, DateTime.UtcNow);
 
-            PgpKeyRingGenerator keyRingGen = new PgpKeyRingGenerator(PgpSignatures.PositiveCertification,
-                rsaKeyPair1, "test", SymmetricKeyAlgorithms.Aes256, passPhrase, null, null, random);
+            PgpKeyRingGenerator keyRingGen = new PgpKeyRingGenerator(PgpSignatureTypes.PositiveCertification,
+                rsaKeyPair1, "test", SymmetricKeyAlgorithms.Aes256, passPhrase, null, null, random, false);
             PgpSecretKeyRing secRing1 = keyRingGen.GenerateSecretKeyRing();
             PgpPublicKeyRing pubRing1 = keyRingGen.GeneratePublicKeyRing();
 
-            keyRingGen = new PgpKeyRingGenerator(PgpSignatures.PositiveCertification,
-                rsaKeyPair2, "test", SymmetricKeyAlgorithms.Aes256, passPhrase, null, null, random);
+            keyRingGen = new PgpKeyRingGenerator(PgpSignatureTypes.PositiveCertification,
+                rsaKeyPair2, "test", SymmetricKeyAlgorithms.Aes256, passPhrase, null, null, random, false);
             PgpSecretKeyRing secRing2 = keyRingGen.GenerateSecretKeyRing();
             PgpPublicKeyRing pubRing2 = keyRingGen.GeneratePublicKeyRing();
 
@@ -1979,8 +1998,8 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
             PgpKeyPair dsaKeyPair = new PgpKeyPair(PublicKeyAlgorithms.Dsa, dsaKp, DateTime.UtcNow);
             PgpKeyPair elgKeyPair = new PgpKeyPair(PublicKeyAlgorithms.ElGamalEncrypt, elgKp, DateTime.UtcNow);
 
-            PgpKeyRingGenerator keyRingGen = new PgpKeyRingGenerator(PgpSignatures.PositiveCertification, dsaKeyPair,
-                "test", SymmetricKeyAlgorithms.Aes256, passPhrase, true, null, null, new SecureRandom());
+            PgpKeyRingGenerator keyRingGen = new PgpKeyRingGenerator(PgpSignatureTypes.PositiveCertification, dsaKeyPair,
+                "test", SymmetricKeyAlgorithms.Aes256, passPhrase, null, null, new SecureRandom());
 
             keyRingGen.AddSubKey(elgKeyPair);
 
@@ -1988,65 +2007,71 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
 
             keyRing.FirstSecretKey.ExtractPrivateKey(passPhrase);
 
-            PgpPublicKeyRing pubRing = keyRingGen.GeneratePublicKeyRing();
+            var PublicKeyRing = keyRingGen.GeneratePublicKeyRing();
 
             PgpPublicKey vKey = null;
-            PgpPublicKey sKey = null;
+            PgpPublicKey PublicKey = null;
 
-            foreach (PgpPublicKey pk in pubRing.PublicKeys)
+            foreach (var _PublicKey in PublicKeyRing)
             {
-                if (pk.IsMasterKey)
-                {
-                    vKey = pk;
-                }
+
+                if (_PublicKey.IsMasterKey)
+                    vKey = _PublicKey;
+
                 else
-                {
-                    sKey = pk;
-                }
+                    PublicKey = _PublicKey;
+
             }
 
-            foreach (PgpSignature sig in sKey.GetSignatures())
+            foreach (var Signature in PublicKey.Signatures)
             {
-                if (sig.KeyId == vKey.KeyId
-                    && sig.SignatureType == PgpSignatures.SubkeyBinding)
-                {
-                    sig.InitVerify(vKey);
 
-                    if (!sig.VerifyCertification(vKey, sKey))
-                    {
+                if (Signature.KeyId         == vKey.KeyId &&
+                    Signature.SignatureType == PgpSignatureTypes.SubkeyBinding)
+                {
+
+                    Signature.InitVerify(vKey);
+
+                    if (!Signature.VerifyCertification(vKey, PublicKey))
                         Fail("failed to verify sub-key signature.");
-                    }
+
                 }
+
             }
+
         }
 
         [Test]
         public void RewrapTest()
         {
-            SecureRandom rand = new SecureRandom();
+
+            var rand = new SecureRandom();
 
             // Read the secret key rings
-            PgpSecretKeyRingBundle privRings = new PgpSecretKeyRingBundle(
-                new MemoryStream(rewrapKey, false));
+            var SecretKeyRingBundle = new PgpSecretKeyRingBundle(new MemoryStream(rewrapKey, false));
 
-            foreach (PgpSecretKeyRing pgpPrivEnum in privRings.GetKeyRings())
+            foreach (var SecretKeyRing in SecretKeyRingBundle)
             {
-                foreach (PgpSecretKey pgpKeyEnum in pgpPrivEnum.SecretKeys)
+                foreach (var SecretKey in SecretKeyRing)
                 {
+
                     // re-encrypt the key with an empty password
-                    PgpSecretKeyRing pgpPriv = PgpSecretKeyRing.RemoveSecretKey(pgpPrivEnum, pgpKeyEnum);
-                    PgpSecretKey pgpKey = PgpSecretKey.CopyWithNewPassword(
-                        pgpKeyEnum,
-                        rewrapPass,
-                        null,
-                        SymmetricKeyAlgorithms.Null,
-                        rand);
-                    pgpPriv = PgpSecretKeyRing.InsertSecretKey(pgpPriv, pgpKey);
+                    var pgpPriv = PgpSecretKeyRing.RemoveSecretKey(SecretKeyRing, SecretKey);
+
+                    var pgpKey  = PgpSecretKey.CopyWithNewPassword(SecretKey,
+                                                                   rewrapPass,
+                                                                   null,
+                                                                   SymmetricKeyAlgorithms.Null,
+                                                                   rand);
+
+                        pgpPriv = PgpSecretKeyRing.InsertSecretKey(pgpPriv, pgpKey);
 
                     // this should succeed
-                    PgpPrivateKey privTmp = pgpKey.ExtractPrivateKey(null);
+                    var privTmp = pgpKey.ExtractPrivateKey(null);
+
                 }
             }
+
         }
 
         [Test]
@@ -2054,7 +2079,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
         {
             checkPublicKeyRingWithX509(pubWithX509);
 
-            PgpPublicKeyRing pubRing = new PgpPublicKeyRing(pubWithX509);
+            var pubRing = new PgpPublicKeyRing(pubWithX509);
 
             checkPublicKeyRingWithX509(pubRing.GetEncoded());
         }
@@ -2071,7 +2096,6 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
         {
 
             if (new PgpSecretKeyRingBundle(keyRing).
-                    GetKeyRings().
                     SelectMany(SecretKeyRing => SecretKeyRing.ExtraPublicKeys).
                     Count() != 1)
             {
@@ -2080,39 +2104,37 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
 
         }
 
-        private void checkPublicKeyRingWithX509(
-            byte[] keyRing)
+        private void checkPublicKeyRingWithX509(Byte[] EncodedPublicKeyRing)
         {
-            PgpPublicKeyRing pubRing = new PgpPublicKeyRing(keyRing);
-            var en = pubRing.PublicKeys.GetEnumerator();
+
+            var PublicKeyRing  = new PgpPublicKeyRing(EncodedPublicKeyRing);
+            var en             = PublicKeyRing.GetEnumerator();
 
             if (en.MoveNext())
             {
-                PgpPublicKey key = (PgpPublicKey) en.Current;
 
-                IEnumerator sEn = key.GetSignatures().GetEnumerator();
+                var key = en.Current;
+                var sEn = key.Signatures.GetEnumerator();
 
                 if (sEn.MoveNext())
                 {
-                    PgpSignature sig = (PgpSignature) sEn.Current;
+
+                    var sig = sEn.Current;
+
                     if (sig.KeyAlgorithm != PublicKeyAlgorithms.Experimental_1)
-                    {
                         Fail("experimental signature not found");
-                    }
+
                     if (!AreEqual(sig.Signature, Hex.Decode("000101")))
-                    {
                         Fail("experimental encoding check failed");
-                    }
+
                 }
                 else
-                {
                     Fail("no signature found");
-                }
+
             }
             else
-            {
                 Fail("no key found");
-            }
+
         }
 
         public override void PerformTest()

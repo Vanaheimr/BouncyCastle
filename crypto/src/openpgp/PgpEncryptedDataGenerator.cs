@@ -111,7 +111,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
                         throw new PgpException("unknown asymmetric algorithm: " + pubKey.Algorithm);
                 }
 
-                AsymmetricKeyParameter akp = pubKey.GetKey();
+                AsymmetricKeyParameter akp = pubKey.Key;
 
                 c.Init(true, new ParametersWithRandom(akp, random));
 

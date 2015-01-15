@@ -4,44 +4,73 @@ using System;
 
 namespace Org.BouncyCastle.Bcpg.Sig
 {
-    /**
-    * packet giving signature creation time.
-    */
-    public class Exportable
-        : SignatureSubpacket
+
+    /// <summary>
+    /// Packet giving signature creation time.
+    /// </summary>
+    public class Exportable : SignatureSubpacket
     {
-        private static byte[] BooleanToByteArray(bool val)
+
+        #region Properties
+
+        #region IsExportable
+
+        public Boolean IsExportable
         {
-            byte[]    data = new byte[1];
+            get
+            {
+                return _Data[0] != 0;
+            }
+        }
+
+        #endregion
+
+        #endregion
+
+        #region Constructor(s)
+
+        #region Exportable(IsCritical, Data)
+
+        public Exportable(Boolean  IsCritical,
+                          Byte[]   Data)
+
+            : base(SignatureSubpackets.Exportable, IsCritical, Data)
+
+        { }
+
+        #endregion
+
+        #region Exportable(IsCritical, IsExportable)
+
+        public Exportable(Boolean  IsCritical,
+                          Boolean  IsExportable)
+
+            : base(SignatureSubpackets.Exportable, IsCritical, BooleanToByteArray(IsExportable))
+
+        { }
+
+        #endregion
+
+        #endregion
+
+
+        private static Byte[] BooleanToByteArray(Boolean val)
+        {
+
+            var data = new byte[1];
 
             if (val)
             {
                 data[0] = 1;
                 return data;
             }
+
             else
-            {
+
                 return data;
-            }
+
         }
 
-        public Exportable(
-            bool    critical,
-            byte[]     data)
-            : base(SignatureSubpackets.Exportable, critical, data)
-        {
-        }
-
-        public Exportable(
-            bool    critical,
-            bool    isExportable)
-            : base(SignatureSubpackets.Exportable, critical, BooleanToByteArray(isExportable))
-        {
-        }
-
-        public bool IsExportable()
-        {
-            return data[0] != 0;
-        }
     }
+
 }

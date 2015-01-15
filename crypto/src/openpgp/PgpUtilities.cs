@@ -16,13 +16,14 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
     /// <remarks>Basic utility class.</remarks>
     public sealed class PgpUtilities
     {
+
         private PgpUtilities()
         {
         }
 
-        public static MPInteger[] DsaSigToMpi(
-            byte[] encoding)
+        public static MPInteger[] DsaSigToMpi(byte[] encoding)
         {
+
             DerInteger i1, i2;
 
             try
@@ -38,17 +39,17 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
             }
 
             return new MPInteger[]{ new MPInteger(i1.Value), new MPInteger(i2.Value) };
+
         }
 
-        public static MPInteger[] RsaSigToMpi(
-            byte[] encoding)
+        public static MPInteger[] RsaSigToMpi(byte[] encoding)
         {
             return new MPInteger[]{ new MPInteger(new BigInteger(1, encoding)) };
         }
 
-        public static string GetDigestName(
-            HashAlgorithms hashAlgorithm)
+        public static String GetDigestName(HashAlgorithms hashAlgorithm)
         {
+
             switch (hashAlgorithm)
             {
                 case HashAlgorithms.Sha1:
@@ -70,36 +71,44 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
                 default:
                     throw new PgpException("unknown hash algorithm tag in GetDigestName: " + hashAlgorithm);
             }
+
         }
 
-        public static string GetSignatureName(
-            PublicKeyAlgorithms    keyAlgorithm,
-            HashAlgorithms        hashAlgorithm)
+        public static String GetSignatureName(PublicKeyAlgorithms  keyAlgorithm,
+                                              HashAlgorithms       hashAlgorithm)
         {
+
             string encAlg;
+
             switch (keyAlgorithm)
             {
+
                 case PublicKeyAlgorithms.RsaGeneral:
                 case PublicKeyAlgorithms.RsaSign:
                     encAlg = "RSA";
                     break;
+
                 case PublicKeyAlgorithms.Dsa:
                     encAlg = "DSA";
                     break;
+
                 case PublicKeyAlgorithms.ElGamalEncrypt: // in some malformed cases.
                 case PublicKeyAlgorithms.ElGamalGeneral:
                     encAlg = "ElGamal";
                     break;
+
                 default:
                     throw new PgpException("unknown algorithm tag in signature:" + keyAlgorithm);
+
             }
 
             return GetDigestName(hashAlgorithm) + "with" + encAlg;
+
         }
 
-    public static string GetSymmetricCipherName(
-            SymmetricKeyAlgorithms algorithm)
+        public static String GetSymmetricCipherName(SymmetricKeyAlgorithms algorithm)
         {
+
             switch (algorithm)
             {
                 case SymmetricKeyAlgorithms.Null:
@@ -133,16 +142,21 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
                 default:
                     throw new PgpException("unknown symmetric algorithm: " + algorithm);
             }
+
         }
 
-    public static int GetKeySize(SymmetricKeyAlgorithms algorithm)
+        public static int GetKeySize(SymmetricKeyAlgorithms algorithm)
         {
+
             int keySize;
+
             switch (algorithm)
             {
+
                 case SymmetricKeyAlgorithms.Des:
                     keySize = 64;
                     break;
+
                 case SymmetricKeyAlgorithms.Idea:
                 case SymmetricKeyAlgorithms.Cast5:
                 case SymmetricKeyAlgorithms.Blowfish:
@@ -151,34 +165,40 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
                 case SymmetricKeyAlgorithms.Camellia128:
                     keySize = 128;
                     break;
+
                 case SymmetricKeyAlgorithms.TripleDes:
                 case SymmetricKeyAlgorithms.Aes192:
                 case SymmetricKeyAlgorithms.Camellia192:
                     keySize = 192;
                     break;
+
                 case SymmetricKeyAlgorithms.Aes256:
                 case SymmetricKeyAlgorithms.Twofish:
                 case SymmetricKeyAlgorithms.Camellia256:
                     keySize = 256;
                     break;
+
                 default:
                     throw new PgpException("unknown symmetric algorithm: " + algorithm);
+
             }
 
             return keySize;
+
         }
 
-        public static KeyParameter MakeKey(
-            SymmetricKeyAlgorithms    algorithm,
-            byte[]                        keyBytes)
+        public static KeyParameter MakeKey(SymmetricKeyAlgorithms  algorithm,
+                                           Byte[]                  keyBytes)
         {
-            string algName = GetSymmetricCipherName(algorithm);
+
+            var algName = GetSymmetricCipherName(algorithm);
 
             return ParameterUtilities.CreateKeyParameter(algName, keyBytes);
+
         }
 
         public static KeyParameter MakeRandomKey(SymmetricKeyAlgorithms  algorithm,
-                                                 SecureRandom              random)
+                                                 SecureRandom            random)
         {
 
             var keySize   = GetKeySize(algorithm);
@@ -203,7 +223,9 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
 
             while (generatedBytes < keyBytes.Length)
             {
+
                 IDigest digest;
+
                 if (s2k != null)
                 {
                     string digestName = GetDigestName(s2k.HashAlgorithm);
@@ -309,33 +331,38 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
             return MakeKey(algorithm, keyBytes);
         }
 
-        /// <summary>Write out the passed in file as a literal data packet.</summary>
-        public static void WriteFileToLiteralData(
-            Stream        output,
-            char        fileType,
-            FileInfo    file)
+        /// <summary>
+        /// Write out the passed in file as a literal data packet.
+        /// </summary>
+        public static void WriteFileToLiteralData(Stream    output,
+                                                  Char      fileType,
+                                                  FileInfo  file)
         {
-            PgpLiteralDataGenerator lData = new PgpLiteralDataGenerator();
-            Stream pOut = lData.Open(output, fileType, file.Name, file.Length, file.LastWriteTime);
+            var lData = new PgpLiteralDataGenerator();
+            var pOut  = lData.Open(output, fileType, file.Name, file.Length, file.LastWriteTime);
             PipeFileContents(file, pOut, 4096);
         }
 
-        /// <summary>Write out the passed in file as a literal data packet in partial packet format.</summary>
-        public static void WriteFileToLiteralData(
-            Stream        output,
-            char        fileType,
-            FileInfo    file,
-            byte[]        buffer)
+        /// <summary>
+        /// Write out the passed in file as a literal data packet in partial packet format.
+        /// </summary>
+        public static void WriteFileToLiteralData(Stream    output,
+                                                  Char      fileType,
+                                                  FileInfo  file,
+                                                  Byte[]    buffer)
         {
-            PgpLiteralDataGenerator lData = new PgpLiteralDataGenerator();
-            Stream pOut = lData.Open(output, fileType, file.Name, file.LastWriteTime, buffer);
+            var lData = new PgpLiteralDataGenerator();
+            var pOut  = lData.Open(output, fileType, file.Name, file.LastWriteTime, buffer);
             PipeFileContents(file, pOut, buffer.Length);
         }
 
-        private static void PipeFileContents(FileInfo file, Stream pOut, int bufSize)
+        private static void PipeFileContents(FileInfo  file,
+                                             Stream    pOut,
+                                             Int32     bufSize)
         {
-            FileStream inputStream = file.OpenRead();
-            byte[] buf = new byte[bufSize];
+
+            var inputStream  = file.OpenRead();
+            var buf          = new byte[bufSize];
 
             int len;
             while ((len = inputStream.Read(buf, 0, buf.Length)) > 0)
@@ -345,16 +372,22 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
 
             pOut.Close();
             inputStream.Close();
+
         }
 
-        private const int ReadAhead = 60;
+        private const Int32 ReadAhead = 60;
 
-        private static bool IsPossiblyBase64(
-            int ch)
+        private static Boolean IsPossiblyBase64(Int32 ch)
         {
-            return (ch >= 'A' && ch <= 'Z') || (ch >= 'a' && ch <= 'z')
-                    || (ch >= '0' && ch <= '9') || (ch == '+') || (ch == '/')
-                    || (ch == '\r') || (ch == '\n');
+
+            return (ch >= 'A' && ch <= 'Z') ||
+                   (ch >= 'a' && ch <= 'z') ||
+                   (ch >= '0' && ch <= '9') ||
+                   (ch == '+')              ||
+                   (ch == '/')              ||
+                   (ch == '\r')             ||
+                   (ch == '\n');
+
         }
 
         /// <summary>
@@ -431,7 +464,11 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
                 bool hasHeaders = (decoded[0] & 0x80) == 0;
 
                 return new ArmoredInputStream(inputStream, hasHeaders);
+
             }
+
         }
+
     }
+
 }

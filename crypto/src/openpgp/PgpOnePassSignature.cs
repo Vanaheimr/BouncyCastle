@@ -11,7 +11,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
     {
 
         private OnePassSignaturePacket  sigPack;
-        private PgpSignatures           signatureType;
+        private PgpSignatureTypes           signatureType;
         private ISigner                 sig;
         private Byte                    lastb;
 
@@ -42,7 +42,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
 
             try
             {
-                sig.Init(false, pubKey.GetKey());
+                sig.Init(false, pubKey.Key);
             }
             catch (InvalidKeyException e)
             {
@@ -54,7 +54,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
         public void Update(Byte b)
         {
 
-            if (signatureType == PgpSignatures.CanonicalTextDocument)
+            if (signatureType == PgpSignatureTypes.CanonicalTextDocument)
                 doCanonicalUpdateByte(b);
 
             else
@@ -93,7 +93,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
         public void Update(
             byte[] bytes)
         {
-            if (signatureType == PgpSignatures.CanonicalTextDocument)
+            if (signatureType == PgpSignatureTypes.CanonicalTextDocument)
             {
                 for (int i = 0; i != bytes.Length; i++)
                 {
@@ -111,7 +111,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
             int     off,
             int     length)
         {
-            if (signatureType == PgpSignatures.CanonicalTextDocument)
+            if (signatureType == PgpSignatureTypes.CanonicalTextDocument)
             {
                 int finish = off + length;
 
@@ -143,7 +143,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
             get { return sigPack.KeyId; }
         }
 
-        public PgpSignatures SignatureType
+        public PgpSignatureTypes SignatureType
         {
             get { return sigPack.SignatureType; }
         }

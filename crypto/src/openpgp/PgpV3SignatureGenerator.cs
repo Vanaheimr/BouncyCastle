@@ -19,7 +19,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
         private PgpPrivateKey         privKey;
         private ISigner               sig;
         private IDigest               dig;
-        private PgpSignatures         signatureType;
+        private PgpSignatureTypes         signatureType;
         private Byte                  lastb;
 
         /// <summary>Create a generator for the passed in keyAlgorithm and hashAlgorithm codes.</summary>
@@ -36,14 +36,14 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
         }
 
         /// <summary>Initialise the generator for signing.</summary>
-        public void InitSign(PgpSignatures  sigType,
+        public void InitSign(PgpSignatureTypes  sigType,
                              PgpPrivateKey  key)
         {
             InitSign(sigType, key, null);
         }
 
         /// <summary>Initialise the generator for signing.</summary>
-        public void InitSign(PgpSignatures  sigType,
+        public void InitSign(PgpSignatureTypes  sigType,
                              PgpPrivateKey  key,
                              SecureRandom   random)
         {
@@ -74,7 +74,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
         public void Update(Byte b)
         {
 
-            if (signatureType == PgpSignatures.CanonicalTextDocument)
+            if (signatureType == PgpSignatureTypes.CanonicalTextDocument)
             {
                 doCanonicalUpdateByte(b);
             }
@@ -123,7 +123,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
         public void Update(Byte[] b)
         {
 
-            if (signatureType == PgpSignatures.CanonicalTextDocument)
+            if (signatureType == PgpSignatureTypes.CanonicalTextDocument)
             {
                 for (int i = 0; i != b.Length; i++)
                 {
@@ -143,7 +143,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
                            int     len)
         {
 
-            if (signatureType == PgpSignatures.CanonicalTextDocument)
+            if (signatureType == PgpSignatureTypes.CanonicalTextDocument)
             {
 
                 int finish = off + len;

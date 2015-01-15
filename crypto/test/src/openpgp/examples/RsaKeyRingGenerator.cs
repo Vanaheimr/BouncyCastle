@@ -39,7 +39,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Examples
             }
 
             var secretKey = new PgpSecretKey(
-                PgpSignatures.DefaultCertification,
+                PgpSignatureTypes.DefaultCertification,
                 PublicKeyAlgorithms.RsaGeneral,
                 publicKey,
                 privateKey,

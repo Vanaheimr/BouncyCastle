@@ -1,54 +1,59 @@
 using System;
-
-
+using System.Linq;
 
 namespace Org.BouncyCastle.Bcpg.Sig
 {
-    /**
-    * packet giving signature creation time.
-    */
-    public class PreferredAlgorithms
-        : SignatureSubpacket
+
+    public class PreferredAlgorithms : SignatureSubpacket
     {
-        private static byte[] IntToByteArray(
-            int[]    v)
-        {
-            byte[]    data = new byte[v.Length];
 
-            for (int i = 0; i != v.Length; i++)
+        #region Properties
+
+        public Int32[] Preferences
+        {
+            get
             {
-                data[i] = (byte)v[i];
+
+                var v = new Int32[_Data.Length];
+
+                for (var i = 0; i != v.Length; i++)
+                    v[i] = _Data[i] & 0xff;
+
+                return v;
+
             }
-
-            return data;
         }
 
-        public PreferredAlgorithms(
-            SignatureSubpackets        type,
-            bool    critical,
-            byte[]     data)
-            : base(type, critical, data)
-        {
-        }
+        #endregion
 
-        public PreferredAlgorithms(
-            SignatureSubpackets        type,
-            bool    critical,
-            int[]      preferences)
-            : base(type, critical, IntToByteArray(preferences))
-        {
-        }
+        #region Constructor(s)
 
-        public int[] GetPreferences()
-        {
-            int[]    v = new int[data.Length];
+        #region PreferredAlgorithms(SubpacketType, IsCritical, Data)
 
-            for (int i = 0; i != v.Length; i++)
-            {
-                v[i] = data[i] & 0xff;
-            }
+        public PreferredAlgorithms(SignatureSubpackets  SubpacketType,
+                                   Boolean              IsCritical,
+                                   Byte[]               Data)
 
-            return v;
-        }
+            : base(SubpacketType, IsCritical, Data)
+
+        { }
+
+        #endregion
+
+        #region PreferredAlgorithms(SubpacketType, IsCritical, Preferences)
+
+        public PreferredAlgorithms(SignatureSubpackets  SubpacketType,
+                                   Boolean              IsCritical,
+                                   Int32[]              Preferences)
+
+            : base(SubpacketType, IsCritical, Preferences.Select(value => (Byte) value).ToArray())
+
+        { }
+
+        #endregion
+
+        #endregion
+
     }
+
 }

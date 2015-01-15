@@ -20,31 +20,47 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
     public class PgpPublicKey
     {
 
-        private static readonly PgpSignatures[] MasterKeyCertificationTypes = new PgpSignatures[]
+        private static readonly PgpSignatureTypes[] MasterKeyCertificationTypes = new PgpSignatureTypes[]
         {
-            PgpSignatures.PositiveCertification,
-            PgpSignatures.CasualCertification,
-            PgpSignatures.NoCertification,
-            PgpSignatures.DefaultCertification
+            PgpSignatureTypes.PositiveCertification,
+            PgpSignatureTypes.CasualCertification,
+            PgpSignatureTypes.NoCertification,
+            PgpSignatureTypes.DefaultCertification
         };
 
         #region Data
 
-        private UInt64                     keyId;
-        private Byte[]                     fingerprint;
-        private Int32                      keyStrength;
+        private UInt64                     _KeyId;
+        private Byte[]                     _Fingerprint;
+        private UInt32                     _KeyStrength;
 
-        internal PublicKeyPacket           publicPk;
-        internal TrustPacket               trustPk;
-        internal List<PgpSignature>        keySigs;
-        internal List<Object>              ids;
-        internal List<TrustPacket>         idTrusts;
-        internal List<List<PgpSignature>>  idSigs;
-        internal List<PgpSignature>        subSigs;
+        internal readonly PublicKeyPacket           _PublicKeyPacket;
+        internal readonly TrustPacket               _TrustPacket;
+
+        internal readonly List<PgpSignature>        _KeySignatures;
+        internal readonly List<Object>              _UserIds;
+        internal readonly List<TrustPacket>         _idTrusts;
+        internal readonly List<List<PgpSignature>>  _idSigs;
+        internal readonly List<PgpSignature>        _SubSignatures;
 
         #endregion
 
         #region Properties
+
+        #region KeyId
+
+        /// <summary>
+        /// The keyId associated with the public key.
+        /// </summary>
+        public UInt64 KeyId
+        {
+            get
+            {
+                return _KeyId;
+            }
+        }
+
+        #endregion
 
         #region Version
 
@@ -55,7 +71,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
         {
             get
             {
-                return publicPk.Version;
+                return _PublicKeyPacket.Version;
             }
         }
 
@@ -70,7 +86,37 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
         {
             get
             {
-                return publicPk.GetTime();
+                return _PublicKeyPacket.Time;
+            }
+        }
+
+        #endregion
+
+        #region Algorithm
+
+        /// <summary>
+        /// The algorithm code associated with the public key.
+        /// </summary>
+        public PublicKeyAlgorithms Algorithm
+        {
+            get
+            {
+                return _PublicKeyPacket.Algorithm;
+            }
+        }
+
+        #endregion
+
+        #region BitStrength
+
+        /// <summary>
+        /// The strength of the key in bits.
+        /// </summary>
+        public UInt32 BitStrength
+        {
+            get
+            {
+                return _KeyStrength;
             }
         }
 
@@ -91,17 +137,17 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
                 // Master key
                 if (IsMasterKey)
                 {
-                    while (ns < keySigs.Count)
+                    while (ns < _KeySignatures.Count)
                     {
-                        if (keySigs[ns++].SignatureType == PgpSignatures.KeyRevocation)
+                        if (_KeySignatures[ns++].SignatureType == PgpSignatureTypes.KeyRevocation)
                             return true;
                     }
                 }
 
                 // Sub-key
-                while (ns < subSigs.Count)
+                while (ns < _SubSignatures.Count)
                 {
-                    if ((subSigs[ns++]).SignatureType == PgpSignatures.SubkeyRevocation)
+                    if ((_SubSignatures[ns++]).SignatureType == PgpSignatureTypes.SubkeyRevocation)
                         return true;
                 }
 
@@ -113,9 +159,314 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
 
         #endregion
 
+        #region IsEncryptionKey
+
+        /// <summary>
+        /// Check if this key has an algorithm type that makes it suitable to use for encryption.
+        /// </summary>
+        /// <remarks>
+        /// Note: with version 4 keys KeyFlags subpackets should also be considered when present for
+        /// determining the preferred use of the key.
+        /// </remarks>
+        /// <returns>
+        /// <c>true</c> if this key algorithm is suitable for encryption.
+        /// </returns>
+        public Boolean IsEncryptionKey
+        {
+            get
+            {
+                switch (_PublicKeyPacket.Algorithm)
+                {
+
+                    case PublicKeyAlgorithms.ElGamalEncrypt:
+                    case PublicKeyAlgorithms.ElGamalGeneral:
+                    case PublicKeyAlgorithms.RsaEncrypt:
+                    case PublicKeyAlgorithms.RsaGeneral:
+                        return true;
+
+                    default:
+                        return false;
+
+                }
+            }
+        }
+
+        #endregion
+
+        #region IsMasterKey
+
+        /// <summary>
+        /// True, if this is a master key.
+        /// </summary>
+        public Boolean IsMasterKey
+        {
+            get
+            {
+                return _SubSignatures.Count == 0;
+            }
+        }
+
+        #endregion
+
+        #region ValidDays
+
+        /// <summary>
+        /// The number of valid days from creation time - zero means no expiry.
+        /// </summary>
+        public UInt32 ValidDays
+        {
+            get
+            {
+
+                if (_PublicKeyPacket.Version > 3)
+                    return (UInt32) (ValidSeconds / (24 * 60 * 60));
+
+                return (UInt32) _PublicKeyPacket.ValidDays;
+
+            }
+        }
+
+        #endregion
+
+        #region ValidSeconds
+
+        /// <summary>
+        /// The number of valid seconds from creation time - zero means no expiry.
+        /// </summary>
+        public UInt64 ValidSeconds
+        {
+
+            get
+            {
+
+                if (_PublicKeyPacket.Version > 3)
+                {
+
+                    if (IsMasterKey)
+                    {
+                        for (int i = 0; i != MasterKeyCertificationTypes.Length; i++)
+                        {
+
+                            var seconds = GetExpirationTimeFromSignature(true, MasterKeyCertificationTypes[i]);
+
+                            if (seconds >= 0)
+                                return seconds;
+
+                        }
+                    }
+                    else
+                    {
+
+                        var seconds = GetExpirationTimeFromSignature(false, PgpSignatureTypes.SubkeyBinding);
+
+                        if (seconds >= 0)
+                            return seconds;
+
+                    }
+
+                    return 0;
+
+                }
+
+                return (UInt64) _PublicKeyPacket.ValidDays * 24 * 60 * 60;
+
+            }
+
+        }
+
+        #endregion
+
+        #region IsExpired
+
+        /// <summary>
+        /// Checks if the public key is already expired,
+        /// if an expiration timestamp was defined.
+        /// </summary>
+        public Boolean IsExpired
+        {
+            get
+            {
+
+                var _ValidSeconds = _PublicKeyPacket.Version > 3
+                                        ? ValidSeconds
+                                        : _PublicKeyPacket.ValidDays * (24 * 60 * 60);
+
+                return _ValidSeconds > 0
+                           ? (DateTime.Now - CreationTime).TotalSeconds >= _ValidSeconds
+                           : false;
+
+            }
+        }
+
+        #endregion
+
+        #region ExpiresAt
+
+        /// <summary>
+        /// Returns the expiration timestamp of the public key,
+        /// if an expiration timestamp was defined.
+        /// </summary>
+        public DateTime? ExpiresAt
+        {
+            get
+            {
+
+                var _ValidSeconds = _PublicKeyPacket.Version > 3
+                                        ? ValidSeconds
+                                        : _PublicKeyPacket.ValidDays * (24 * 60 * 60);
+
+                return _ValidSeconds > 0
+                           ? new Nullable<DateTime>(CreationTime.AddSeconds(_ValidSeconds))
+                           : new Nullable<DateTime>();
+
+            }
+        }
+
+        #endregion
+
+        #region TrustData
+
+        /// <summary>
+        /// Return the trust data associated with the public key, if present.
+        /// </summary>
+        public Byte[] TrustData
+        {
+
+            get
+            {
+
+                if (_TrustPacket == null)
+                    return new Byte[0];
+
+                return _TrustPacket.GetLevelAndTrustAmount();
+
+            }
+
+        }
+
+        #endregion
+
+        #region Fingerprint
+
+        /// <summary>
+        /// The fingerprint of the key
+        /// </summary>
+        public Byte[] Fingerprint
+        {
+            get
+            {
+                return _Fingerprint;
+            }
+        }
+
+        #endregion
+
+        #region Key
+
+        /// <summary>
+        /// The public key contained in the object.
+        /// </summary>
+        public AsymmetricKeyParameter Key
+        {
+
+            get
+            {
+
+                try
+                {
+
+                    switch (_PublicKeyPacket.Algorithm)
+                    {
+
+                        case PublicKeyAlgorithms.RsaEncrypt:
+                        case PublicKeyAlgorithms.RsaGeneral:
+                        case PublicKeyAlgorithms.RsaSign:
+                            var rsaK = _PublicKeyPacket.Key as RsaPublicBcpgKey;
+                            return new RsaKeyParameters(false, rsaK.Modulus, rsaK.PublicExponent);
+
+                        case PublicKeyAlgorithms.Dsa:
+                            var dsaK = _PublicKeyPacket.Key as DsaPublicBcpgKey;
+                            return new DsaPublicKeyParameters(dsaK.Y, new DsaParameters(dsaK.P, dsaK.Q, dsaK.G));
+
+                        case PublicKeyAlgorithms.ElGamalEncrypt:
+                        case PublicKeyAlgorithms.ElGamalGeneral:
+                            var elK = _PublicKeyPacket.Key as ElGamalPublicBcpgKey;
+                            return new ElGamalPublicKeyParameters(elK.Y, new ElGamalParameters(elK.P, elK.G));
+
+                        default:
+                            throw new PgpException("unknown public key algorithm encountered");
+
+                    }
+
+                }
+                catch (PgpException e)
+                {
+                    throw e;
+                }
+                catch (Exception e)
+                {
+                    throw new PgpException("exception constructing public key", e);
+                }
+
+            }
+
+        }
+
+        #endregion
+
+        #region UserIds
+
+        /// <summary>
+        /// Allows enumeration of any user IDs associated with the key.
+        /// </summary>
+        /// <returns>An <c>IEnumerable</c> of <c>string</c> objects.</returns>
+        public IEnumerable<String> UserIds
+        {
+            get
+            {
+                return _UserIds.Where(item => item is String).
+                                Cast<String>();
+            }
+        }
+
+        #endregion
+
+        #region Signatures
+
+        /// <summary>
+        /// Allows enumeration of all signatures/certifications associated with this key.
+        /// </summary>
+        public IEnumerable<PgpSignature> Signatures
+        {
+            get
+            {
+                return _KeySignatures.Concat(_idSigs.SelectMany(v => v));
+            }
+        }
+
+        #endregion
+
+        #region UserAttributes
+
+        /// <summary>
+        /// Allows enumeration of any user attribute vectors associated with the key.
+        /// </summary>
+        public IEnumerable<PgpUserAttributeSubpacketVector> UserAttributes
+        {
+            get
+            {
+                return _UserIds.Where(item => item is PgpUserAttributeSubpacketVector).
+                                Cast<PgpUserAttributeSubpacketVector>();
+            }
+        }
+
+        #endregion
+
         #endregion
 
         #region Constructor(s)
+
+        #region PgpPublicKey(Algorithm, AsymKeyParameter, CreationTime)
 
         /// <summary>
         /// Create a PgpPublicKey from the passed in lightweight one.
@@ -124,46 +475,47 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
         /// Note: the time passed in affects the value of the key's keyId, so you probably only want
         /// to do this once for a lightweight key, or make sure you keep track of the time you used.
         /// </remarks>
-        /// <param name="algorithm">Asymmetric algorithm type representing the public key.</param>
-        /// <param name="pubKey">Actual public key to associate.</param>
-        /// <param name="time">Date of creation.</param>
+        /// <param name="Algorithm">Asymmetric algorithm type representing the public key.</param>
+        /// <param name="AsymKeyParameter">Actual public key to associate.</param>
+        /// <param name="CreationTime">Date of creation.</param>
         /// <exception cref="ArgumentException">If <c>pubKey</c> is not public.</exception>
         /// <exception cref="PgpException">On key creation problem.</exception>
-        public PgpPublicKey(PublicKeyAlgorithms   algorithm,
-                            AsymmetricKeyParameter  pubKey,
-                            DateTime                time)
+        public PgpPublicKey(PublicKeyAlgorithms     Algorithm,
+                            AsymmetricKeyParameter  AsymKeyParameter,
+                            DateTime                CreationTime)
         {
 
-            if (pubKey.IsPrivate)
+            if (AsymKeyParameter.IsPrivate)
                 throw new ArgumentException("Expected a public key", "pubKey");
 
             IBcpgKey bcpgKey;
 
-            if (pubKey is RsaKeyParameters)
+            if (AsymKeyParameter is RsaKeyParameters)
             {
-                var rK = (RsaKeyParameters) pubKey;
+                var rK = (RsaKeyParameters) AsymKeyParameter;
                 bcpgKey = new RsaPublicBcpgKey(rK.Modulus, rK.Exponent);
             }
-            else if (pubKey is DsaPublicKeyParameters)
+
+            else if (AsymKeyParameter is DsaPublicKeyParameters)
             {
-                var dK = (DsaPublicKeyParameters) pubKey;
+                var dK = (DsaPublicKeyParameters) AsymKeyParameter;
                 var dP = dK.Parameters;
                 bcpgKey = new DsaPublicBcpgKey(dP.P, dP.Q, dP.G, dK.Y);
             }
-            else if (pubKey is ElGamalPublicKeyParameters)
+
+            else if (AsymKeyParameter is ElGamalPublicKeyParameters)
             {
-                var eK = (ElGamalPublicKeyParameters) pubKey;
+                var eK = (ElGamalPublicKeyParameters) AsymKeyParameter;
                 var eS = eK.Parameters;
                 bcpgKey = new ElGamalPublicBcpgKey(eS.P, eS.G, eK.Y);
             }
-            else
-            {
-                throw new PgpException("unknown key class");
-            }
 
-            this.publicPk  = new PublicKeyPacket(algorithm, time, bcpgKey);
-            this.ids       = new List<Object>();
-            this.idSigs    = new List<List<PgpSignature>>();
+            else
+                throw new PgpException("unknown key class");
+
+            this._PublicKeyPacket  = new PublicKeyPacket(Algorithm, CreationTime, bcpgKey);
+            this._UserIds          = new List<Object>();
+            this._idSigs           = new List<List<PgpSignature>>();
 
             try
             {
@@ -176,97 +528,147 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
 
         }
 
-        /// <summary>Constructor for a sub-key.</summary>
-        internal PgpPublicKey(PublicKeyPacket     publicPk,
-                              TrustPacket         trustPk,
-                              List<PgpSignature>  sigs)
+        #endregion
+
+        #region (internal) PgpPublicKey(PublicKeyPacket, TrustPacket, SubSignatures)
+
+        /// <summary>
+        /// Constructor for a sub-key.
+        /// </summary>
+        internal PgpPublicKey(PublicKeyPacket            PublicKeyPacket,
+                              TrustPacket                TrustPacket,
+                              IEnumerable<PgpSignature>  SubSignatures)
         {
 
-            this.publicPk = publicPk;
-            this.trustPk  = trustPk;
-            this.subSigs  = sigs;
+            this._PublicKeyPacket  = PublicKeyPacket;
+            this._TrustPacket      = TrustPacket;
+            this._SubSignatures    = new List<PgpSignature>(SubSignatures);
+
+            this._KeySignatures    = new List<PgpSignature>();
+            this._UserIds          = new List<Object>();
+            this._idTrusts         = new List<TrustPacket>();
+            this._idSigs           = new List<List<PgpSignature>>();
 
             Init();
 
         }
 
-        internal PgpPublicKey(PgpPublicKey        key,
-                              TrustPacket         trust,
-                              List<PgpSignature>  subSigs)
+        #endregion
+
+        #region (internal) PgpPublicKey(PublicKey, TrustPacket, SubSignatures)
+
+        internal PgpPublicKey(PgpPublicKey               PublicKey,
+                              TrustPacket                TrustPacket,
+                              IEnumerable<PgpSignature>  SubSignatures)
         {
 
-            this.publicPk       = key.publicPk;
-            this.trustPk        = trust;
-            this.subSigs        = subSigs;
+            this._PublicKeyPacket  = PublicKey._PublicKeyPacket;
+            this._TrustPacket      = TrustPacket;
+            this._SubSignatures    = new List<PgpSignature>(Signatures);
 
-            this.fingerprint    = key.fingerprint;
-            this.keyId          = key.keyId;
-            this.keyStrength    = key.keyStrength;
+            this._Fingerprint      = PublicKey._Fingerprint;
+            this._KeyId            = PublicKey._KeyId;
+            this._KeyStrength      = PublicKey._KeyStrength;
+
+            this._KeySignatures    = new List<PgpSignature>();
+            this._UserIds          = new List<Object>();
+            this._idTrusts         = new List<TrustPacket>();
+            this._idSigs           = new List<List<PgpSignature>>();
 
         }
 
-        /// <summary>Copy constructor.</summary>
-        /// <param name="pubKey">The public key to copy.</param>
-        internal PgpPublicKey(PgpPublicKey pubKey)
+        #endregion
+
+        #region (internal) PgpPublicKey(PublicKey)
+
+        /// <summary>
+        /// Copy constructor.
+        /// </summary>
+        /// <param name="PublicKey">The public key to copy.</param>
+        internal PgpPublicKey(PgpPublicKey PublicKey)
         {
 
-            this.publicPk   = pubKey.publicPk;
-            this.keySigs    = new List<PgpSignature>      (pubKey.keySigs);
-            this.ids        = new List<Object>            (pubKey.ids);
-            this.idTrusts   = new List<TrustPacket>       (pubKey.idTrusts);
-            this.idSigs     = new List<List<PgpSignature>>();
+            this._PublicKeyPacket  = PublicKey._PublicKeyPacket;
+            this._KeySignatures    = new List<PgpSignature>(PublicKey._KeySignatures);
+            this._UserIds          = new List<Object>      (PublicKey._UserIds);
+            this._idTrusts         = new List<TrustPacket> (PublicKey._idTrusts);
+            this._idSigs           = new List<List<PgpSignature>>();
 
-            for (int i = 0; i != pubKey.idSigs.Count; i++)
-            {
-                this.idSigs.Add(new List<PgpSignature>(pubKey.idSigs[i]));
-            }
+            for (int i = 0; i != PublicKey._idSigs.Count; i++)
+                this._idSigs.Add(new List<PgpSignature>(PublicKey._idSigs[i]));
 
-            if (pubKey.subSigs != null)
-            {
-                this.subSigs = new List<PgpSignature>();
-                for (int i = 0; i != pubKey.subSigs.Count; i++)
-                {
-                    this.subSigs.Add(pubKey.subSigs[i]);
-                }
-            }
+            this._SubSignatures    = new List<PgpSignature>();
 
-            this.fingerprint  = pubKey.fingerprint;
-            this.keyId        = pubKey.keyId;
-            this.keyStrength  = pubKey.keyStrength;
+            if (PublicKey._SubSignatures != null)
+                this._SubSignatures.AddRange(PublicKey._SubSignatures);
+
+            this._Fingerprint  = PublicKey._Fingerprint;
+            this._KeyId        = PublicKey._KeyId;
+            this._KeyStrength  = PublicKey._KeyStrength;
 
         }
 
-        internal PgpPublicKey(PublicKeyPacket           publicPk,
-                              TrustPacket               trustPk,
-                              List<PgpSignature>        keySigs,
-                              List<Object>              ids,
-                              List<TrustPacket>         idTrusts,
-                              List<List<PgpSignature>>  idSigs)
+        #endregion
+
+        #region (internal) PgpPublicKey(PublicKey, Helper)
+
+        /// <summary>
+        /// Helper for the PgpKeyRingGenerator.
+        /// </summary>
+        /// <param name="PublicKey">A public key.</param>
+        internal PgpPublicKey(PgpPublicKey PublicKey, Boolean Helper)
+            : this(PublicKey)
+        {
+            this._PublicKeyPacket = new PublicSubkeyPacket(PublicKey.Algorithm, PublicKey.CreationTime, PublicKey._PublicKeyPacket.Key);
+        }
+
+        #endregion
+
+        #region (internal) PgpPublicKey(PublicKeyPacket, ...)
+
+        internal PgpPublicKey(PublicKeyPacket                  PublicKeyPacket,
+                              TrustPacket                      TrustPacket,
+                              IEnumerable<PgpSignature>        KeySignatures,
+                              IEnumerable<Object>              UserIds,
+                              IEnumerable<TrustPacket>         idTrusts,
+                              IEnumerable<List<PgpSignature>>  idSigs)
         {
 
-            this.publicPk   = publicPk;
-            this.trustPk    = trustPk;
-            this.keySigs    = keySigs;
-            this.ids        = ids;
-            this.idTrusts   = idTrusts;
-            this.idSigs     = idSigs;
+            this._PublicKeyPacket  = PublicKeyPacket;
+            this._TrustPacket      = TrustPacket;
+
+            this._KeySignatures    = new List<PgpSignature>(KeySignatures);
+            this._UserIds          = new List<object>(UserIds);
+            this._idTrusts         = new List<TrustPacket>(idTrusts);
+            this._idSigs           = new List<List<PgpSignature>>(idSigs);
+            this._SubSignatures    = new List<PgpSignature>();
 
             Init();
 
         }
 
-        internal PgpPublicKey(PublicKeyPacket           publicPk,
-                              List<Object>              ids,
-                              List<List<PgpSignature>>  idSigs)
+        #endregion
+
+        #region (internal) PgpPublicKey(PublicKeyPacket, UserIds, idSigs)
+
+        internal PgpPublicKey(PublicKeyPacket                  PublicKeyPacket,
+                              IEnumerable<Object>              UserIds,
+                              IEnumerable<List<PgpSignature>>  idSigs)
         {
 
-            this.publicPk  = publicPk;
-            this.ids       = ids;
-            this.idSigs    = idSigs;
+            this._PublicKeyPacket  = PublicKeyPacket;
+            this._UserIds          = new List<Object>(UserIds);
+            this._idSigs           = new List<List<PgpSignature>>(idSigs);
+
+            this._KeySignatures    = new List<PgpSignature>();
+            this._idTrusts         = new List<TrustPacket>();
+            this._SubSignatures    = new List<PgpSignature>();
 
             Init();
 
         }
+
+        #endregion
 
         #endregion
 
@@ -276,14 +678,14 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
         private void Init()
         {
 
-            var key = publicPk.Key;
+            var key = _PublicKeyPacket.Key;
 
-            if (publicPk.Version <= 3)
+            if (_PublicKeyPacket.Version <= 3)
             {
 
                 var rK = (RsaPublicBcpgKey) key;
 
-                this.keyId = (UInt64) rK.Modulus.LongValue;
+                this._KeyId = (UInt64) rK.Modulus.LongValue;
 
                 try
                 {
@@ -295,7 +697,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
                     bytes = rK.PublicExponent.ToByteArrayUnsigned();
                     digest.BlockUpdate(bytes, 0, bytes.Length);
 
-                    this.fingerprint = DigestUtilities.DoFinal(digest);
+                    this._Fingerprint = DigestUtilities.DoFinal(digest);
                 }
                 //catch (NoSuchAlgorithmException)
                 catch (Exception e)
@@ -303,11 +705,11 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
                     throw new IOException("can't find MD5", e);
                 }
 
-                this.keyStrength = rK.Modulus.BitLength;
+                this._KeyStrength = (UInt32) rK.Modulus.BitLength;
             }
             else
             {
-                byte[] kBytes = publicPk.GetEncodedContents();
+                byte[] kBytes = _PublicKeyPacket.GetEncodedContents();
 
                 try
                 {
@@ -317,30 +719,30 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
                     digest.Update((byte)(kBytes.Length >> 8));
                     digest.Update((byte)kBytes.Length);
                     digest.BlockUpdate(kBytes, 0, kBytes.Length);
-                    this.fingerprint = DigestUtilities.DoFinal(digest);
+                    this._Fingerprint = DigestUtilities.DoFinal(digest);
                 }
                 catch (Exception e)
                 {
                     throw new IOException("can't find SHA1", e);
                 }
 
-                this.keyId = (((ulong) fingerprint[fingerprint.Length - 8] << 56)
-                            | ((ulong) fingerprint[fingerprint.Length - 7] << 48)
-                            | ((ulong) fingerprint[fingerprint.Length - 6] << 40)
-                            | ((ulong) fingerprint[fingerprint.Length - 5] << 32)
-                            | ((ulong) fingerprint[fingerprint.Length - 4] << 24)
-                            | ((ulong) fingerprint[fingerprint.Length - 3] << 16)
-                            | ((ulong) fingerprint[fingerprint.Length - 2] << 8)
-                            |  (ulong) fingerprint[fingerprint.Length - 1]);
+                this._KeyId = (((ulong) _Fingerprint[_Fingerprint.Length - 8] << 56) |
+                               ((ulong) _Fingerprint[_Fingerprint.Length - 7] << 48) |
+                               ((ulong) _Fingerprint[_Fingerprint.Length - 6] << 40) |
+                               ((ulong) _Fingerprint[_Fingerprint.Length - 5] << 32) |
+                               ((ulong) _Fingerprint[_Fingerprint.Length - 4] << 24) |
+                               ((ulong) _Fingerprint[_Fingerprint.Length - 3] << 16) |
+                               ((ulong) _Fingerprint[_Fingerprint.Length - 2] <<  8) |
+                                (ulong) _Fingerprint[_Fingerprint.Length - 1]);
 
                 if (key is RsaPublicBcpgKey)
-                    this.keyStrength = ((RsaPublicBcpgKey) key).Modulus.BitLength;
+                    this._KeyStrength = (UInt32) ((RsaPublicBcpgKey) key).Modulus.BitLength;
 
                 else if (key is DsaPublicBcpgKey)
-                    this.keyStrength = ((DsaPublicBcpgKey) key).P.BitLength;
+                    this._KeyStrength = (UInt32) ((DsaPublicBcpgKey) key).P.BitLength;
 
                 else if (key is ElGamalPublicBcpgKey)
-                    this.keyStrength = ((ElGamalPublicBcpgKey) key).P.BitLength;
+                    this._KeyStrength = (UInt32) ((ElGamalPublicBcpgKey) key).P.BitLength;
 
             }
 
@@ -349,280 +751,94 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
         #endregion
 
 
+        #region (private) GetExpirationTimeFromSignature(SelfSigned, SignatureType)
 
-        /// <summary>The number of valid days from creation time - zero means no expiry.</summary>
-        public int ValidDays
+        private UInt64 GetExpirationTimeFromSignature(Boolean            SelfSigned,
+                                                      PgpSignatureTypes  SignatureType)
         {
-            get
+
+            foreach (var sig in SignaturesOfType(SignatureType))
             {
-
-                if (publicPk.Version > 3)
-                    return (Int32) (GetValidSeconds() / (24 * 60 * 60));
-
-                return publicPk.ValidDays;
-
-            }
-        }
-
-        /// <summary>The number of valid seconds from creation time - zero means no expiry.</summary>
-        public long GetValidSeconds()
-        {
-
-            if (publicPk.Version > 3)
-            {
-                if (IsMasterKey)
-                {
-                    for (int i = 0; i != MasterKeyCertificationTypes.Length; i++)
-                    {
-                        long seconds = GetExpirationTimeFromSig(true, MasterKeyCertificationTypes[i]);
-
-                        if (seconds >= 0)
-                        {
-                            return seconds;
-                        }
-                    }
-                }
-                else
-                {
-                    long seconds = GetExpirationTimeFromSig(false, PgpSignatures.SubkeyBinding);
-
-                    if (seconds >= 0)
-                    {
-                        return seconds;
-                    }
-                }
-
-                return 0;
-            }
-
-            return (long) publicPk.ValidDays * 24 * 60 * 60;
-
-        }
-
-
-
-
-
-        /// <summary>Return the trust data associated with the public key, if present.</summary>
-        /// <returns>A byte array with trust data, null otherwise.</returns>
-        public byte[] GetTrustData()
-        {
-
-            if (trustPk == null)
-                return null;
-
-            return trustPk.GetLevelAndTrustAmount();
-
-        }
-
-
-        private long GetExpirationTimeFromSig(Boolean        selfSigned,
-                                              PgpSignatures  signatureType)
-        {
-
-            foreach (var sig in GetSignaturesOfType(signatureType))
-            {
-                if (!selfSigned || sig.KeyId == KeyId)
+                if (!SelfSigned || sig.KeyId == KeyId)
                 {
 
                     var hashed = sig.HashedSubPackets;
                     if (hashed != null)
-                        return hashed.GetKeyExpirationTime();
+                        return hashed.KeyExpirationTime;
 
                     return 0;
 
                 }
             }
 
-            return -1;
+            return 0;
 
         }
 
-        /// <summary>The keyId associated with the public key.</summary>
-        public UInt64 KeyId
-        {
-            get
-            {
-                return keyId;
-            }
-        }
+        #endregion
 
-        /// <summary>The fingerprint of the key</summary>
-        public Byte[] GetFingerprint()
-        {
-            return (byte[]) fingerprint.Clone();
-        }
+
+        #region SignaturesForUserId(UserId)
 
         /// <summary>
-        /// Check if this key has an algorithm type that makes it suitable to use for encryption.
+        /// Allows enumeration of any signatures associated with the passed in id.
         /// </summary>
-        /// <remarks>
-        /// Note: with version 4 keys KeyFlags subpackets should also be considered when present for
-        /// determining the preferred use of the key.
-        /// </remarks>
-        /// <returns>
-        /// <c>true</c> if this key algorithm is suitable for encryption.
-        /// </returns>
-        public bool IsEncryptionKey
-        {
-            get
-            {
-                switch (publicPk.Algorithm)
-                {
-                    case PublicKeyAlgorithms.ElGamalEncrypt:
-                    case PublicKeyAlgorithms.ElGamalGeneral:
-                    case PublicKeyAlgorithms.RsaEncrypt:
-                    case PublicKeyAlgorithms.RsaGeneral:
-                        return true;
-                    default:
-                        return false;
-                }
-            }
-        }
-
-        /// <summary>True, if this is a master key.</summary>
-        public bool IsMasterKey
-        {
-            get { return subSigs == null; }
-        }
-
-        /// <summary>The algorithm code associated with the public key.</summary>
-        public PublicKeyAlgorithms Algorithm
-        {
-            get { return publicPk.Algorithm; }
-        }
-
-        /// <summary>The strength of the key in bits.</summary>
-        public int BitStrength
-        {
-            get { return keyStrength; }
-        }
-
-        /// <summary>The public key contained in the object.</summary>
-        /// <returns>A lightweight public key.</returns>
-        /// <exception cref="PgpException">If the key algorithm is not recognised.</exception>
-        public AsymmetricKeyParameter GetKey()
-        {
-            try
-            {
-                switch (publicPk.Algorithm)
-                {
-                    case PublicKeyAlgorithms.RsaEncrypt:
-                    case PublicKeyAlgorithms.RsaGeneral:
-                    case PublicKeyAlgorithms.RsaSign:
-                        RsaPublicBcpgKey rsaK = (RsaPublicBcpgKey) publicPk.Key;
-                        return new RsaKeyParameters(false, rsaK.Modulus, rsaK.PublicExponent);
-                    case PublicKeyAlgorithms.Dsa:
-                        DsaPublicBcpgKey dsaK = (DsaPublicBcpgKey) publicPk.Key;
-                        return new DsaPublicKeyParameters(dsaK.Y, new DsaParameters(dsaK.P, dsaK.Q, dsaK.G));
-                    case PublicKeyAlgorithms.ElGamalEncrypt:
-                    case PublicKeyAlgorithms.ElGamalGeneral:
-                        ElGamalPublicBcpgKey elK = (ElGamalPublicBcpgKey) publicPk.Key;
-                        return new ElGamalPublicKeyParameters(elK.Y, new ElGamalParameters(elK.P, elK.G));
-                    default:
-                        throw new PgpException("unknown public key algorithm encountered");
-                }
-            }
-            catch (PgpException e)
-            {
-                throw e;
-            }
-            catch (Exception e)
-            {
-                throw new PgpException("exception constructing public key", e);
-            }
-        }
-
-        /// <summary>Allows enumeration of any user IDs associated with the key.</summary>
-        /// <returns>An <c>IEnumerable</c> of <c>string</c> objects.</returns>
-        public IEnumerable<String> GetUserIds()
-        {
-
-            var temp = new List<String>();
-
-            foreach (object o in ids)
-            {
-                if (o is String)
-                    temp.Add(o as String);
-            }
-
-            return temp;
-
-        }
-
-        /// <summary>Allows enumeration of any user attribute vectors associated with the key.</summary>
-        /// <returns>An <c>IEnumerable</c> of <c>PgpUserAttributeSubpacketVector</c> objects.</returns>
-        public IEnumerable<PgpUserAttributeSubpacketVector> GetUserAttributes()
-        {
-
-            var temp = new List<PgpUserAttributeSubpacketVector>();
-
-            foreach (object o in ids)
-            {
-                if (o is PgpUserAttributeSubpacketVector)
-                    temp.Add(o as PgpUserAttributeSubpacketVector);
-            }
-
-            return temp;
-
-        }
-
-        /// <summary>Allows enumeration of any signatures associated with the passed in id.</summary>
-        /// <param name="id">The ID to be matched.</param>
+        /// <param name="UserId">The ID to be matched.</param>
         /// <returns>An <c>IEnumerable</c> of <c>PgpSignature</c> objects.</returns>
-        public IEnumerable<PgpSignature> GetSignaturesForId(String id)
+        public IEnumerable<PgpSignature> SignaturesForUserId(String UserId)
         {
 
-            if (id == null)
+            if (UserId == null)
                 throw new ArgumentNullException("id");
 
-            for (int i = 0; i != ids.Count; i++)
+            for (int i = 0; i != _UserIds.Count; i++)
             {
-                if (id.Equals(ids[i]))
-                    return idSigs[i];
+                if (UserId.Equals(_UserIds[i]))
+                    return _idSigs[i];
             }
 
             return null;
 
         }
 
-        /// <summary>Allows enumeration of signatures associated with the passed in user attributes.</summary>
-        /// <param name="userAttributes">The vector of user attributes to be matched.</param>
+        #endregion
+
+        #region SignaturesForUserAttribute(UserAttributes)
+
+        /// <summary>
+        /// Allows enumeration of signatures associated with the passed in user attributes.
+        /// </summary>
+        /// <param name="UserAttributes">The vector of user attributes to be matched.</param>
         /// <returns>An <c>IEnumerable</c> of <c>PgpSignature</c> objects.</returns>
-        public IEnumerable<PgpSignature> GetSignaturesForUserAttribute(PgpUserAttributeSubpacketVector userAttributes)
+        public IEnumerable<PgpSignature> SignaturesForUserAttribute(PgpUserAttributeSubpacketVector UserAttributes)
         {
 
-            for (int i = 0; i != ids.Count; i++)
+            for (int i = 0; i != _UserIds.Count; i++)
             {
-                if (userAttributes.Equals(ids[i]))
-                    return idSigs[i];
+                if (UserAttributes.Equals(_UserIds[i]))
+                    return _idSigs[i];
             }
 
             return null;
 
         }
 
-        /// <summary>Allows enumeration of signatures of the passed in type that are on this key.</summary>
+        #endregion
+
+        #region SignaturesOfType(SignatureType)
+
+        /// <summary>
+        /// Allows enumeration of signatures of the passed in type that are on this key.
+        /// </summary>
         /// <param name="SignatureType">The type of the signature to be returned.</param>
         /// <returns>An <c>IEnumerable</c> of <c>PgpSignature</c> objects.</returns>
-        public IEnumerable<PgpSignature> GetSignaturesOfType(PgpSignatures SignatureType)
+        public IEnumerable<PgpSignature> SignaturesOfType(PgpSignatureTypes SignatureType)
         {
-            return GetSignatures().Where(sig => sig.SignatureType == SignatureType);
+            return Signatures.Where(sig => sig.SignatureType == SignatureType);
         }
 
-        /// <summary>Allows enumeration of all signatures/certifications associated with this key.</summary>
-        /// <returns>An <c>IEnumerable</c> with all signatures/certifications.</returns>
-        public IEnumerable<PgpSignature> GetSignatures()
-        {
+        #endregion
 
-            var SignatureList = new List<PgpSignature>(keySigs);
-
-            foreach (var extraSigs in idSigs)
-                SignatureList.AddRange(extraSigs);
-
-            return SignatureList;
-
-        }
 
         public byte[] GetEncoded()
         {
@@ -634,260 +850,302 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
 
         }
 
-        public void Encode(Stream outStr)
+        #region Encode(OutputStream)
+
+        public void Encode(Stream OutputStream)
         {
 
-            var bcpgOut = BcpgOutputStream.Wrap(outStr);
+            var BCPGOutputStream = BcpgOutputStream.Wrap(OutputStream);
 
-            bcpgOut.WritePacket(publicPk);
-            if (trustPk != null)
+            BCPGOutputStream.WritePacket(_PublicKeyPacket);
+            if (_TrustPacket != null)
+                BCPGOutputStream.WritePacket(_TrustPacket);
+
+            // not a sub-key
+            if (_SubSignatures == null)
             {
-                bcpgOut.WritePacket(trustPk);
-            }
 
-            if (subSigs == null)    // not a sub-key
-            {
+                foreach (var keySig in _KeySignatures)
+                    keySig.Encode(BCPGOutputStream);
 
-                foreach (var keySig in keySigs)
+                for (int i = 0; i != _UserIds.Count; i++)
                 {
-                    keySig.Encode(bcpgOut);
-                }
 
-                for (int i = 0; i != ids.Count; i++)
-                {
-                    if (ids[i] is string)
-                    {
-                        string id = (string) ids[i];
+                    if (_UserIds[i] is string)
+                        BCPGOutputStream.WritePacket(new UserIdPacket((String) _UserIds[i]));
 
-                        bcpgOut.WritePacket(new UserIdPacket(id));
-                    }
                     else
-                    {
-                        var v = (PgpUserAttributeSubpacketVector) ids[i];
-                        bcpgOut.WritePacket(new UserAttributePacket(v.ToSubpacketArray()));
-                    }
+                        BCPGOutputStream.WritePacket(new UserAttributePacket(((PgpUserAttributeSubpacketVector) _UserIds[i]).ToSubpacketArray()));
 
-                    if (idTrusts[i] != null)
-                    {
-                        bcpgOut.WritePacket((ContainedPacket)idTrusts[i]);
-                    }
+                    if (_idTrusts[i] != null)
+                        BCPGOutputStream.WritePacket((ContainedPacket) _idTrusts[i]);
 
-                    foreach (PgpSignature sig in (IList) idSigs[i])
-                    {
-                        sig.Encode(bcpgOut);
-                    }
+                    foreach (var sig in _idSigs[i])
+                        sig.Encode(BCPGOutputStream);
+
                 }
+
             }
+
             else
             {
-                foreach (PgpSignature subSig in subSigs)
-                {
-                    subSig.Encode(bcpgOut);
-                }
+                foreach (var subSig in _SubSignatures)
+                    subSig.Encode(BCPGOutputStream);
             }
+
         }
 
+        #endregion
+
+
+
+        #region (static) AddCertification(PublicKey, UserId, Certification)
 
         /// <summary>Add a certification for an id to the given public key.</summary>
-        /// <param name="key">The key the certification is to be added to.</param>
-        /// <param name="id">The ID the certification is associated with.</param>
-        /// <param name="certification">The new certification.</param>
+        /// <param name="PublicKey">The key the certification is to be added to.</param>
+        /// <param name="UserId">The ID the certification is associated with.</param>
+        /// <param name="Certification">The new certification.</param>
         /// <returns>The re-certified key.</returns>
-        public static PgpPublicKey AddCertification(PgpPublicKey  key,
-                                                    String        id,
-                                                    PgpSignature  certification)
+        public static PgpPublicKey AddCertification(PgpPublicKey  PublicKey,
+                                                    String        UserId,
+                                                    PgpSignature  Certification)
         {
-            return AddCert(key, id, certification);
+            return AddCert(PublicKey, UserId, Certification);
         }
+
+        #endregion
+
+        #region (static) AddCertification(PublicKey, UserAttributes, Certification)
 
         /// <summary>Add a certification for the given UserAttributeSubpackets to the given public key.</summary>
-        /// <param name="key">The key the certification is to be added to.</param>
-        /// <param name="userAttributes">The attributes the certification is associated with.</param>
-        /// <param name="certification">The new certification.</param>
+        /// <param name="PublicKey">The key the certification is to be added to.</param>
+        /// <param name="UserAttributes">The attributes the certification is associated with.</param>
+        /// <param name="Certification">The new certification.</param>
         /// <returns>The re-certified key.</returns>
-        public static PgpPublicKey AddCertification(PgpPublicKey                     key,
-                                                    PgpUserAttributeSubpacketVector  userAttributes,
-                                                    PgpSignature                     certification)
+        public static PgpPublicKey AddCertification(PgpPublicKey                     PublicKey,
+                                                    PgpUserAttributeSubpacketVector  UserAttributes,
+                                                    PgpSignature                     Certification)
         {
-            return AddCert(key, userAttributes, certification);
+            return AddCert(PublicKey, UserAttributes, Certification);
         }
 
-        private static PgpPublicKey AddCert(PgpPublicKey  key,
-                                            object        id,
-                                            PgpSignature  certification)
+        #endregion
+
+        #region (private, static) AddCertification(PublicKey, Id, Certification)
+
+        private static PgpPublicKey AddCert(PgpPublicKey  PublicKey,
+                                            object        Id,
+                                            PgpSignature  Certification)
         {
 
-            var returnKey = new PgpPublicKey(key);
+            var returnKey = new PgpPublicKey(PublicKey);
             List<PgpSignature> sigList = null;
 
-            for (int i = 0; i != returnKey.ids.Count; i++)
+            for (int i = 0; i != returnKey._UserIds.Count; i++)
             {
-                if (id.Equals(returnKey.ids[i]))
+                if (Id.Equals(returnKey._UserIds[i]))
                 {
-                    sigList = returnKey.idSigs[i];
+                    sigList = returnKey._idSigs[i];
                 }
             }
 
             if (sigList != null)
-                sigList.Add(certification);
+                sigList.Add(Certification);
 
             else
             {
                 sigList = new List<PgpSignature>();
-                sigList.Add(certification);
-                returnKey.ids.Add(id);
-                returnKey.idTrusts.Add(null);
-                returnKey.idSigs.Add(sigList);
+                sigList.Add(Certification);
+                returnKey._UserIds.Add(Id);
+                returnKey._idTrusts.Add(null);
+                returnKey._idSigs.Add(sigList);
             }
 
             return returnKey;
 
         }
 
-        /// <summary>
-        /// Remove any certifications associated with a user attribute subpacket on a key.
-        /// </summary>
-        /// <param name="key">The key the certifications are to be removed from.</param>
-        /// <param name="userAttributes">The attributes to be removed.</param>
-        /// <returns>
-        /// The re-certified key, or null if the user attribute subpacket was not found on the key.
-        /// </returns>
-        public static PgpPublicKey RemoveCertification(PgpPublicKey                     key,
-                                                       PgpUserAttributeSubpacketVector  userAttributes)
-        {
-            return RemoveCert(key, userAttributes);
-        }
+        #endregion
 
-        /// <summary>Remove any certifications associated with a given ID on a key.</summary>
-        /// <param name="key">The key the certifications are to be removed from.</param>
-        /// <param name="id">The ID that is to be removed.</param>
-        /// <returns>The re-certified key, or null if the ID was not found on the key.</returns>
-        public static PgpPublicKey RemoveCertification(PgpPublicKey  key,
-                                                       String        id)
-        {
-            return RemoveCert(key, id);
-        }
 
-        private static PgpPublicKey RemoveCert(PgpPublicKey  key,
-                                               object        id)
-        {
-
-            var  returnKey  = new PgpPublicKey(key);
-            bool found      = false;
-
-            for (int i = 0; i < returnKey.ids.Count; i++)
-            {
-                if (id.Equals(returnKey.ids[i]))
-                {
-                    found = true;
-                    returnKey.ids.RemoveAt(i);
-                    returnKey.idTrusts.RemoveAt(i);
-                    returnKey.idSigs.RemoveAt(i);
-                }
-            }
-
-            return found ? returnKey : null;
-
-        }
-
-        /// <summary>Remove a certification associated with a given ID on a key.</summary>
-        /// <param name="key">The key the certifications are to be removed from.</param>
-        /// <param name="id">The ID that the certfication is to be removed from.</param>
-        /// <param name="certification">The certfication to be removed.</param>
-        /// <returns>The re-certified key, or null if the certification was not found.</returns>
-        public static PgpPublicKey RemoveCertification(PgpPublicKey  key,
-                                                       String        id,
-                                                       PgpSignature  certification)
-        {
-            return RemoveCert(key, id, certification);
-        }
-
-        /// <summary>Remove a certification associated with a given user attributes on a key.</summary>
-        /// <param name="key">The key the certifications are to be removed from.</param>
-        /// <param name="userAttributes">The user attributes that the certfication is to be removed from.</param>
-        /// <param name="certification">The certification to be removed.</param>
-        /// <returns>The re-certified key, or null if the certification was not found.</returns>
-        public static PgpPublicKey RemoveCertification(PgpPublicKey                     key,
-                                                       PgpUserAttributeSubpacketVector  userAttributes,
-                                                       PgpSignature                     certification)
-        {
-            return RemoveCert(key, userAttributes, certification);
-        }
-
-        private static PgpPublicKey RemoveCert(PgpPublicKey    key,
-                                               object          id,
-                                               PgpSignature    certification)
-        {
-
-            var returnKey = new PgpPublicKey(key);
-            bool found = false;
-
-            for (int i = 0; i < returnKey.ids.Count; i++)
-            {
-                if (id.Equals(returnKey.ids[i]))
-                {
-                    IList certs = (IList) returnKey.idSigs[i];
-                    found = certs.Contains(certification);
-
-                    if (found)
-                    {
-                        certs.Remove(certification);
-                    }
-                }
-            }
-
-            return found ? returnKey : null;
-
-        }
+        #region (static) AddCertification(PublicKey, Certification)
 
         /// <summary>Add a revocation or some other key certification to a key.</summary>
-        /// <param name="key">The key the revocation is to be added to.</param>
-        /// <param name="certification">The key signature to be added.</param>
+        /// <param name="PublicKey">The key the revocation is to be added to.</param>
+        /// <param name="Certification">The key signature to be added.</param>
         /// <returns>The new changed public key object.</returns>
-        public static PgpPublicKey AddCertification(PgpPublicKey  key,
-                                                    PgpSignature  certification)
+        public static PgpPublicKey AddCertification(PgpPublicKey  PublicKey,
+                                                    PgpSignature  Certification)
         {
 
-            if (key.IsMasterKey)
+            if (PublicKey.IsMasterKey)
             {
-                if (certification.SignatureType == PgpSignatures.SubkeyRevocation)
+                if (Certification.SignatureType == PgpSignatureTypes.SubkeyRevocation)
                     throw new ArgumentException("signature type incorrect for master key revocation.");
             }
 
             else
             {
-                if (certification.SignatureType == PgpSignatures.KeyRevocation)
+                if (Certification.SignatureType == PgpSignatureTypes.KeyRevocation)
                     throw new ArgumentException("signature type incorrect for sub-key revocation.");
             }
 
-            var returnKey = new PgpPublicKey(key);
+            var returnKey = new PgpPublicKey(PublicKey);
 
-            if (returnKey.subSigs != null)
-                returnKey.subSigs.Add(certification);
+            if (returnKey._SubSignatures != null)
+                returnKey._SubSignatures.Add(Certification);
 
             else
-                returnKey.keySigs.Add(certification);
+                returnKey._KeySignatures.Add(Certification);
 
             return returnKey;
 
         }
 
-        /// <summary>Remove a certification from the key.</summary>
-        /// <param name="key">The key the certifications are to be removed from.</param>
-        /// <param name="certification">The certfication to be removed.</param>
-        /// <returns>The modified key, null if the certification was not found.</returns>
-        public static PgpPublicKey RemoveCertification(PgpPublicKey  key,
-                                                       PgpSignature  certification)
+        #endregion
+
+
+
+        #region (static) RemoveCertification(PublicKey, UserAttributes)
+
+        /// <summary>
+        /// Remove any certifications associated with a user attribute subpacket on a key.
+        /// </summary>
+        /// <param name="PublicKey">The key the certifications are to be removed from.</param>
+        /// <param name="UserAttributes">The attributes to be removed.</param>
+        /// <returns>
+        /// The re-certified key, or null if the user attribute subpacket was not found on the key.
+        /// </returns>
+        public static PgpPublicKey RemoveCertification(PgpPublicKey                     PublicKey,
+                                                       PgpUserAttributeSubpacketVector  UserAttributes)
+        {
+            return RemoveCert(PublicKey, UserAttributes);
+        }
+
+        #endregion
+
+        #region (static) RemoveCertification(PublicKey, UserId)
+
+        /// <summary>Remove any certifications associated with a given ID on a key.</summary>
+        /// <param name="PublicKey">The key the certifications are to be removed from.</param>
+        /// <param name="UserId">The ID that is to be removed.</param>
+        /// <returns>The re-certified key, or null if the ID was not found on the key.</returns>
+        public static PgpPublicKey RemoveCertification(PgpPublicKey  PublicKey,
+                                                       String        UserId)
+        {
+            return RemoveCert(PublicKey, UserId);
+        }
+
+        #endregion
+
+        #region (private, static) RemoveCert(PublicKey, Id)
+
+        private static PgpPublicKey RemoveCert(PgpPublicKey  PublicKey,
+                                               object        Id)
         {
 
-            var returnKey = new PgpPublicKey(key);
+            var  returnKey  = new PgpPublicKey(PublicKey);
+            bool found      = false;
 
-            IList sigs = returnKey.subSigs != null
-                ?    returnKey.subSigs
-                :    returnKey.keySigs;
+            for (int i = 0; i < returnKey._UserIds.Count; i++)
+            {
+                if (Id.Equals(returnKey._UserIds[i]))
+                {
+                    found = true;
+                    returnKey._UserIds.RemoveAt(i);
+                    returnKey._idTrusts.RemoveAt(i);
+                    returnKey._idSigs.RemoveAt(i);
+                }
+            }
+
+            return found ? returnKey : null;
+
+        }
+
+        #endregion
+
+
+        #region (static) RemoveCertification(PublicKey, UserId, Certification)
+
+        /// <summary>Remove a certification associated with a given ID on a key.</summary>
+        /// <param name="PublicKey">The key the certifications are to be removed from.</param>
+        /// <param name="UserId">The ID that the certfication is to be removed from.</param>
+        /// <param name="Certification">The certfication to be removed.</param>
+        /// <returns>The re-certified key, or null if the certification was not found.</returns>
+        public static PgpPublicKey RemoveCertification(PgpPublicKey  PublicKey,
+                                                       String        UserId,
+                                                       PgpSignature  Certification)
+        {
+            return RemoveCert(PublicKey, UserId, Certification);
+        }
+
+        #endregion
+
+        #region (static) RemoveCertification(PublicKey, UserAttributes, Certification)
+
+        /// <summary>Remove a certification associated with a given user attributes on a key.</summary>
+        /// <param name="PublicKey">The key the certifications are to be removed from.</param>
+        /// <param name="UserAttributes">The user attributes that the certfication is to be removed from.</param>
+        /// <param name="Certification">The certification to be removed.</param>
+        /// <returns>The re-certified key, or null if the certification was not found.</returns>
+        public static PgpPublicKey RemoveCertification(PgpPublicKey                     PublicKey,
+                                                       PgpUserAttributeSubpacketVector  UserAttributes,
+                                                       PgpSignature                     Certification)
+        {
+            return RemoveCert(PublicKey, UserAttributes, Certification);
+        }
+
+        #endregion
+
+        #region (private, static) RemoveCert(PublicKey, Id, Certification)
+
+        private static PgpPublicKey RemoveCert(PgpPublicKey    PublicKey,
+                                               object          Id,
+                                               PgpSignature    Certification)
+        {
+
+            var returnKey  = new PgpPublicKey(PublicKey);
+            var found      = false;
+
+            for (var i = 0; i < returnKey._UserIds.Count; i++)
+            {
+                if (Id.Equals(returnKey._UserIds[i]))
+                {
+
+                    IList certs = (IList) returnKey._idSigs[i];
+                    found = certs.Contains(Certification);
+
+                    if (found)
+                        certs.Remove(Certification);
+
+                }
+            }
+
+            return found ? returnKey : null;
+
+        }
+
+        #endregion
+
+
+        #region (static) RemoveCertification(PublicKey, Certification)
+
+        /// <summary>Remove a certification from the key.</summary>
+        /// <param name="PublicKey">The key the certifications are to be removed from.</param>
+        /// <param name="Certification">The certfication to be removed.</param>
+        /// <returns>The modified key, null if the certification was not found.</returns>
+        public static PgpPublicKey RemoveCertification(PgpPublicKey  PublicKey,
+                                                       PgpSignature  Certification)
+        {
+
+            var returnKey = new PgpPublicKey(PublicKey);
+
+            IList sigs = returnKey._SubSignatures != null
+                ?    returnKey._SubSignatures
+                :    returnKey._KeySignatures;
 
 //            bool found = sigs.Remove(certification);
-            int pos = sigs.IndexOf(certification);
+            int pos = sigs.IndexOf(Certification);
             bool found = pos >= 0;
 
             if (found)
@@ -896,44 +1154,48 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
             }
             else
             {
-                foreach (String id in key.GetUserIds())
+
+                foreach (var UserId in PublicKey.UserIds)
                 {
-                    foreach (object sig in key.GetSignaturesForId(id))
+                    foreach (var Signature in PublicKey.SignaturesForUserId(UserId))
                     {
                         // TODO Is this the right type of equality test?
-                        if (certification == sig)
+                        if (Certification == Signature)
                         {
                             found = true;
-                            returnKey = PgpPublicKey.RemoveCertification(returnKey, id, certification);
+                            returnKey = PgpPublicKey.RemoveCertification(returnKey, UserId, Certification);
                         }
                     }
                 }
 
                 if (!found)
                 {
-                    foreach (PgpUserAttributeSubpacketVector id in key.GetUserAttributes())
+                    foreach (var UserAttribute in PublicKey.UserAttributes)
                     {
-                        foreach (object sig in key.GetSignaturesForUserAttribute(id))
+                        foreach (var sig in PublicKey.SignaturesForUserAttribute(UserAttribute))
                         {
                             // TODO Is this the right type of equality test?
-                            if (certification == sig)
+                            if (Certification == sig)
                             {
                                 found = true;
-                                returnKey = PgpPublicKey.RemoveCertification(returnKey, id, certification);
+                                returnKey = PgpPublicKey.RemoveCertification(returnKey, UserAttribute, Certification);
                             }
                         }
                     }
                 }
+
             }
 
             return returnKey;
 
         }
 
+        #endregion
 
-        public override string ToString()
+
+        public override String ToString()
         {
-            return ids.FirstOrDefault().ToString() + " 0x" + keyId.ToString("X") + " " + CreationTime.ToString();
+            return (_UserIds.FirstOrDefault() != null ? _UserIds.FirstOrDefault().ToString() : "") + " 0x" + _KeyId.ToString("X") + " " + CreationTime.ToString();
         }
 
     }

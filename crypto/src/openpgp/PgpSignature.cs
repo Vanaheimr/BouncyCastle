@@ -1,37 +1,16 @@
+
 using System;
 using System.IO;
-using Org.BouncyCastle.Asn1;
+using System.Text;
+using System.Collections.Generic;
 
+using Org.BouncyCastle.Asn1;
 using Org.BouncyCastle.Crypto;
 using Org.BouncyCastle.Security;
-using Org.BouncyCastle.Utilities;
 using Org.BouncyCastle.Utilities.Date;
-using System.Collections.Generic;
 
 namespace Org.BouncyCastle.Bcpg.OpenPgp
 {
-
-    public enum PgpSignatures
-    {
-
-        BinaryDocument             = 0x00,
-        CanonicalTextDocument      = 0x01,
-        StandAlone                 = 0x02,
-
-        DefaultCertification       = 0x10,
-        NoCertification            = 0x11,
-        CasualCertification        = 0x12,
-        PositiveCertification      = 0x13,
-
-        SubkeyBinding              = 0x18,
-        PrimaryKeyBinding          = 0x19,
-        DirectKey                  = 0x1f,
-        KeyRevocation              = 0x20,
-        SubkeyRevocation           = 0x28,
-        CertificationRevocation    = 0x30,
-        Timestamp                  = 0x40
-
-    }
 
     /// <summary>
     /// A PGP signature object.
@@ -42,7 +21,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
         #region Data
 
         private readonly SignaturePacket  sigPck;
-        private readonly PgpSignatures    signatureType;
+        private readonly PgpSignatureTypes    signatureType;
         private readonly TrustPacket      trustPck;
 
         private ISigner sig;
@@ -99,7 +78,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
 
         #region SignatureType
 
-        public PgpSignatures SignatureType
+        public PgpSignatureTypes SignatureType
         {
             get
             {
@@ -133,7 +112,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
         {
             get
             {
-                return "0x" + ((UInt64)sigPck.KeyId).ToString("X");
+                return "0x" + ((UInt64) sigPck.KeyId).ToString("X");
             }
         }
 
@@ -330,7 +309,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
         public void Update(Byte InByte)
         {
 
-            if (signatureType == PgpSignatures.CanonicalTextDocument)
+            if (signatureType == PgpSignatureTypes.CanonicalTextDocument)
                 doCanonicalUpdateByte(InByte);
 
             else
@@ -356,7 +335,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
                            UInt64  Length)
         {
 
-            if (signatureType == PgpSignatures.CanonicalTextDocument)
+            if (signatureType == PgpSignatureTypes.CanonicalTextDocument)
             {
 
                 var finish = Offset + Length;
@@ -375,12 +354,16 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
 
 
 
-        #region (private) 
+        #region (private) GetSig()
 
         private void GetSig()
         {
             this.sig = SignerUtilities.GetSigner(PgpUtilities.GetSignatureName(sigPck.KeyAlgorithm, sigPck.HashAlgorithm));
         }
+
+        #endregion
+
+        #region (private) doCanonicalUpdateByte(b)
 
         private void doCanonicalUpdateByte(Byte b)
         {
@@ -400,11 +383,19 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
 
         }
 
+        #endregion
+
+        #region (private) doUpdateCRLF()
+
         private void doUpdateCRLF()
         {
             sig.Update((byte)'\r');
             sig.Update((byte)'\n');
         }
+
+        #endregion
+
+        #region (private) UpdateWithIdData(header, idBytes)
 
         private void UpdateWithIdData(Int32   header,
                                       Byte[]  idBytes)
@@ -420,10 +411,14 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
 
         }
 
-        private void UpdateWithPublicKey(PgpPublicKey  key)
+        #endregion
+
+        #region (private) UpdateWithPublicKey(PublicKey)
+
+        private void UpdateWithPublicKey(PgpPublicKey PublicKey)
         {
 
-            var keyBytes = GetEncodedPublicKey(key);
+            var keyBytes = GetEncodedPublicKey(PublicKey);
 
             this.Update((byte) 0x99,
                         (byte) (keyBytes.Length >> 8),
@@ -433,21 +428,29 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
 
         }
 
-        private PgpSignatureSubpacketVector createSubpacketVector(IEnumerable<SignatureSubpacket> pcks)
+        #endregion
+
+        #region (private) createSubpacketVector(SignatureSubpackets)
+
+        private PgpSignatureSubpacketVector createSubpacketVector(IEnumerable<SignatureSubpacket> SignatureSubpackets)
         {
 
-            return pcks == null
+            return SignatureSubpackets == null
                 ? null
-                : new PgpSignatureSubpacketVector(pcks);
+                : new PgpSignatureSubpacketVector(SignatureSubpackets);
 
         }
 
-        private byte[] GetEncodedPublicKey(PgpPublicKey pubKey)
+        #endregion
+
+        #region (private) GetEncodedPublicKey(PublicKey)
+
+        private byte[] GetEncodedPublicKey(PgpPublicKey PublicKey)
         {
 
             try
             {
-                return pubKey.publicPk.GetEncodedContents();
+                return PublicKey._PublicKeyPacket.GetEncodedContents();
             }
             catch (IOException e)
             {
@@ -460,6 +463,8 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
 
 
 
+        #region InitVerify(PublicKey)
+
         public void InitVerify(PgpPublicKey PublicKey)
         {
 
@@ -470,7 +475,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
 
             try
             {
-                sig.Init(false, PublicKey.GetKey());
+                sig.Init(false, PublicKey.Key);
             }
             catch (InvalidKeyException e)
             {
@@ -479,18 +484,22 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
 
         }
 
+        #endregion
+
+        #region VerifyCertification(UserAttributes, PublicKey)
+
         /// <summary>
         /// Verify the signature as certifying the passed in public key as associated
         /// with the passed in user attributes.
         /// </summary>
-        /// <param name="userAttributes">User attributes the key was stored under.</param>
-        /// <param name="key">The key to be verified.</param>
+        /// <param name="UserAttributes">User attributes the key was stored under.</param>
+        /// <param name="PublicKey">The key to be verified.</param>
         /// <returns>True, if the signature matches, false otherwise.</returns>
-        public bool VerifyCertification(PgpUserAttributeSubpacketVector  userAttributes,
-                                        PgpPublicKey                     key)
+        public Boolean VerifyCertification(PgpUserAttributeSubpacketVector  UserAttributes,
+                                           PgpPublicKey                     PublicKey)
         {
 
-            UpdateWithPublicKey(key);
+            UpdateWithPublicKey(PublicKey);
 
             // hash in the userAttributes
             try
@@ -498,7 +507,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
 
                 var bOut = new MemoryStream();
 
-                foreach (var packet in userAttributes.ToSubpacketArray())
+                foreach (var packet in UserAttributes.ToSubpacketArray())
                     packet.Encode(bOut);
 
                 UpdateWithIdData(0xd1, bOut.ToArray());
@@ -515,59 +524,71 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
 
         }
 
+        #endregion
+
+        #region VerifyCertification(Id, PublicKey)
+
         /// <summary>
         /// Verify the signature as certifying the passed in public key as associated
         /// with the passed in ID.
         /// </summary>
-        /// <param name="id">ID the key was stored under.</param>
-        /// <param name="key">The key to be verified.</param>
+        /// <param name="Id">Id the key was stored under.</param>
+        /// <param name="PublicKey">The key to be verified.</param>
         /// <returns>True, if the signature matches, false otherwise.</returns>
-        public Boolean VerifyCertification(String        id,
-                                           PgpPublicKey  key)
+        public Boolean VerifyCertification(String        Id,
+                                           PgpPublicKey  PublicKey)
         {
 
-            UpdateWithPublicKey(key);
+            UpdateWithPublicKey(PublicKey);
 
             // hash in the id
-            UpdateWithIdData(0xb4, Strings.ToUtf8ByteArray(id));
+            UpdateWithIdData(0xb4, Encoding.UTF8.GetBytes(Id));
 
             Update(sigPck.SignatureTrailer);
 
             return sig.VerifySignature(Signature);
 
         }
+
+        #endregion
+
+        #region VerifyCertification(MasterKey, PublicKey)
 
         /// <summary>
         /// Verify a certification for the passed in key against the passed in master key.
         /// </summary>
-        /// <param name="masterKey">The key we are verifying against.</param>
-        /// <param name="pubKey">The key we are verifying.</param>
+        /// <param name="MasterKey">The key we are verifying against.</param>
+        /// <param name="PublicKey">The key we are verifying.</param>
         /// <returns>True, if the certification is valid, false otherwise.</returns>
-        public Boolean VerifyCertification(PgpPublicKey  masterKey,
-                                           PgpPublicKey  pubKey)
+        public Boolean VerifyCertification(PgpPublicKey  MasterKey,
+                                           PgpPublicKey  PublicKey)
         {
 
-            UpdateWithPublicKey(masterKey);
-            UpdateWithPublicKey(pubKey);
+            UpdateWithPublicKey(MasterKey);
+            UpdateWithPublicKey(PublicKey);
 
             Update(sigPck.SignatureTrailer);
 
             return sig.VerifySignature(Signature);
 
         }
+
+        #endregion
+
+        #region VerifyCertification(PublicKey)
 
         /// <summary>
         /// Verify a key certification, such as revocation, for the passed in key.
         /// </summary>
-        /// <param name="pubKey">The key we are checking.</param>
+        /// <param name="PublicKey">The key we are checking.</param>
         /// <returns>True, if the certification is valid, false otherwise.</returns>
-        public Boolean VerifyCertification(PgpPublicKey pubKey)
+        public Boolean VerifyCertification(PgpPublicKey PublicKey)
         {
 
-            if (SignatureType != PgpSignatures.KeyRevocation && SignatureType != PgpSignatures.SubkeyRevocation)
+            if (SignatureType != PgpSignatureTypes.KeyRevocation && SignatureType != PgpSignatureTypes.SubkeyRevocation)
                 throw new InvalidOperationException("signature is not a key signature");
 
-            UpdateWithPublicKey(pubKey);
+            UpdateWithPublicKey(PublicKey);
 
             Update(sigPck.SignatureTrailer);
 
@@ -575,6 +596,13 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
 
         }
 
+        #endregion
+
+
+        public override String ToString()
+        {
+            return KeyIdHex + " / " + SignatureType.ToString();
+        }
 
     }
 

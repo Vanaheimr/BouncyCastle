@@ -46,6 +46,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Examples
             }
 
             return "unknown";
+
         }
 
         public static void Main(
@@ -56,12 +57,12 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Examples
             //
             // Read the public key rings
             //
-            PgpPublicKeyRingBundle pubRings = new PgpPublicKeyRingBundle(
+            var PublicKeyRingBundle = new PgpPublicKeyRingBundle(
                 PgpUtilities.GetDecoderStream(fs));
 
             fs.Close();
 
-            foreach (PgpPublicKeyRing pgpPub in pubRings.KeyRings)
+            foreach (var pgpPub in PublicKeyRingBundle)
             {
                 try
                 {
@@ -76,7 +77,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Examples
 
                 bool first = true;
 
-                foreach (PgpPublicKey pgpKey in pgpPub.PublicKeys)
+                foreach (var pgpKey in pgpPub)
                 {
                     if (first)
                     {
@@ -89,7 +90,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Examples
                     }
 
                     Console.WriteLine("            Algorithm: " + GetAlgorithm(pgpKey.Algorithm));
-                    Console.WriteLine("            Fingerprint: " + Hex.ToHexString(pgpKey.GetFingerprint()));
+                    Console.WriteLine("            Fingerprint: " + Hex.ToHexString(pgpKey.Fingerprint));
                 }
             }
         }

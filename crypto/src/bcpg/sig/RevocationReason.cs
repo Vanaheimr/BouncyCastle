@@ -5,55 +5,92 @@ using Org.BouncyCastle.Utilities;
 
 namespace Org.BouncyCastle.Bcpg
 {
+
     /// <summary>
     /// Represents revocation reason OpenPGP signature sub packet.
     /// </summary>
-    public class RevocationReason
-		: SignatureSubpacket
+    public class RevocationReason : SignatureSubpacket
     {
-        public RevocationReason(bool isCritical, byte[] data)
-            : base(SignatureSubpackets.RevocationReason, isCritical, data)
+
+        #region Properties
+
+        #region Reason
+
+        public RevocationReasonType Reason
         {
+            get
+            {
+                return (RevocationReasonType) GetData()[0];
+            }
         }
 
-		public RevocationReason(
-			bool				isCritical,
-			RevocationReasonTag	reason,
-			string				description)
-            : base(SignatureSubpackets.RevocationReason, isCritical, CreateData(reason, description))
+        #endregion
+
+        #region Description
+
+        public String Description
         {
+
+            get
+            {
+
+                var data = GetData();
+
+                if (data.Length == 1)
+                    return String.Empty;
+
+                return Encoding.UTF8.GetString(data, 1, data.Length - 1);
+
+            }
+
         }
 
-        private static byte[] CreateData(
-			RevocationReasonTag	reason,
-			string				description)
-        {
-            byte[] descriptionBytes = Strings.ToUtf8ByteArray(description);
-            byte[] data = new byte[1 + descriptionBytes.Length];
+        #endregion
 
-            data[0] = (byte)reason;
+        #endregion
+
+        #region Constructor(s)
+
+        #region RevocationReason(IsCritical, Data)
+
+        public RevocationReason(Boolean  IsCritical,
+                                Byte[]   Data)
+
+            : base(SignatureSubpackets.RevocationReason, IsCritical, Data)
+
+        { }
+
+        #endregion
+
+        #region RevocationReason(IsCritical, Reason, Description)
+
+        public RevocationReason(Boolean               IsCritical,
+                                RevocationReasonType  Reason,
+                                String                Description)
+
+            : base(SignatureSubpackets.RevocationReason, IsCritical, CreateData(Reason, Description))
+
+        { }
+
+        #endregion
+
+        #endregion
+
+
+        private static Byte[] CreateData(RevocationReasonType  Reason,
+                                         String                Description)
+        {
+
+            var descriptionBytes  = Encoding.UTF8.GetBytes(Description);
+            var data              = new Byte[1 + descriptionBytes.Length];
+
+            data[0] = (byte) Reason;
             Array.Copy(descriptionBytes, 0, data, 1, descriptionBytes.Length);
 
             return data;
+
         }
 
-        public virtual RevocationReasonTag GetRevocationReason()
-        {
-            return (RevocationReasonTag)GetData()[0];
-        }
-
-        public virtual string GetRevocationDescription()
-        {
-            byte[] data = GetData();
-            if (data.Length == 1)
-            {
-                return string.Empty;
-            }
-
-            byte[] description = new byte[data.Length - 1];
-            Array.Copy(data, 1, description, 0, description.Length);
-
-            return Strings.FromUtf8ByteArray(description);
-        }
     }
+
 }

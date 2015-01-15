@@ -1540,13 +1540,13 @@
     <Compile Include="src\bcpg\sig\RevocationKey.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\bcpg\sig\RevocationKeyTags.cs">
+    <Compile Include="src\bcpg\sig\RevocationKeyType.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="src\bcpg\sig\RevocationReason.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="src\bcpg\sig\RevocationReasonTags.cs">
+    <Compile Include="src\bcpg\sig\RevocationReasonType.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="src\bcpg\sig\SignatureCreationTime.cs">
@@ -3445,6 +3445,7 @@
     <Compile Include="src\openpgp\PgpSecretKeyRingBundle.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="src\openpgp\PgpSignatureTypes.cs" />
     <Compile Include="src\openpgp\PgpSignature.cs">
       <SubType>Code</SubType>
     </Compile>

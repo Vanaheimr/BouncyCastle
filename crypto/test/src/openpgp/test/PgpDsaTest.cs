@@ -285,11 +285,11 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
 
             PgpSignatureGenerator sGen = new PgpSignatureGenerator(PublicKeyAlgorithms.Dsa, HashAlgorithms.Sha1);
 
-            sGen.InitSign(PgpSignatures.BinaryDocument, pgpPrivKey);
+            sGen.InitSign(PgpSignatureTypes.BinaryDocument, pgpPrivKey);
 
             PgpSignatureSubpacketGenerator spGen = new PgpSignatureSubpacketGenerator();
 
-            IEnumerator enumerator = sKey.FirstSecretKey.PublicKey.GetUserIds().GetEnumerator();
+            IEnumerator enumerator = sKey.FirstSecretKey.PublicKey.UserIds.GetEnumerator();
             enumerator.MoveNext();
             string primaryUserId = (string) enumerator.Current;
 
@@ -420,7 +420,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
             PgpSignatureGenerator sGen = new PgpSignatureGenerator(
                 PublicKeyAlgorithms.Dsa, HashAlgorithms.Sha1);
 
-            sGen.InitSign(PgpSignatures.CanonicalTextDocument, pgpPrivKey);
+            sGen.InitSign(PgpSignatureTypes.CanonicalTextDocument, pgpPrivKey);
 
             PgpCompressedDataGenerator  cGen = new PgpCompressedDataGenerator(
                 CompressionAlgorithms.Zip);
@@ -493,52 +493,53 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
             pubKey = pgpPub.PublicKey;
 
             int count = 0;
-            foreach (PgpUserAttributeSubpacketVector attributes in pubKey.GetUserAttributes())
+            foreach (var attributes in pubKey.UserAttributes)
             {
+
                 int sigCount = 0;
-                foreach (object sigs in pubKey.GetSignaturesForUserAttribute(attributes))
+
+                foreach (object sigs in pubKey.SignaturesForUserAttribute(attributes))
                 {
+
                     if (sigs == null)
                         Fail("null signature found");
 
                     sigCount++;
+
                 }
 
                 if (sigCount != 1)
-                {
                     Fail("Failed user attributes signature check");
-                }
 
                 count++;
+
             }
 
             if (count != 1)
-            {
                 Fail("Failed user attributes check");
-            }
 
-            byte[]  pgpPubBytes = pgpPub.GetEncoded();
+            var  pgpPubBytes = pgpPub.GetEncoded();
             pgpPub = new PgpPublicKeyRing(pgpPubBytes);
             pubKey = pgpPub.PublicKey;
-            count = 0;
+            count  = 0;
 
-            foreach (object ua in pubKey.GetUserAttributes())
+            foreach (object ua in pubKey.UserAttributes)
             {
+
                 if (ua == null)
                     Fail("null user attribute found");
 
                 count++;
+
             }
 
             if (count != 1)
-            {
                 Fail("Failed user attributes reread");
-            }
 
             //
             // reading test extra data - key with edge condition for DSA key password.
             //
-            String passPhrase = "0123456789";
+            var passPhrase = "0123456789";
 
             sKey = new PgpSecretKeyRing(testPrivKey2);
             pgpPrivKey = sKey.FirstSecretKey.ExtractPrivateKey(passPhrase);
@@ -546,33 +547,33 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
             //
             // reading test - aes256 encrypted passphrase.
             //
-            sKey = new PgpSecretKeyRing(aesSecretKey);
-            pgpPrivKey = sKey.FirstSecretKey.ExtractPrivateKey(pass);
+            sKey        = new PgpSecretKeyRing(aesSecretKey);
+            pgpPrivKey  = sKey.FirstSecretKey.ExtractPrivateKey(pass);
 
             //
             // reading test - twofish encrypted passphrase.
             //
-            sKey = new PgpSecretKeyRing(twofishSecretKey);
-            pgpPrivKey = sKey.FirstSecretKey.ExtractPrivateKey(pass);
+            sKey        = new PgpSecretKeyRing(twofishSecretKey);
+            pgpPrivKey  = sKey.FirstSecretKey.ExtractPrivateKey(pass);
 
             //
             // use of PgpKeyPair
             //
-            DsaParametersGenerator pGen = new DsaParametersGenerator();
+            var pGen        = new DsaParametersGenerator();
             pGen.Init(512, 80, new SecureRandom()); // TODO Is the certainty okay?
-            DsaParameters dsaParams = pGen.GenerateParameters();
-            DsaKeyGenerationParameters kgp = new DsaKeyGenerationParameters(new SecureRandom(), dsaParams);
-            IAsymmetricCipherKeyPairGenerator kpg = GeneratorUtilities.GetKeyPairGenerator("DSA");
+            var dsaParams   = pGen.GenerateParameters();
+            var kgp         = new DsaKeyGenerationParameters(new SecureRandom(), dsaParams);
+            var kpg         = GeneratorUtilities.GetKeyPairGenerator("DSA");
             kpg.Init(kgp);
 
 
-            AsymmetricCipherKeyPair kp = kpg.GenerateKeyPair();
+            var kp = kpg.GenerateKeyPair();
 
-            PgpKeyPair pgpKp = new PgpKeyPair(PublicKeyAlgorithms.Dsa,
-                kp.Public, kp.Private, DateTime.UtcNow);
+            var pgpKp = new PgpKeyPair(PublicKeyAlgorithms.Dsa, kp.Public, kp.Private, DateTime.UtcNow);
 
-            PgpPublicKey k1 = pgpKp.PublicKey;
-            PgpPrivateKey k2 = pgpKp.PrivateKey;
+            var k1 = pgpKp.PublicKey;
+            var k2 = pgpKp.PrivateKey;
+
         }
 
         public override string Name

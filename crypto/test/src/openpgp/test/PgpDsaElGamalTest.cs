@@ -129,7 +129,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
             var testIn = new MemoryStream(dataBytes, false);
             var sGen   = new PgpSignatureGenerator(PublicKeyAlgorithms.Dsa, HashAlgorithms.Sha1);
 
-            sGen.InitSign(PgpSignatures.BinaryDocument, pgpPrivKey);
+            sGen.InitSign(PgpSignatureTypes.BinaryDocument, pgpPrivKey);
 
             var cGen  = new PgpCompressedDataGenerator(CompressionAlgorithms.Zip);
             var bcOut = new BcpgOutputStream(cGen.Open(new UncloseableStream(bOut)));
@@ -204,12 +204,13 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
             var pgpKeyID = 0UL;
             AsymmetricKeyParameter pKey = null;
 
-            foreach (PgpPublicKey pgpKey in pgpPub.PublicKeys)
+            foreach (var pgpKey in pgpPub)
             {
-                if (pgpKey.Algorithm == PublicKeyAlgorithms.ElGamalEncrypt
-                    || pgpKey.Algorithm == PublicKeyAlgorithms.ElGamalGeneral)
+
+                if (pgpKey.Algorithm == PublicKeyAlgorithms.ElGamalEncrypt ||
+                    pgpKey.Algorithm == PublicKeyAlgorithms.ElGamalGeneral)
                 {
-                    pKey = pgpKey.GetKey();
+                    pKey = pgpKey.Key;
                     pgpKeyID = pgpKey.KeyId;
                     if (pgpKey.BitStrength != 1024)
                     {
@@ -221,6 +222,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
                     //
 
                 }
+
             }
 
             IBufferedCipher c = CipherUtilities.GetCipher("ElGamal/None/PKCS1Padding");
@@ -440,7 +442,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
 
             // check sub key encoding
 
-            foreach (PgpPublicKey pgpKey in pgpPub.PublicKeys)
+            foreach (var pgpKey in pgpPub)
             {
                 if (!pgpKey.IsMasterKey)
                 {
