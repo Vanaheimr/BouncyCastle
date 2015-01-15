@@ -234,7 +234,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
 
             pgpPrivKey = sKey.GetSecretKeyByKeyId(pgpKeyID).ExtractPrivateKey(pass);
 
-            c.Init(false, pgpPrivKey.Key);
+            c.Init(false, pgpPrivKey.PrivateKey);
 
             outBytes = c.DoFinal(outBytes);
 

@@ -613,7 +613,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
             var outBytes = c.DoFinal(inBytes);
 
 //                c.Init(Cipher.DECRYPT_MODE, pgpPrivKey.GetKey());
-            c.Init(false, pgpPrivKey.Key);
+            c.Init(false, pgpPrivKey.PrivateKey);
 
             outBytes = c.DoFinal(outBytes);
 

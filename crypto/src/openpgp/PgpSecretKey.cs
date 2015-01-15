@@ -200,16 +200,16 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
                 case PublicKeyAlgorithms.RsaEncrypt:
                 case PublicKeyAlgorithms.RsaSign:
                 case PublicKeyAlgorithms.RsaGeneral:
-                    RsaPrivateCrtKeyParameters rsK = (RsaPrivateCrtKeyParameters) privKey.Key;
+                    RsaPrivateCrtKeyParameters rsK = (RsaPrivateCrtKeyParameters) privKey.PrivateKey;
                     secKey = new RsaSecretBcpgKey(rsK.Exponent, rsK.P, rsK.Q);
                     break;
                 case PublicKeyAlgorithms.Dsa:
-                    DsaPrivateKeyParameters dsK = (DsaPrivateKeyParameters) privKey.Key;
+                    DsaPrivateKeyParameters dsK = (DsaPrivateKeyParameters) privKey.PrivateKey;
                     secKey = new DsaSecretBcpgKey(dsK.X);
                     break;
                 case PublicKeyAlgorithms.ElGamalEncrypt:
                 case PublicKeyAlgorithms.ElGamalGeneral:
-                    ElGamalPrivateKeyParameters esK = (ElGamalPrivateKeyParameters) privKey.Key;
+                    ElGamalPrivateKeyParameters esK = (ElGamalPrivateKeyParameters) privKey.PrivateKey;
                     secKey = new ElGamalSecretBcpgKey(esK.X);
                     break;
                 default:

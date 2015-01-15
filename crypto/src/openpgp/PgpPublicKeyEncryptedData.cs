@@ -185,7 +185,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
 
             try
             {
-                c1.Init(false, privKey.Key);
+                c1.Init(false, privKey.PrivateKey);
             }
             catch (InvalidKeyException e)
             {
@@ -201,7 +201,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
             }
             else
             {
-                ElGamalPrivateKeyParameters k = (ElGamalPrivateKeyParameters)privKey.Key;
+                ElGamalPrivateKeyParameters k = (ElGamalPrivateKeyParameters)privKey.PrivateKey;
                 int size = (k.Parameters.P.BitLength + 7) / 8;
 
                 byte[] bi = keyD[0].ToByteArray();

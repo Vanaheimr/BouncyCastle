@@ -74,10 +74,10 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
             try
             {
 
-                var cp = (ICipherParameters) PrivateKey.Key;
+                var cp = (ICipherParameters) PrivateKey.PrivateKey;
 
                 if (Random != null)
-                    cp = new ParametersWithRandom(PrivateKey.Key, Random);
+                    cp = new ParametersWithRandom(PrivateKey.PrivateKey, Random);
 
                 Signer.Init(true, cp);
 

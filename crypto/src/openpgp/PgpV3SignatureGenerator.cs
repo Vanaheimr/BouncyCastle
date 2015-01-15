@@ -53,10 +53,10 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
 
             try
             {
-                ICipherParameters cp = key.Key;
+                ICipherParameters cp = key.PrivateKey;
                 if (random != null)
                 {
-                    cp = new ParametersWithRandom(key.Key, random);
+                    cp = new ParametersWithRandom(key.PrivateKey, random);
                 }
 
                 sig.Init(true, cp);

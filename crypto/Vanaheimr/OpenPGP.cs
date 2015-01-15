@@ -32,9 +32,34 @@ namespace org.GraphDefined.Vanaheimr.BouncyCastle
 
     public static class OpenPGP
     {
+
+        public static MemoryStream ToMemoryStream(this String InputStream)
+        {
+
+            var inputstream = new MemoryStream();
+            var Bytes = Encoding.UTF8.GetBytes(InputStream);
+            inputstream.Write(Bytes, 0, Bytes.Length);
+            inputstream.Seek(0, SeekOrigin.Begin);
+
+            return inputstream;
+
+        }
+
+
+        public static PgpPublicKeyRingBundle ReadPgpPublicKeyRingBundle(String Text)
+        {
+            return new PgpPublicKeyRingBundle(PgpUtilities.GetDecoderStream(Text.ToMemoryStream()));
+        }
+
         public static PgpPublicKeyRingBundle ReadPgpPublicKeyRingBundle(Stream InputStream)
         {
             return new PgpPublicKeyRingBundle(PgpUtilities.GetDecoderStream(InputStream));
+        }
+
+
+        public static PgpPublicKeyRing ReadPublicKeyRing(String Text)
+        {
+            return new PgpPublicKeyRingBundle(PgpUtilities.GetDecoderStream(Text.ToMemoryStream())).First();
         }
 
         public static PgpPublicKeyRing ReadPublicKeyRing(Stream InputStream)
@@ -42,29 +67,31 @@ namespace org.GraphDefined.Vanaheimr.BouncyCastle
             return new PgpPublicKeyRingBundle(PgpUtilities.GetDecoderStream(InputStream)).First();
         }
 
+
+        public static PgpPublicKey ReadPublicKey(String Text)
+        {
+            return ReadPublicKeyRing(Text.ToMemoryStream()).First();
+        }
+
         public static PgpPublicKey ReadPublicKey(Stream InputStream)
         {
             return ReadPublicKeyRing(InputStream).First();
         }
 
-        public static PgpPublicKey ReadPublicKey(String InputStream)
+
+
+
+        public static PgpSecretKeyRingBundle ReadPgpSecretKeyRingBundle(String Text)
         {
-
-            var inputstream = new MemoryStream();
-            var Bytes       = Encoding.UTF8.GetBytes(InputStream);
-            inputstream.Write(Bytes, 0, Bytes.Length);
-            inputstream.Seek(0, SeekOrigin.Begin);
-
-            return ReadPublicKey(inputstream);
-
+            return new PgpSecretKeyRingBundle(PgpUtilities.GetDecoderStream(Text.ToMemoryStream()));
         }
-
-
 
         public static PgpSecretKeyRingBundle ReadPgpSecretKeyRingBundle(Stream InputStream)
         {
             return new PgpSecretKeyRingBundle(PgpUtilities.GetDecoderStream(InputStream));
         }
+
+
 
         public static PgpSecretKeyRing ReadSecretKeyRing(Stream InputStream)
         {
@@ -87,21 +114,14 @@ namespace org.GraphDefined.Vanaheimr.BouncyCastle
         }
 
 
+        public static PgpSecretKey ReadSecretKey(String Text)
+        {
+            return ReadSecretKeyRing(Text.ToMemoryStream()).First();
+        }
+
         public static PgpSecretKey ReadSecretKey(Stream InputStream)
         {
             return ReadSecretKeyRing(InputStream).First();
-        }
-
-        public static PgpSecretKey ReadSecretKey(String InputStream)
-        {
-
-            var inputstream = new MemoryStream();
-            var Bytes       = Encoding.UTF8.GetBytes(InputStream);
-            inputstream.Write(Bytes, 0, Bytes.Length);
-            inputstream.Seek(0, SeekOrigin.Begin);
-
-            return ReadSecretKey(inputstream);
-
         }
 
 

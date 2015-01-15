@@ -15,33 +15,33 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
 
         #region KeyId
 
-        private readonly UInt64 keyId;
+        private readonly UInt64 _KeyId;
 
         /// <summary>
-        /// The keyId associated with the contained private key.
+        /// The KeyId associated with the contained private key.
         /// </summary>
         public UInt64 KeyId
         {
             get
             {
-                return keyId;
+                return _KeyId;
             }
         }
 
         #endregion
 
-        #region Key
+        #region PrivateKey
 
-        private readonly AsymmetricKeyParameter privateKey;
+        private readonly AsymmetricKeyParameter _PrivateKey;
 
         /// <summary>
         /// The contained private key.
         /// </summary>
-        public AsymmetricKeyParameter Key
+        public AsymmetricKeyParameter PrivateKey
         {
             get
             {
-                return privateKey;
+                return _PrivateKey;
             }
         }
 
@@ -52,11 +52,11 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
         #region Constructor(s)
 
         /// <summary>
-        /// Create a PgpPrivateKey from a regular private key and the ID of its
-        /// associated public key.
+        /// Create a PgpPrivateKey from a regular private key and the KeyId
+        /// of its associated public key.
         /// </summary>
         /// <param name="PrivateKey">Private key to use.</param>
-        /// <param name="KeyId">ID of the corresponding public key.</param>
+        /// <param name="KeyId">The Id of the corresponding public key.</param>
         public PgpPrivateKey(AsymmetricKeyParameter  PrivateKey,
                              UInt64                  KeyId)
         {
@@ -64,8 +64,8 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
             if (!PrivateKey.IsPrivate)
                 throw new ArgumentException("Expected a private key", "privateKey");
 
-            this.privateKey  = PrivateKey;
-            this.keyId       = KeyId;
+            this._PrivateKey  = PrivateKey;
+            this._KeyId       = KeyId;
 
         }
 
