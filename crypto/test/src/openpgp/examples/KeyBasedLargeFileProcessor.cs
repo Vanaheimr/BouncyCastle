@@ -62,32 +62,24 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Examples
             try
             {
                 PgpObjectFactory        pgpF = new PgpObjectFactory(inputStream);
-                PgpEncryptedDataList    enc;
+                PgpEncryptedDataList    EncryptedDataList;
 
-                PgpObject o = pgpF.NextPgpObject();
-                //
+                var _PgpObject = pgpF.NextPgpObject();
                 // the first object might be a PGP marker packet.
-                //
-                if (o is PgpEncryptedDataList)
-                {
-                    enc = (PgpEncryptedDataList)o;
-                }
-                else
-                {
-                    enc = (PgpEncryptedDataList)pgpF.NextPgpObject();
-                }
+                if (_PgpObject is PgpEncryptedDataList)
+                    EncryptedDataList = (PgpEncryptedDataList) _PgpObject;
 
-                //
+                else
+                    EncryptedDataList = (PgpEncryptedDataList) pgpF.NextPgpObject();
+
                 // find the secret key
-                //
                 PgpPrivateKey sKey = null;
                 PgpPublicKeyEncryptedData pbe = null;
-                PgpSecretKeyRingBundle pgpSec = new PgpSecretKeyRingBundle(
-                    PgpUtilities.GetDecoderStream(keyIn));
+                var SecretKeyRingBundle = new PgpSecretKeyRingBundle(PgpUtilities.GetDecoderStream(keyIn));
 
-                foreach (PgpPublicKeyEncryptedData pked in enc.GetEncryptedDataObjects())
+                foreach (PgpPublicKeyEncryptedData pked in EncryptedDataList)
                 {
-                    sKey = PgpExampleUtilities.FindSecretKey(pgpSec, pked.KeyId, passwd);
+                    sKey = PgpExampleUtilities.FindSecretKey(SecretKeyRingBundle, pked.KeyId, passwd);
 
                     if (sKey != null)
                     {
@@ -122,7 +114,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Examples
                     }
 
                     Stream fOut = File.Create(outFileName);
-                    Stream unc = ld.GetInputStream();
+                    Stream unc = ld.InputStream;
                     Streams.PipeAll(unc, fOut);
                     fOut.Close();
                 }

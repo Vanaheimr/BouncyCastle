@@ -360,7 +360,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
                 bOut,
                 PgpLiteralData.Binary,
                 PgpLiteralData.Console,
-                text.Length,
+                (UInt64) text.Length,
                 DateTime.UtcNow);
 
             lOut.Write(text, 0, text.Length);
@@ -383,7 +383,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
 
             encGen.AddMethod("password");
 
-            Stream cOut = encGen.Open(bcOut, bytes.Length);
+            Stream cOut = encGen.Open(bcOut, (UInt64) bytes.Length);
 
             cOut.Write(bytes, 0, bytes.Length);
 
@@ -429,7 +429,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
             if (!ld.FileName.Equals(PgpLiteralData.Console))
                 throw new Exception("wrong filename in packet");
 
-            Stream inLd = ld.GetDataStream();
+            Stream inLd = ld.DataStream;
             byte[] bytes = Streams.ReadAll(inLd);
 
             if (!AreEqual(bytes, data))
@@ -633,7 +633,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
 
             PgpLiteralData p2 = (PgpLiteralData)pgpFact.NextPgpObject();
 
-            Stream dIn = p2.GetInputStream();
+            Stream dIn = p2.InputStream;
 
             ops.InitVerify(pgpPub.GetPublicKeyByKeyId(ops.KeyId));
 
@@ -683,7 +683,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
                 throw new Exception("wrong filename in packet");
             }
 
-            Stream inLd = ld.GetDataStream();
+            Stream inLd = ld.DataStream;
             byte[] bytes = Streams.ReadAll(inLd);
 
             if (!Arrays.AreEqual(bytes, text))
@@ -702,7 +702,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
 
             cPk.AddMethod(puK);
 
-            Stream cOut = cPk.Open(new UncloseableStream(cbOut), shortText.Length);
+            Stream cOut = cPk.Open(new UncloseableStream(cbOut), (UInt64) shortText.Length);
 
             cOut.Write(shortText, 0, shortText.Length);
 
@@ -738,7 +738,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
 
             cPk.AddMethod(puK);
 
-            cOut = cPk.Open(new UncloseableStream(cbOut), text.Length);
+            cOut = cPk.Open(new UncloseableStream(cbOut), (UInt64) text.Length);
 
             cOut.Write(text, 0, text.Length);
 
@@ -942,7 +942,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
 
             DateTime testDateTime = new DateTime(1973, 7, 27);
             Stream lOut = lGen.Open(new UncloseableStream(bcOut), PgpLiteralData.Binary, "_CONSOLE",
-                dataBytes.Length, testDateTime);
+                (UInt64) dataBytes.Length, testDateTime);
 
             // TODO Need a stream object to automatically call Update?
             // (via ISigner implementation of PgpSignatureGenerator)
@@ -977,7 +977,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
                 Fail("Modification time not preserved");
             }
 
-            dIn = p2.GetInputStream();
+            dIn = p2.InputStream;
 
             ops.InitVerify(secretKey.PublicKey);
 
@@ -1017,7 +1017,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
                 new UncloseableStream(bcOut),
                 PgpLiteralData.Binary,
                 "_CONSOLE",
-                dataBytes.Length,
+                (UInt64) dataBytes.Length,
                 testDateTime);
 
             // TODO Need a stream object to automatically call Update?
@@ -1053,7 +1053,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
                 Fail("Modification time not preserved");
             }
 
-            dIn = p2.GetInputStream();
+            dIn = p2.InputStream;
 
             ops.InitVerify(secretKey.PublicKey);
 
@@ -1117,7 +1117,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
                 new UncloseableStream(bcOut),
                 PgpLiteralData.Binary,
                 "_CONSOLE",
-                dataBytes.Length,
+                (UInt64) dataBytes.Length,
                 testDateTime);
 
             // TODO Need a stream object to automatically call Update?
@@ -1154,7 +1154,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
                 Fail("Modification time not preserved");
             }
 
-            Stream dIn = p2.GetInputStream();
+            Stream dIn = p2.InputStream;
 
             ops.InitVerify(pubKey);
 

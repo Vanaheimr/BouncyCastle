@@ -23,58 +23,58 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
 
             for (int i = 1; i != MAX; i++)
             {
-                MemoryStream bOut = new MemoryStream();
 
-                Stream outputStream = generator.Open(
-					new UncloseableStream(bOut),
-					PgpLiteralData.Binary,
-					PgpLiteralData.Console,
-					i,
-					DateTime.UtcNow);
+                var bOut = new MemoryStream();
 
-				outputStream.Write(buf, 0, i);
+                var outputStream = generator.Open(
+                    new UncloseableStream(bOut),
+                    PgpLiteralData.Binary,
+                    PgpLiteralData.Console,
+                    (UInt64) i,
+                    DateTime.UtcNow);
+
+                outputStream.Write(buf, 0, i);
 
                 generator.Close();
 
-                PgpObjectFactory fact = new PgpObjectFactory(bOut.ToArray());
+                var fact = new PgpObjectFactory(bOut.ToArray());
 
-                PgpLiteralData data = (PgpLiteralData)fact.NextPgpObject();
+                var data = (PgpLiteralData) fact.NextPgpObject();
 
-                Stream inputStream = data.GetInputStream();
+                var inputStream = data.InputStream;
 
                 for (int count = 0; count != i; count++)
                 {
                     if (inputStream.ReadByte() != (buf[count] & 0xff))
-                    {
                         Fail("failed readback test - length = " + i);
-                    }
                 }
+
             }
         }
 
         public override void PerformTest()
         {
             ReadBackTest(new PgpLiteralDataGenerator(true));
-			ReadBackTest(new PgpLiteralDataGenerator(false));
+            ReadBackTest(new PgpLiteralDataGenerator(false));
         }
 
-		public override string Name
+        public override String Name
         {
-			get { return "PGPPacketTest"; }
+            get { return "PGPPacketTest"; }
         }
 
-		public static void Main(
-            string[] args)
+        public static void Main(String[] args)
         {
-			RunTest(new PgpPacketTest());
+            RunTest(new PgpPacketTest());
         }
 
-		[Test]
+        [Test]
         public void TestFunction()
         {
             string resultText = Perform().ToString();
 
-			Assert.AreEqual(Name + ": Okay", resultText);
+            Assert.AreEqual(Name + ": Okay", resultText);
         }
+
     }
 }

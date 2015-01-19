@@ -2,43 +2,53 @@ using System;
 
 namespace Org.BouncyCastle.Crypto
 {
-	/// <remarks>Block cipher engines are expected to conform to this interface.</remarks>
+
+    /// <summary>
+    /// Block cipher engines are expected to conform to this interface.
+    /// </summary>
     public interface IBufferedCipher
     {
-		/// <summary>The name of the algorithm this cipher implements.</summary>
-		string AlgorithmName { get; }
 
-		/// <summary>Initialise the cipher.</summary>
-		/// <param name="forEncryption">If true the cipher is initialised for encryption,
-		/// if false for decryption.</param>
-		/// <param name="parameters">The key and other data required by the cipher.</param>
-        void Init(bool forEncryption, ICipherParameters parameters);
+        /// <summary>
+        /// The name of the algorithm this cipher implements.
+        /// </summary>
+        String AlgorithmName { get; }
 
-		int GetBlockSize();
+        /// <summary>
+        /// Initialise the cipher.
+        /// </summary>
+        /// <param name="ForEncryption">If true the cipher is initialised for encryption,
+        /// if false for decryption.</param>
+        /// <param name="Parameters">The key and other data required by the cipher.</param>
+        void Init(Boolean ForEncryption, ICipherParameters Parameters);
 
-		int GetOutputSize(int inputLen);
+        int GetBlockSize();
 
-		int GetUpdateOutputSize(int inputLen);
+        int GetOutputSize(int inputLen);
 
-		byte[] ProcessByte(byte input);
-		int ProcessByte(byte input, byte[] output, int outOff);
+        int GetUpdateOutputSize(int inputLen);
 
-		byte[] ProcessBytes(byte[] input);
-		byte[] ProcessBytes(byte[] input, int inOff, int length);
-		int ProcessBytes(byte[] input, byte[] output, int outOff);
-		int ProcessBytes(byte[] input, int inOff, int length, byte[] output, int outOff);
+        byte[] ProcessByte(byte input);
+        int ProcessByte(byte input, byte[] output, int outOff);
 
-		byte[] DoFinal();
-		byte[] DoFinal(byte[] input);
-		byte[] DoFinal(byte[] input, int inOff, int length);
-		int DoFinal(byte[] output, int outOff);
-		int DoFinal(byte[] input, byte[] output, int outOff);
-		int DoFinal(byte[] input, int inOff, int length, byte[] output, int outOff);
+        byte[] ProcessBytes(byte[] input);
+        byte[] ProcessBytes(byte[] input, int inOff, int length);
+        int ProcessBytes(byte[] input, byte[] output, int outOff);
+        int ProcessBytes(byte[] input, int inOff, int length, byte[] output, int outOff);
 
-		/// <summary>
-		/// Reset the cipher. After resetting the cipher is in the same state
-		/// as it was after the last init (if there was one).
-		/// </summary>
+        byte[] DoFinal();
+        byte[] DoFinal(byte[] input);
+        byte[] DoFinal(byte[] input, int inOff, int length);
+        int DoFinal(byte[] output, int outOff);
+        int DoFinal(byte[] input, byte[] output, int outOff);
+        int DoFinal(byte[] input, int inOff, int length, byte[] output, int outOff);
+
+        /// <summary>
+        /// Reset the cipher. After resetting the cipher is in the same state
+        /// as it was after the last init (if there was one).
+        /// </summary>
         void Reset();
+
     }
+
 }

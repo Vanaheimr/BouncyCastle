@@ -1,8 +1,7 @@
 using System;
+using System.Linq;
 using System.Collections;
-
-using Org.BouncyCastle.Utilities;
-using Org.BouncyCastle.Utilities.Collections;
+using System.Collections.Generic;
 
 namespace Org.BouncyCastle.Bcpg.OpenPgp
 {
@@ -10,55 +9,103 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
     /// <remarks>
     /// A holder for a list of PGP encryption method packets.
     /// </remarks>
-    public class PgpEncryptedDataList : PgpObject
+    public class PgpEncryptedDataList : PgpObject,
+                                        IEnumerable<PgpEncryptedData>
     {
 
-        private IList             list = Platform.CreateArrayList();
-        private InputStreamPacket data;
+        #region Data
+
+        private readonly List<PgpEncryptedData>  _EncryptedDataList;
+        private readonly InputStreamPacket       _Data;
+
+        #endregion
+
+        #region Properties
+
+        #region Count
+
+        public UInt64 Count
+        {
+            get
+            {
+                return (UInt64) _EncryptedDataList.Count;
+            }
+        }
+
+        #endregion
+
+        #region IsEmpty
+
+        public Boolean IsEmpty
+        {
+            get
+            {
+                return !_EncryptedDataList.Any();
+            }
+        }
+
+        #endregion
+
+        #endregion
+
+        #region Constructor(s)
 
         public PgpEncryptedDataList(BcpgInputStream BCPGInputStream)
         {
 
+            _EncryptedDataList = new List<PgpEncryptedData>();
+            var _list = new List<Packet>();
+
             while (BCPGInputStream.NextPacketTag() == PacketTag.PublicKeyEncryptedSession ||
                    BCPGInputStream.NextPacketTag() == PacketTag.SymmetricKeyEncryptedSessionKey)
             {
-                list.Add(BCPGInputStream.ReadPacket());
+                _list.Add(BCPGInputStream.ReadPacket());
             }
 
-            data = BCPGInputStream.ReadPacket<InputStreamPacket>();
+            _Data = BCPGInputStream.ReadPacket<InputStreamPacket>();
 
-            for (int i = 0; i != list.Count; i++)
+            foreach (var p in _list)
             {
 
-                if (list[i] is SymmetricKeyEncSessionPacket)
-                    list[i] = new PgpPbeEncryptedData((SymmetricKeyEncSessionPacket) list[i], data);
+                if (p is SymmetricKeyEncSessionPacket)
+                    _EncryptedDataList.Add(new PgpPbeEncryptedData((SymmetricKeyEncSessionPacket) p, _Data));
 
                 else
-                    list[i] = new PgpPublicKeyEncryptedData((PublicKeyEncSessionPacket) list[i], data);
+                    _EncryptedDataList.Add(new PgpPublicKeyEncryptedData((PublicKeyEncSessionPacket) p, _Data));
 
             }
 
         }
 
-        public PgpEncryptedData this[int index]
+        #endregion
+
+
+        #region this[Index]
+
+        public PgpEncryptedData this[Int32 Index]
         {
-            get { return (PgpEncryptedData) list[index]; }
+            get
+            {
+                return _EncryptedDataList[Index];
+            }
         }
 
-        public int Count
+        #endregion
+
+
+        #region GetEnumerator()
+
+        public IEnumerator<PgpEncryptedData> GetEnumerator()
         {
-            get { return list.Count; }
+            return _EncryptedDataList.GetEnumerator();
         }
 
-        public bool IsEmpty
+        IEnumerator IEnumerable.GetEnumerator()
         {
-            get { return list.Count == 0; }
+            return _EncryptedDataList.GetEnumerator();
         }
 
-        public IEnumerable GetEncryptedDataObjects()
-        {
-            return new EnumerableProxy(list);
-        }
+        #endregion
 
     }
 

@@ -673,7 +673,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
                 obj = f.NextPgpObject();
                 if (obj is PgpLiteralData)
                 {
-                    Stream input = ((PgpLiteralData)obj).GetDataStream();
+                    Stream input = ((PgpLiteralData)obj).DataStream;
                     Streams.Drain(input);
                 }
             }
@@ -752,7 +752,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
                 new UncloseableStream(bOut),
                 PgpLiteralData.Binary,
                 "_CONSOLE",
-                TEST_DATA.Length * 2,
+                (UInt64) TEST_DATA.Length * 2,
                 DateTime.UtcNow);
 
             int ch;
@@ -793,7 +793,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
                 new UncloseableStream(bOut),
                 PgpLiteralData.Text,
                 "_CONSOLE",
-                data.Length * 2,
+                (UInt64) data.Length * 2,
                 creationTime);
 
             int ch;
@@ -848,7 +848,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
                 new UncloseableStream(bOut),
                 PgpLiteralData.Binary,
                 "_CONSOLE",
-                TEST_DATA.Length * 2,
+                (UInt64) TEST_DATA.Length * 2,
                 DateTime.UtcNow);
 
             int ch;
@@ -888,7 +888,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
                 new UncloseableStream(bOut),
                 PgpLiteralData.Text,
                 "_CONSOLE",
-                data.Length * 2,
+                (UInt64) data.Length * 2,
                 DateTime.UtcNow);
 
             int ch;
@@ -926,7 +926,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
             PgpOnePassSignatureList  p1       = (PgpOnePassSignatureList)pgpFact.NextPgpObject();
             PgpOnePassSignature      ops      = p1[0];
             PgpLiteralData           p2       = (PgpLiteralData)pgpFact.NextPgpObject();
-            Stream                   dIn      = p2.GetInputStream();
+            Stream                   dIn      = p2.InputStream;
 
             ops.InitVerify(pubKey);
 

@@ -51,6 +51,11 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
             this._PublicKeys = PublicKeys.ToDictionary(item => item.KeyId, item => item);
         }
 
+        internal PgpPublicKeyRing(params PgpPublicKey[] PublicKeys)
+        {
+            this._PublicKeys = PublicKeys.ToDictionary(item => item.KeyId, item => item);
+        }
+
         #endregion
 
         #region PgpPublicKeyRing(EncodedPublicKeyRing)

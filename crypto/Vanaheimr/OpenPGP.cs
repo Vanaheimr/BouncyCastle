@@ -212,8 +212,6 @@ namespace org.GraphDefined.Vanaheimr.BouncyCastle
 
 
 
-
-        
         private static void VerifySignature2(String fileName,
                                     Stream inputStream,
                                     Stream keyIn)

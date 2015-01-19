@@ -318,7 +318,7 @@ namespace Org.BouncyCastle.Bcpg
                         keyId = ((IssuerKeyId) _SignatureSubpacket).KeyId;
 
                     else if (_SignatureSubpacket is SignatureCreationTime)
-                        creationTime = DateTimeUtilities.DateTimeToUnixMs(((SignatureCreationTime) _SignatureSubpacket).Time);
+                        creationTime = (Int64) DateTimeUtilities.DateTimeToUnixMs(((SignatureCreationTime) _SignatureSubpacket).Time);
 
                     _hashedSubPackets.Add(_SignatureSubpacket);
 
@@ -490,7 +490,7 @@ namespace Org.BouncyCastle.Bcpg
                 {
                     if (SignatureSubpacket is SignatureCreationTime)
                     {
-                        creationTime = DateTimeUtilities.DateTimeToUnixMs(((SignatureCreationTime) SignatureSubpacket).Time);
+                        creationTime = (Int64) DateTimeUtilities.DateTimeToUnixMs(((SignatureCreationTime)SignatureSubpacket).Time);
                         break;
                     }
                 }

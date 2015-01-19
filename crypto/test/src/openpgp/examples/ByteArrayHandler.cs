@@ -10,6 +10,7 @@ using Org.BouncyCastle.Utilities.IO;
 
 namespace Org.BouncyCastle.Bcpg.OpenPgp.Examples
 {
+
     /**
     * Simple routine to encrypt and decrypt using a passphrase.
     * This service routine provides the basic PGP services between
@@ -22,48 +23,38 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Examples
     */
     public sealed class ByteArrayHandler
     {
-        private ByteArrayHandler()
-        {
-        }
 
-        /**
-        * decrypt the passed in message stream
-        *
-        * @param encrypted  The message to be decrypted.
-        * @param passPhrase Pass phrase (key)
-        *
-        * @return Clear text as a byte array.  I18N considerations are
-        *         not handled by this routine
-        * @exception IOException
-        * @exception PgpException
-        */
-        public static byte[] Decrypt(
-            byte[] encrypted,
-            String passPhrase)
+        /// <summary>
+        /// Decrypt the passed in message stream.
+        /// I18N considerations are not handled by this routine.
+        /// </summary>
+        /// <param name="EncryptedText">The message to be decrypted.</param>
+        /// <param name="Passphrase">Pass phrase (key)</param>
+        /// <returns></returns>
+        public static Byte[] Decrypt(Byte[]  EncryptedText,
+                                     String  Passphrase)
         {
-            Stream inputStream = new MemoryStream(encrypted);
+
+            Stream inputStream = new MemoryStream(EncryptedText);
 
             inputStream = PgpUtilities.GetDecoderStream(inputStream);
 
-            PgpObjectFactory pgpF = new PgpObjectFactory(inputStream);
+            var pgpF = new PgpObjectFactory(inputStream);
             PgpEncryptedDataList enc = null;
-            PgpObject o = pgpF.NextPgpObject();
+            var o = pgpF.NextPgpObject();
 
             //
             // the first object might be a PGP marker packet.
             //
             if (o is PgpEncryptedDataList)
-            {
                 enc = (PgpEncryptedDataList) o;
-            }
+
             else
-            {
                 enc = (PgpEncryptedDataList) pgpF.NextPgpObject();
-            }
 
-            PgpPbeEncryptedData pbe = (PgpPbeEncryptedData)enc[0];
+            PgpPbeEncryptedData pbe = (PgpPbeEncryptedData) enc[0];
 
-            Stream clear = pbe.GetDataStream(passPhrase);
+            Stream clear = pbe.GetDataStream(Passphrase);
 
             PgpObjectFactory pgpFact = new PgpObjectFactory(clear);
 
@@ -73,87 +64,80 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Examples
 
             PgpLiteralData ld = (PgpLiteralData) pgpFact.NextPgpObject();
 
-            Stream unc = ld.GetInputStream();
+            Stream unc = ld.InputStream;
 
             return Streams.ReadAll(unc);
+
         }
 
-        /**
-        * Simple PGP encryptor between byte[].
-        *
-        * @param clearData  The test to be encrypted
-        * @param passPhrase The pass phrase (key).  This method assumes that the
-        *                   key is a simple pass phrase, and does not yet support
-        *                   RSA or more sophisiticated keying.
-        * @param fileName   File name. This is used in the Literal Data Packet (tag 11)
-        *                   which is really inly important if the data is to be
-        *                   related to a file to be recovered later.  Because this
-        *                   routine does not know the source of the information, the
-        *                   caller can set something here for file name use that
-        *                   will be carried.  If this routine is being used to
-        *                   encrypt SOAP MIME bodies, for example, use the file name from the
-        *                   MIME type, if applicable. Or anything else appropriate.
-        *
-        * @param armor
-        *
-        * @return encrypted data.
-        * @exception IOException
-        * @exception PgpException
-        */
-        public static byte[] Encrypt(
-            byte[]                        clearData,
-            String                        passPhrase,
-            string                        fileName,
-            SymmetricKeyAlgorithms    algorithm,
-            bool                        armor)
+
+
+        /// <summary>
+        /// Simple PGP encryptor between byte[].
+        /// </summary>
+        /// <param name="Plaintext">The test to be encrypted</param>
+        /// <param name="Passphrase">The pass phrase (key). This method assumes that the key is a simple pass phrase, and does not yet support RSA or more sophisiticated keying.</param>
+        /// <param name="fileName">
+        /// File name. This is used in the Literal Data Packet (tag 11)
+        /// which is really inly important if the data is to be
+        /// related to a file to be recovered later.  Because this
+        /// routine does not know the source of the information, the
+        /// caller can set something here for file name use that
+        /// will be carried.  If this routine is being used to
+        /// encrypt SOAP MIME bodies, for example, use the file name from the
+        /// MIME type, if applicable. Or anything else appropriate.
+        /// </param>
+        /// <param name="EncryptionAlgorithm"></param>
+        /// <param name="UseArmor"></param>
+        public static Byte[] Encrypt(Byte[]                  Plaintext,
+                                     String                  Passphrase,
+                                     String                  fileName,
+                                     SymmetricKeyAlgorithms  EncryptionAlgorithm,
+                                     Boolean                 UseArmor)
         {
+
             if (fileName == null)
-            {
                 fileName = PgpLiteralData.Console;
-            }
 
-            byte[] compressedData = Compress(clearData, fileName, CompressionAlgorithms.Zip);
+            var compressedData = Compress(Plaintext, fileName, CompressionAlgorithms.Zip);
 
-            MemoryStream bOut = new MemoryStream();
+            var bOut = new MemoryStream();
 
             Stream output = bOut;
-            if (armor)
-            {
+            if (UseArmor)
                 output = new ArmoredOutputStream(output);
-            }
 
-            PgpEncryptedDataGenerator encGen = new PgpEncryptedDataGenerator(algorithm, new SecureRandom());
-            encGen.AddMethod(passPhrase);
+            var encGen = new PgpEncryptedDataGenerator(EncryptionAlgorithm, new SecureRandom());
+            encGen.AddMethod(Passphrase);
 
-            Stream encOut = encGen.Open(output, compressedData.Length);
+            Stream encOut = encGen.Open(output, (UInt64) compressedData.Length);
 
             encOut.Write(compressedData, 0, compressedData.Length);
             encOut.Close();
-            
-            if (armor)
-            {
+
+            if (UseArmor)
                 output.Close();
-            }
 
             return bOut.ToArray();
+
         }
 
-        private static byte[] Compress(byte[] clearData, string fileName, CompressionAlgorithms algorithm)
+        private static byte[] Compress(Byte[] clearData, String fileName, CompressionAlgorithms algorithm)
         {
-            MemoryStream bOut = new MemoryStream();
 
-            PgpCompressedDataGenerator comData = new PgpCompressedDataGenerator(algorithm);
-            Stream cos = comData.Open(bOut); // open it with the final destination
-            PgpLiteralDataGenerator lData = new PgpLiteralDataGenerator();
+            var bOut    = new MemoryStream();
+            var comData = new PgpCompressedDataGenerator(algorithm);
+            var cos     = comData.Open(bOut); // open it with the final destination
+            var lData   = new PgpLiteralDataGenerator();
 
             // we want to Generate compressed data. This might be a user option later,
             // in which case we would pass in bOut.
-            Stream pOut = lData.Open(
-                cos,                    // the compressed output stream
+            var pOut = lData.Open(
+                cos,                        // the compressed output stream
                 PgpLiteralData.Binary,
-                fileName,                // "filename" to store
-                clearData.Length,        // length of clear data
-                DateTime.UtcNow            // current time
+                fileName,                   // "filename" to store
+                (UInt64) clearData.Length,  // length of clear data
+                DateTime.UtcNow             // current time
             );
 
             pOut.Write(clearData, 0, clearData.Length);
@@ -162,24 +146,25 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Examples
             comData.Close();
 
             return bOut.ToArray();
+
         }
 
-        private static string GetAsciiString(byte[] bs)
+        private static String GetAsciiString(Byte[] bs)
         {
             return Encoding.ASCII.GetString(bs, 0, bs.Length);
         }
 
-        public static void Main(
-            string[] args)
+        public static void Main(String[] args)
         {
-            string passPhrase = "Dick Beck";
 
-            byte[] original = Encoding.ASCII.GetBytes("Hello world");
+            var passPhrase  = "Dick Beck";
+
+            var original    = Encoding.ASCII.GetBytes("Hello world");
             Console.WriteLine("Starting PGP test");
-            byte[] encrypted = Encrypt(original, passPhrase, "iway", SymmetricKeyAlgorithms.Cast5, true);
+            var encrypted   = Encrypt(original, passPhrase, "iway", SymmetricKeyAlgorithms.Cast5, true);
 
             Console.WriteLine("\nencrypted data = '"+Hex.ToHexString(encrypted)+"'");
-            byte[] decrypted = Decrypt(encrypted, passPhrase);
+            var decrypted   = Decrypt(encrypted, passPhrase);
 
             Console.WriteLine("\ndecrypted data = '"+GetAsciiString(decrypted)+"'");
 
@@ -189,6 +174,9 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Examples
             decrypted = Decrypt(encrypted, passPhrase);
 
             Console.WriteLine("\ndecrypted data = '"+GetAsciiString(decrypted)+"'");
+
         }
+
     }
+
 }

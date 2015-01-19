@@ -64,8 +64,8 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
         /// Initialise the generator for signing.
         /// </summary>
         public void InitSign(PgpSignatureTypes  SignatureType,
-                             PgpPrivateKey  PrivateKey,
-                             SecureRandom   Random  = null)
+                             PgpPrivateKey      PrivateKey,
+                             SecureRandom       Random  = null)
         {
 
             this.SignatureType  = SignatureType;

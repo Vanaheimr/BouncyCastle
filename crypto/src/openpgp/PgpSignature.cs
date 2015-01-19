@@ -127,7 +127,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
         {
             get
             {
-                return DateTimeUtilities.UnixMsToDateTime(sigPck.CreationTime);
+                return DateTimeUtilities.UnixMsToDateTime((UInt64) sigPck.CreationTime);
             }
         }
 

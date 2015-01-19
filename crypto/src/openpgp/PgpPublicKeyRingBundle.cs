@@ -93,11 +93,11 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
             {
 
                 var PublicKeyRing = PGPObject as PgpPublicKeyRing;
+                if (PublicKeyRing != null)
+                    PublicKeyRings.Add(PublicKeyRing.PublicKey.KeyId, PublicKeyRing);
 
-                if (PublicKeyRing == null)
-                    throw new PgpException("'" + PGPObject.GetType().FullName + "' found where a PgpPublicKeyRing was expected!");
-
-                PublicKeyRings.Add(PublicKeyRing.PublicKey.KeyId, PublicKeyRing);
+                var PgpSignatureList = PGPObject as PgpSignatureList;
+                //if (PgpSignatureList != null)
 
             }
 

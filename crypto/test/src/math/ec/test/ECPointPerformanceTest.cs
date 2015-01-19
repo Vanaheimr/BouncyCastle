@@ -50,12 +50,13 @@ namespace Org.BouncyCastle.Math.EC.Tests
 
         private void RandMult(string label, X9ECParameters spec)
         {
+
             ECCurve C = spec.Curve;
             ECPoint G = (ECPoint)spec.G;
             BigInteger n = spec.N;
 
-            SecureRandom random = new SecureRandom();
-            random.SetSeed(DateTimeUtilities.CurrentUnixMs());
+            var random = new SecureRandom();
+            random.SetSeed((Int64) DateTimeUtilities.CurrentUnixMs());
 
             Console.WriteLine(label);
 
@@ -102,7 +103,9 @@ namespace Org.BouncyCastle.Math.EC.Tests
 
         private double RandMult(SecureRandom random, ECPoint g, BigInteger n)
         {
-            BigInteger[] ks = new BigInteger[128];
+
+            var ks = new BigInteger[128];
+
             for (int i = 0; i < ks.Length; ++i)
             {
                 ks[i] = new BigInteger(n.BitLength - 1, random);
@@ -112,8 +115,9 @@ namespace Org.BouncyCastle.Math.EC.Tests
             ECPoint p = g;
 
             {
-                long startTime = DateTimeUtilities.CurrentUnixMs();
-                long goalTime = startTime + MILLIS_WARMUP;
+
+                var startTime = DateTimeUtilities.CurrentUnixMs();
+                var goalTime  = startTime + MILLIS_WARMUP;
 
                 do
                 {
@@ -135,9 +139,10 @@ namespace Org.BouncyCastle.Math.EC.Tests
 
             for (int i = 1; i <= NUM_ROUNDS; i++)
             {
-                long startTime = DateTimeUtilities.CurrentUnixMs();
-                long goalTime = startTime + MILLIS_PER_ROUND;
-                long count = 0, endTime;
+                var startTime = DateTimeUtilities.CurrentUnixMs();
+                var goalTime  = startTime + MILLIS_PER_ROUND;
+                var count     = 0UL;
+                var endTime   = 0UL;
 
                 do
                 {
@@ -161,12 +166,13 @@ namespace Org.BouncyCastle.Math.EC.Tests
                 }
                 while (endTime < goalTime);
 
-                double roundElapsed = (double)(endTime - startTime);
+                double roundElapsed = (double) (endTime - startTime);
                 double roundRate = count * MULTS_PER_CHECK * 1000L / roundElapsed;
 
                 minRate = System.Math.Min(minRate, roundRate);
                 maxRate = System.Math.Max(maxRate, roundRate);
                 totalRate += roundRate;
+
             }
 
             return (totalRate - minRate - maxRate) / (NUM_ROUNDS - 2);

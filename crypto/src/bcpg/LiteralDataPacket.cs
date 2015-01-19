@@ -2,56 +2,105 @@ using System;
 using System.IO;
 
 using Org.BouncyCastle.Utilities;
+using System.Text;
 
 namespace Org.BouncyCastle.Bcpg
 {
-	/// <remarks>Generic literal data packet.</remarks>
-    public class LiteralDataPacket
-        : InputStreamPacket
-	{
-		private int		format;
-        private byte[]	fileName;
-        private long	modDate;
 
-		internal LiteralDataPacket(
-            BcpgInputStream bcpgIn)
-			: base(bcpgIn)
+    /// <summary>
+    /// >Generic literal data packet.
+    /// </summary>
+    public class LiteralDataPacket : InputStreamPacket
+    {
+
+        #region Properties
+
+        #region Format
+
+        private readonly Int32 _Format;
+
+        /// <summary>
+        /// The format tag value.
+        /// </summary>
+        public Int32 Format
         {
-            format = bcpgIn.ReadByte();
-            int len = bcpgIn.ReadByte();
-
-			fileName = new byte[len];
-			for (int i = 0; i != len; ++i)
+            get
             {
-                fileName[i] = (byte)bcpgIn.ReadByte();
+                return _Format;
             }
-
-			modDate = (((uint)bcpgIn.ReadByte() << 24)
-				| ((uint)bcpgIn.ReadByte() << 16)
-                | ((uint)bcpgIn.ReadByte() << 8)
-				| (uint)bcpgIn.ReadByte()) * 1000L;
         }
 
-		/// <summary>The format tag value.</summary>
-        public int Format
-		{
-			get { return format; }
-		}
+        #endregion
 
-		/// <summary>The modification time of the file in milli-seconds (since Jan 1, 1970 UTC)</summary>
-        public long ModificationTime
-		{
-			get { return modDate; }
-		}
+        #region FileName
 
-		public string FileName
-		{
-			get { return Strings.FromUtf8ByteArray(fileName); }
-		}
+        public String FileName
+        {
+            get
+            {
+                return Encoding.UTF8.GetString(_RawFileName, 0, _RawFileName.Length);
+            }
+        }
 
-		public byte[] GetRawFileName()
-		{
-			return Arrays.Clone(fileName);
-		}
-	}
+        #endregion
+
+        #region RawFileName
+
+        private readonly Byte[] _RawFileName;
+
+        public Byte[] RawFileName
+        {
+            get
+            {
+                return _RawFileName;
+            }
+        }
+
+        #endregion
+
+        #region ModificationTime
+
+        private readonly UInt64 _ModificationTime;
+
+        /// <summary>
+        /// The modification time of the file in milli-seconds (since Jan 1, 1970 UTC)
+        /// </summary>
+        public UInt64 ModificationTime
+        {
+            get
+            {
+                return _ModificationTime;
+            }
+        }
+
+        #endregion
+
+        #endregion
+
+        #region Constructor(s)
+
+        internal LiteralDataPacket(BcpgInputStream BCPGInputStream)
+            : base(BCPGInputStream)
+        {
+
+            _Format  = BCPGInputStream.ReadByte();
+            var len = BCPGInputStream.ReadByte();
+
+            _RawFileName = new byte[len];
+            for (var i = 0; i != len; ++i)
+            {
+                _RawFileName[i] = (byte) BCPGInputStream.ReadByte();
+            }
+
+            _ModificationTime = (((uint) BCPGInputStream.ReadByte() << 24) |
+                                 ((uint) BCPGInputStream.ReadByte() << 16) |
+                                 ((uint) BCPGInputStream.ReadByte() <<  8) |
+                                  (uint) BCPGInputStream.ReadByte()) * 1000UL;
+
+        }
+
+        #endregion
+
+    }
+
 }

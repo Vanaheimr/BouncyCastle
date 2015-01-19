@@ -82,21 +82,21 @@ namespace Org.BouncyCastle.Utilities
 #endif
         }
 
-        public static string FromUtf8ByteArray(
-            byte[] bytes)
+        public static String FromUtf8ByteArray(Byte[] bytes)
         {
             return Encoding.UTF8.GetString(bytes, 0, bytes.Length);
         }
 
-        public static byte[] ToUtf8ByteArray(
-            char[] cs)
+        public static Byte[] ToUtf8ByteArray(Char[] cs)
         {
             return Encoding.UTF8.GetBytes(cs);
         }
 
-        public static byte[] ToUtf8ByteArray(String s)
+        public static Byte[] ToUtf8ByteArray(String s)
         {
             return Encoding.UTF8.GetBytes(s);
         }
+
     }
+
 }

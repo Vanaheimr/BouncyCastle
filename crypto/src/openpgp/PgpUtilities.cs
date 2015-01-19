@@ -339,7 +339,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
                                                   FileInfo  file)
         {
             var lData = new PgpLiteralDataGenerator();
-            var pOut  = lData.Open(output, fileType, file.Name, file.Length, file.LastWriteTime);
+            var pOut = lData.Open(output, fileType, file.Name, (UInt64) file.Length, file.LastWriteTime);
             PipeFileContents(file, pOut, 4096);
         }
 

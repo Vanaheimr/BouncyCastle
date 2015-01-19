@@ -27,63 +27,64 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Examples
     */
     public sealed class KeyBasedFileProcessor
     {
+
         private KeyBasedFileProcessor()
         {
         }
 
-        private static void DecryptFile(
-            String    inputFileName,
-            String    keyFileName,
-            String    passwd,
-            String    defaultFileName)
+        private static void DecryptFile(String  inputFileName,
+                                        String  keyFileName,
+                                        String  passwd,
+                                        String  defaultFileName)
         {
+
             using (Stream input = File.OpenRead(inputFileName),
                    keyIn = File.OpenRead(keyFileName))
             {
                 DecryptFile(input, keyIn, passwd, defaultFileName);
             }
+
         }
 
-        /**
-         * decrypt the passed in message stream
-         */
-        private static void DecryptFile(
-            Stream    inputStream,
-            Stream    keyIn,
-            String    passwd,
-            String    defaultFileName)
+        /// <summary>
+        /// Decrypt the passed in message stream
+        /// </summary>
+        /// <param name="InputStream"></param>
+        /// <param name="keyIn"></param>
+        /// <param name="passwd"></param>
+        /// <param name="defaultFileName"></param>
+        private static void DecryptFile(Stream  InputStream,
+                                        Stream  keyIn,
+                                        String  passwd,
+                                        String  defaultFileName)
         {
-            inputStream = PgpUtilities.GetDecoderStream(inputStream);
+
+            InputStream = PgpUtilities.GetDecoderStream(InputStream);
 
             try
             {
-                PgpObjectFactory pgpF = new PgpObjectFactory(inputStream);
+
+                var PGPObjectFactory = new PgpObjectFactory(InputStream);
                 PgpEncryptedDataList enc;
 
-                PgpObject o = pgpF.NextPgpObject();
-                //
-                // the first object might be a PGP marker packet.
-                //
-                if (o is PgpEncryptedDataList)
-                {
-                    enc = (PgpEncryptedDataList)o;
-                }
-                else
-                {
-                    enc = (PgpEncryptedDataList)pgpF.NextPgpObject();
-                }
+                var PGPObject = PGPObjectFactory.NextPgpObject();
 
-                //
+                // the first object might be a PGP marker packet.
+                if (PGPObject is PgpEncryptedDataList)
+                    enc = (PgpEncryptedDataList) PGPObject;
+
+                else
+                    enc = (PgpEncryptedDataList) PGPObjectFactory.NextPgpObject();
+
+
                 // find the secret key
-                //
                 PgpPrivateKey sKey = null;
                 PgpPublicKeyEncryptedData pbe = null;
-                PgpSecretKeyRingBundle pgpSec = new PgpSecretKeyRingBundle(
-                    PgpUtilities.GetDecoderStream(keyIn));
+                var SecretKeyRingBundle = new PgpSecretKeyRingBundle(PgpUtilities.GetDecoderStream(keyIn));
 
-                foreach (PgpPublicKeyEncryptedData pked in enc.GetEncryptedDataObjects())
+                foreach (PgpPublicKeyEncryptedData pked in enc)
                 {
-                    sKey = PgpExampleUtilities.FindSecretKey(pgpSec, pked.KeyId, passwd);
+                    sKey = PgpExampleUtilities.FindSecretKey(SecretKeyRingBundle, pked.KeyId, passwd);
 
                     if (sKey != null)
                     {
@@ -122,7 +123,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Examples
                     }
 
                     Stream fOut = File.Create(outFileName);
-                    Stream unc = ld.GetInputStream();
+                    Stream unc = ld.InputStream;
                     Streams.PipeAll(unc, fOut);
                     fOut.Close();
                 }
@@ -199,7 +200,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Examples
                     SymmetricKeyAlgorithms.Cast5, withIntegrityCheck, new SecureRandom());
                 encGen.AddMethod(encKey);
 
-                Stream cOut = encGen.Open(outputStream, bytes.Length);
+                Stream cOut = encGen.Open(outputStream, (UInt64) bytes.Length);
 
                 cOut.Write(bytes, 0, bytes.Length);
                 cOut.Close();

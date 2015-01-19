@@ -311,10 +311,9 @@ namespace Org.BouncyCastle.Utilities
             return hc;
         }
 
-        public static byte[] Clone(
-            byte[] data)
+        public static byte[] Clone(byte[] data)
         {
-            return data == null ? null : (byte[])data.Clone();
+            return data == null ? null : (byte[]) data.Clone();
         }
 
         public static byte[] Clone(

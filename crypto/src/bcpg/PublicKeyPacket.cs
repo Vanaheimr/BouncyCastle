@@ -64,7 +64,7 @@ namespace Org.BouncyCastle.Bcpg
         {
             get
             {
-                return DateTimeUtilities.UnixMsToDateTime(time * 1000L);
+                return DateTimeUtilities.UnixMsToDateTime((UInt64) time * 1000L);
             }
         }
 
@@ -144,7 +144,7 @@ namespace Org.BouncyCastle.Bcpg
         {
 
             this._Version    = 4;
-            this.time        = DateTimeUtilities.DateTimeToUnixMs(Time) / 1000L;
+            this.time        = (Int64) DateTimeUtilities.DateTimeToUnixMs(Time) / 1000L;
             this._Algorithm  = Algorithm;
             this.key         = Key;
 

@@ -74,7 +74,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Examples
             }
 
             PgpLiteralData ld = (PgpLiteralData) o;
-            Stream unc = ld.GetInputStream();
+            Stream unc = ld.InputStream;
             Stream fOut = File.Create(ld.FileName);
             Streams.PipeAll(unc, fOut);
             fOut.Close();
@@ -129,7 +129,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Examples
                     SymmetricKeyAlgorithms.Cast5, withIntegrityCheck, new SecureRandom());
                 encGen.AddMethod(passPhrase);
 
-                Stream encOut = encGen.Open(outputStream, compressedData.Length);
+                Stream encOut = encGen.Open(outputStream, (UInt64) compressedData.Length);
 
                 encOut.Write(compressedData, 0, compressedData.Length);
                 encOut.Close();

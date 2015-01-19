@@ -517,8 +517,8 @@ namespace Org.BouncyCastle.Crypto.Tests
 
         private void RandomTests()
         {
-            SecureRandom srng = new SecureRandom();
-            srng.SetSeed(DateTimeUtilities.CurrentUnixMs());
+            var srng = new SecureRandom();
+            srng.SetSeed((Int64) DateTimeUtilities.CurrentUnixMs());
             RandomTests(srng, null);
             RandomTests(srng, new BasicGcmMultiplier());
             RandomTests(srng, new Tables8kGcmMultiplier());

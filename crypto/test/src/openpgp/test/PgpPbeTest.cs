@@ -71,7 +71,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
                 Fail("wrong modification time in packet: " + ld.ModificationTime + " vs " + TestDateTime);
             }
 
-            Stream unc = ld.GetInputStream();
+            Stream unc = ld.InputStream;
             byte[] bytes = Streams.ReadAll(unc);
 
             if (pbe.IsIntegrityProtected() && !pbe.Verify())
@@ -109,7 +109,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
                 Fail("wrong modification time in packet: " + ld.ModificationTime.Ticks + " " + TestDateTime.Ticks);
             }
 
-            Stream unc = ld.GetInputStream();
+            Stream unc = ld.InputStream;
             byte[] buf = new byte[1024];
 
             int len;
@@ -153,7 +153,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
                 new UncloseableStream(comOut),
                 PgpLiteralData.Binary,
                 PgpLiteralData.Console,
-                text.Length,
+                (UInt64) text.Length,
                 TestDateTime);
 
             ldOut.Write(text, 0, text.Length);
@@ -171,7 +171,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
             cPk.AddMethod(pass);
 
             byte[] bOutData = bOut.ToArray();
-            Stream cOut = cPk.Open(new UncloseableStream(cbOut), bOutData.Length);
+            Stream cOut = cPk.Open(new UncloseableStream(cbOut), (UInt64) bOutData.Length);
             cOut.Write(bOutData, 0, bOutData.Length);
             cOut.Close();
 
@@ -191,7 +191,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
             cPk.AddMethod(pass);
 
             bOutData = bOut.ToArray();
-            cOut = cPk.Open(new UncloseableStream(cbOut), bOutData.Length);
+            cOut = cPk.Open(new UncloseableStream(cbOut), (UInt64) bOutData.Length);
             cOut.Write(bOutData, 0, bOutData.Length);
 
             cPk.Close();
@@ -293,7 +293,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
 
             PgpLiteralData ld = (PgpLiteralData) pgpFact.NextPgpObject();
 
-            Stream unc = ld.GetInputStream();
+            Stream unc = ld.InputStream;
             byte[] bytes = Streams.ReadAll(unc);
 
             if (!AreEqual(bytes, Hex.Decode("5361742031302e30322e30370d0a")))
@@ -316,7 +316,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
                 new UncloseableStream(comOut),
                 PgpLiteralData.Binary,
                 PgpLiteralData.Console,
-                msg.Length,
+                (UInt64) msg.Length,
                 TestDateTime);
 
             ldOut.Write(msg, 0, msg.Length);

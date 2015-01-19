@@ -171,35 +171,43 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
         public PgpSignature Generate()
         {
 
-            long creationTime = DateTimeUtilities.CurrentUnixMs() / 1000L;
+            var creationTime = (UInt64) DateTimeUtilities.CurrentUnixMs() / 1000L;
 
-            byte[] hData = new byte[]
+            var hData = new byte[]
             {
-                (byte) signatureType,
-                (byte)(creationTime >> 24),
-                (byte)(creationTime >> 16),
-                (byte)(creationTime >> 8),
-                (byte) creationTime
+                (byte)  signatureType,
+                (byte) (creationTime >> 24),
+                (byte) (creationTime >> 16),
+                (byte) (creationTime >>  8),
+                (byte)  creationTime
             };
 
             sig.BlockUpdate(hData, 0, hData.Length);
             dig.BlockUpdate(hData, 0, hData.Length);
 
-            byte[] sigBytes = sig.GenerateSignature();
-            byte[] digest = DigestUtilities.DoFinal(dig);
-            byte[] fingerPrint = new byte[]{ digest[0], digest[1] };
+            var sigBytes = sig.GenerateSignature();
+            var digest = DigestUtilities.DoFinal(dig);
+            var fingerPrint = new byte[]{ digest[0], digest[1] };
 
             // an RSA signature
-            bool isRsa = keyAlgorithm == PublicKeyAlgorithms.RsaSign
-                || keyAlgorithm == PublicKeyAlgorithms.RsaGeneral;
+            var isRsa = keyAlgorithm == PublicKeyAlgorithms.RsaSign ||
+                        keyAlgorithm == PublicKeyAlgorithms.RsaGeneral;
 
             MPInteger[] sigValues = isRsa
                 ?    PgpUtilities.RsaSigToMpi(sigBytes)
                 :    PgpUtilities.DsaSigToMpi(sigBytes);
 
-            return new PgpSignature(
-                new SignaturePacket(3, signatureType, privKey.KeyId, keyAlgorithm,
-                    hashAlgorithm, creationTime * 1000L, fingerPrint, sigValues));
+            return new PgpSignature(new SignaturePacket(3,
+                                                        signatureType,
+                                                        privKey.KeyId,
+                                                        keyAlgorithm,
+                                                        hashAlgorithm,
+                                                        (Int64) creationTime * 1000L,
+                                                        fingerPrint,
+                                                        sigValues));
+
         }
+
     }
+
 }

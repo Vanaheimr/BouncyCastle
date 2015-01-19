@@ -6,9 +6,9 @@ namespace Org.BouncyCastle.Bcpg
     /**
     * Basic type for a symmetric encrypted session key packet
     */
-    public class SymmetricKeyEncSessionPacket
-        : ContainedPacket
+    public class SymmetricKeyEncSessionPacket : ContainedPacket
     {
+
         private int version;
         private SymmetricKeyAlgorithms encAlgorithm;
         private S2k s2k;
@@ -25,10 +25,10 @@ namespace Org.BouncyCastle.Bcpg
             secKeyData = bcpgIn.ReadAll();
         }
 
-		public SymmetricKeyEncSessionPacket(
-            SymmetricKeyAlgorithms	encAlgorithm,
-            S2k							s2k,
-            byte[]						secKeyData)
+        public SymmetricKeyEncSessionPacket(
+            SymmetricKeyAlgorithms    encAlgorithm,
+            S2k                            s2k,
+            byte[]                        secKeyData)
         {
             this.version = 4;
             this.encAlgorithm = encAlgorithm;
@@ -41,7 +41,7 @@ namespace Org.BouncyCastle.Bcpg
         */
         public SymmetricKeyAlgorithms EncAlgorithm
         {
-			get { return encAlgorithm; }
+            get { return encAlgorithm; }
         }
 
         /**
@@ -49,7 +49,7 @@ namespace Org.BouncyCastle.Bcpg
         */
         public S2k S2k
         {
-			get { return s2k; }
+            get { return s2k; }
         }
 
         /**
@@ -65,7 +65,7 @@ namespace Org.BouncyCastle.Bcpg
         */
         public int Version
         {
-			get { return version; }
+            get { return version; }
         }
 
         public override void Encode(
@@ -75,17 +75,17 @@ namespace Org.BouncyCastle.Bcpg
             BcpgOutputStream pOut = new BcpgOutputStream(bOut);
 
             pOut.Write(
-				(byte) version,
-				(byte) encAlgorithm);
+                (byte) version,
+                (byte) encAlgorithm);
 
-			pOut.WriteObject(s2k);
+            pOut.WriteObject(s2k);
 
-			if (secKeyData != null && secKeyData.Length > 0)
-			{
+            if (secKeyData != null && secKeyData.Length > 0)
+            {
                 pOut.Write(secKeyData);
             }
 
-			bcpgOut.WritePacket(PacketTag.SymmetricKeyEncryptedSessionKey, bOut.ToArray(), true);
+            bcpgOut.WritePacket(PacketTag.SymmetricKeyEncryptedSessionKey, bOut.ToArray(), true);
         }
     }
 }

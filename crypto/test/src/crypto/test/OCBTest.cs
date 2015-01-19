@@ -330,7 +330,7 @@ namespace Org.BouncyCastle.Crypto.Tests
         private void RandomTests()
         {
             SecureRandom srng = new SecureRandom();
-            srng.SetSeed(DateTimeUtilities.CurrentUnixMs());
+            srng.SetSeed((Int64) DateTimeUtilities.CurrentUnixMs());
             for (int i = 0; i < 10; ++i)
             {
                 RandomTest(srng);

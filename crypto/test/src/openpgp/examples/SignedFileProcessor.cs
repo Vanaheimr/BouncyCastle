@@ -43,7 +43,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Examples
             PgpOnePassSignature            ops = p1[0];
 
             PgpLiteralData                p2 = (PgpLiteralData) pgpFact.NextPgpObject();
-            Stream                        dIn = p2.GetInputStream();
+            Stream                        dIn = p2.InputStream;
             PgpPublicKeyRingBundle        pgpRing = new PgpPublicKeyRingBundle(PgpUtilities.GetDecoderStream(keyIn));
             PgpPublicKey                  key = pgpRing.GetPublicKey(ops.KeyId);
             Stream                        fos = File.Create(p2.FileName);

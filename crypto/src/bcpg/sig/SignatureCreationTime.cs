@@ -20,11 +20,11 @@ namespace Org.BouncyCastle.Bcpg.Sig
             get
             {
 
-                return DateTimeUtilities.UnixMsToDateTime((long)(((uint) _Data[0] << 24) |
-                                                                 ((uint) _Data[1] << 16) |
-                                                                 ((uint) _Data[2] <<  8) |
-                                                                 ((uint) _Data[3])
-                                                                ) * 1000L);
+                return DateTimeUtilities.UnixMsToDateTime((UInt64)(((uint) _Data[0] << 24) |
+                                                                   ((uint) _Data[1] << 16) |
+                                                                   ((uint) _Data[2] <<  8) |
+                                                                   ((uint) _Data[3])
+                                                                  ) * 1000L);
 
             }
         }
@@ -60,6 +60,8 @@ namespace Org.BouncyCastle.Bcpg.Sig
         #endregion
 
 
+        #region (protected, static) TimeToBytes(Time)
+
         protected static Byte[] TimeToBytes(DateTime Time)
         {
 
@@ -73,6 +75,9 @@ namespace Org.BouncyCastle.Bcpg.Sig
             };
 
         }
+
+        #endregion
+
 
     }
 

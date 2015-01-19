@@ -143,7 +143,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
                 new UncloseableStream(bcOut),
                 PgpLiteralData.Binary,
                 "_CONSOLE",
-                dataBytes.Length,
+                (UInt64) dataBytes.Length,
                 testDateTime);
 
             int ch;
@@ -178,7 +178,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
                 Fail("Modification time not preserved");
             }
 
-            Stream    dIn = p2.GetInputStream();
+            Stream dIn = p2.InputStream;
 
             ops.InitVerify(pubKey);
 
@@ -270,7 +270,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
                 throw new Exception("wrong filename in packet");
             }
 
-            Stream inLd = ld.GetDataStream();
+            Stream inLd = ld.DataStream;
             byte[] bytes = Streams.ReadAll(inLd);
 
             if (!Arrays.AreEqual(bytes, text))
@@ -308,7 +308,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
                 throw new Exception("wrong filename in packet");
             }
 
-            inLd = ld.GetDataStream();
+            inLd = ld.DataStream;
 
             //
             // note: we use the DSA public key here.
@@ -343,7 +343,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
 
             cPk.AddMethod(puK);
 
-            Stream cOut = cPk.Open(new UncloseableStream(cbOut), bOut.ToArray().Length);
+            Stream cOut = cPk.Open(new UncloseableStream(cbOut), (UInt64) bOut.ToArray().Length);
 
             cOut.Write(text, 0, text.Length);
 
@@ -415,7 +415,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
 
                 cbOut = new MemoryStream();
 
-                cOut = cPk.Open(new UncloseableStream(cbOut), text.Length);
+                cOut = cPk.Open(new UncloseableStream(cbOut), (UInt64) text.Length);
 
                 cOut.Write(text, 0, text.Length);
 

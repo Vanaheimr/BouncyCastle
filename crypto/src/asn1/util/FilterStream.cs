@@ -3,65 +3,146 @@ using System.IO;
 
 namespace Org.BouncyCastle.Asn1.Utilities
 {
+
     public class FilterStream : Stream
     {
-        public FilterStream(Stream s)
+
+        #region Data
+
+        protected readonly Stream _Stream;
+
+        #endregion
+
+        #region Properties
+
+        #region CanRead
+
+        public override Boolean CanRead
         {
-            this.s = s;
+            get
+            {
+                return _Stream.CanRead;
+            }
         }
-        public override bool CanRead
+
+        #endregion
+
+        #region CanSeek
+
+        public override Boolean CanSeek
         {
-            get { return s.CanRead; }
+            get
+            {
+                return _Stream.CanSeek;
+            }
         }
-        public override bool CanSeek
+
+        #endregion
+
+        #region CanWrite
+
+        public override Boolean CanWrite
         {
-            get { return s.CanSeek; }
+            get
+            {
+                return _Stream.CanWrite;
+            }
         }
-        public override bool CanWrite
+
+        #endregion
+
+        #region Length
+
+        public override Int64 Length
         {
-            get { return s.CanWrite; }
+            get
+            {
+                return _Stream.Length;
+            }
         }
-        public override long Length
+
+        #endregion
+
+        #region Position
+
+        public override Int64 Position
         {
-            get { return s.Length; }
+
+            get
+            {
+                return _Stream.Position;
+            }
+
+            set
+            {
+                _Stream.Position = value;
+            }
+
         }
-        public override long Position
+
+        #endregion
+
+        #endregion
+
+        #region Constructor(s)
+
+        public FilterStream(Stream InputStream)
         {
-            get { return s.Position; }
-            set { s.Position = value; }
+            this._Stream = InputStream;
         }
-        public override void Close()
-        {
-            s.Close();
-        }
-        public override void Flush()
-        {
-            s.Flush();
-        }
+
+        #endregion
+
+
         public override long Seek(long offset, SeekOrigin origin)
         {
-            return s.Seek(offset, origin);
+            return _Stream.Seek(offset, origin);
         }
+
         public override void SetLength(long value)
         {
-            s.SetLength(value);
+            _Stream.SetLength(value);
         }
+
         public override int Read(byte[] buffer, int offset, int count)
         {
-            return s.Read(buffer, offset, count);
+            return _Stream.Read(buffer, offset, count);
         }
+
         public override int ReadByte()
         {
-            return s.ReadByte();
+            return _Stream.ReadByte();
         }
+
         public override void Write(byte[] buffer, int offset, int count)
         {
-            s.Write(buffer, offset, count);
+            _Stream.Write(buffer, offset, count);
         }
+
         public override void WriteByte(byte value)
         {
-            s.WriteByte(value);
+            _Stream.WriteByte(value);
         }
-        protected readonly Stream s;
+
+
+        #region Flush()
+
+        public override void Flush()
+        {
+            _Stream.Flush();
+        }
+
+        #endregion
+
+        #region Close()
+
+        public override void Close()
+        {
+            _Stream.Close();
+        }
+
+        #endregion
+
     }
+
 }

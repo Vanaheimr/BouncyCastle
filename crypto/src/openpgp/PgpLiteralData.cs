@@ -5,61 +5,134 @@ using Org.BouncyCastle.Utilities.Date;
 
 namespace Org.BouncyCastle.Bcpg.OpenPgp
 {
+
     /// <summary>
     /// Class for processing literal data objects.
     /// </summary>
     public class PgpLiteralData : PgpObject
     {
 
+        #region Const
+
         public const char Binary = 'b';
         public const char Text   = 't';
         public const char Utf8   = 'u';
 
-        /// <summary>The special name indicating a "for your eyes only" packet.</summary>
+        /// <summary>
+        /// The special name indicating a "for your eyes only" packet.
+        /// </summary>
         public const string Console = "_CONSOLE";
+
+        #endregion
+
+        #region Data
 
         private LiteralDataPacket data;
 
-        public PgpLiteralData(BcpgInputStream bcpgInput)
+        #endregion
+
+        #region Properties
+
+        #region Format
+
+        /// <summary>
+        /// The format of the data stream - Binary or Text
+        /// </summary>
+        public Int32 Format
         {
-            data = bcpgInput.ReadPacket<LiteralDataPacket>();
+            get
+            {
+                return data.Format;
+            }
         }
 
-        /// <summary>The format of the data stream - Binary or Text</summary>
-        public int Format
+        #endregion
+
+        #region FileName
+
+        /// <summary>
+        /// The file name that's associated with the data stream.
+        /// </summary>
+        public String FileName
         {
-            get { return data.Format; }
+            get
+            {
+                return data.FileName;
+            }
         }
 
-        /// <summary>The file name that's associated with the data stream.</summary>
-        public string FileName
-        {
-            get { return data.FileName; }
-        }
+        #endregion
 
+        #region RawFileName
+
+        /// <summary>
         /// Return the file name as an unintrepreted byte array.
-        public byte[] GetRawFileName()
+        /// </summary>
+        public Byte[] RawFileName
         {
-            return data.GetRawFileName();
+            get
+            {
+                return data.RawFileName;
+            }
         }
 
-        /// <summary>The modification time for the file.</summary>
+        #endregion
+
+        #region ModificationTime
+
+        /// <summary>
+        /// The modification time for the file.
+        /// </summary>
         public DateTime ModificationTime
         {
-            get { return DateTimeUtilities.UnixMsToDateTime(data.ModificationTime); }
+            get
+            {
+                return DateTimeUtilities.UnixMsToDateTime((UInt64) data.ModificationTime);
+            }
         }
 
-        /// <summary>The raw input stream for the data stream.</summary>
-        public Stream GetInputStream()
+        #endregion
+
+        #region InputStream
+
+        /// <summary>
+        /// The raw input stream for the data stream.
+        /// </summary>
+        public Stream InputStream
         {
-            return data.GetInputStream();
+            get
+            {
+                return data.GetInputStream();
+            }
         }
 
-        /// <summary>The input stream representing the data stream.</summary>
-        public Stream GetDataStream()
+        #endregion
+
+        #region DataStream
+
+        /// <summary>
+        /// The input stream representing the data stream.
+        /// </summary>
+        public Stream DataStream
         {
-            return GetInputStream();
+            get
+            {
+                return InputStream;
+            }
         }
+
+        #endregion
+
+        #endregion
+
+        #region Constructor(s)
+
+        public PgpLiteralData(BcpgInputStream BCPGInputStream)
+        {
+            data = BCPGInputStream.ReadPacket<LiteralDataPacket>();
+        }
+
+        #endregion
 
     }
 
