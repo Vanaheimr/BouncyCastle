@@ -5019,6 +5019,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="SecurityVisualization\DrunkenBishop.cs" />
+    <Compile Include="Vanaheimr\OpenPGP2.cs" />
     <Compile Include="Vanaheimr\OpenPGP.cs" />
     <Content Include="Contributors.html" />
     <Content Include="License.html" />

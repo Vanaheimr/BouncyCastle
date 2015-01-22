@@ -139,12 +139,11 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
             PgpLiteralDataGenerator lGen = new PgpLiteralDataGenerator();
 
             DateTime testDateTime = new DateTime(1973, 7, 27);
-            Stream lOut = lGen.Open(
-                new UncloseableStream(bcOut),
-                PgpLiteralData.Binary,
-                "_CONSOLE",
-                (UInt64) dataBytes.Length,
-                testDateTime);
+            Stream lOut = lGen.Open(PgpLiteralData.Binary,
+                                    "_CONSOLE",
+                                    (UInt64) dataBytes.Length,
+                                    testDateTime,
+                                    new UncloseableStream(bcOut));
 
             int ch;
             while ((ch = testIn.ReadByte()) >= 0)
@@ -337,11 +336,10 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
             // encrypt
             //
             MemoryStream cbOut = new MemoryStream();
-            PgpEncryptedDataGenerator cPk = new PgpEncryptedDataGenerator(
-                SymmetricKeyAlgorithms.TripleDes, random);
-            PgpPublicKey puK = sKey.GetSecretKeyByKeyId(pgpKeyID).PublicKey;
+            var cPk = new PgpEncryptedDataGenerator(SymmetricKeyAlgorithms.TripleDes, SecureRandom: random);
+            var puK = sKey.GetSecretKeyByKeyId(pgpKeyID).PublicKey;
 
-            cPk.AddMethod(puK);
+            cPk.AddPublicKey(puK);
 
             Stream cOut = cPk.Open(new UncloseableStream(cbOut), (UInt64) bOut.ToArray().Length);
 
@@ -407,36 +405,31 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
                 PgpKeyPair elGamalKeyPair = new PgpKeyPair(
                     PublicKeyAlgorithms.ElGamalGeneral, kp, DateTime.UtcNow);
 
-                cPk = new PgpEncryptedDataGenerator(SymmetricKeyAlgorithms.Cast5, random);
-
+                cPk = new PgpEncryptedDataGenerator(SymmetricKeyAlgorithms.Cast5, SecureRandom: random);
                 puK = elGamalKeyPair.PublicKey;
 
-                cPk.AddMethod(puK);
+                cPk.AddPublicKey(puK);
 
                 cbOut = new MemoryStream();
-
-                cOut = cPk.Open(new UncloseableStream(cbOut), (UInt64) text.Length);
+                cOut  = cPk.Open(new UncloseableStream(cbOut), (UInt64) text.Length);
 
                 cOut.Write(text, 0, text.Length);
-
                 cOut.Close();
 
-                pgpF = new PgpObjectFactory(cbOut.ToArray());
-
-                encList = (PgpEncryptedDataList)pgpF.NextPgpObject();
-
-                encP = (PgpPublicKeyEncryptedData)encList[0];
-
-                pgpPrivKey = elGamalKeyPair.PrivateKey;
+                pgpF        = new PgpObjectFactory(cbOut.ToArray());
+                encList     = (PgpEncryptedDataList) pgpF.NextPgpObject();
+                encP        = (PgpPublicKeyEncryptedData) encList[0];
+                pgpPrivKey  = elGamalKeyPair.PrivateKey;
 
                 // Note: This is where an exception would be expected if the P size causes problems
                 clear = encP.GetDataStream(pgpPrivKey);
-                byte[] decText = Streams.ReadAll(clear);
+                var decText = Streams.ReadAll(clear);
 
                 if (!Arrays.AreEqual(text, decText))
                 {
                     Fail("decrypted message incorrect");
                 }
+
             }
 
 
@@ -446,9 +439,9 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
             {
                 if (!pgpKey.IsMasterKey)
                 {
-                    byte[] kEnc = pgpKey.GetEncoded();
 
-                    PgpObjectFactory objF = new PgpObjectFactory(kEnc);
+                    var kEnc = pgpKey.GetEncoded();
+                    var objF = new PgpObjectFactory(kEnc);
 
                     // TODO Make PgpPublicKey a PgpObject or return a PgpPublicKeyRing
 //                    PgpPublicKey k = (PgpPublicKey)objF.NextPgpObject();
@@ -464,6 +457,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
 //                    {
 //                        Fail("failed - stream not fully parsed.");
 //                    }
+
                 }
             }
         }
@@ -486,5 +480,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
 
             Assert.AreEqual(Name + ": Okay", resultText);
         }
+
     }
+
 }

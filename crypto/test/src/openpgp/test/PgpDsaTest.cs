@@ -307,12 +307,11 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
             PgpLiteralDataGenerator lGen = new PgpLiteralDataGenerator();
 
             DateTime testDateTime = new DateTime(1973, 7, 27);
-            Stream lOut = lGen.Open(
-                new UncloseableStream(bcOut),
-                PgpLiteralData.Binary,
-                "_CONSOLE",
-                (UInt64) dataBytes.Length,
-                testDateTime);
+            Stream lOut = lGen.Open(PgpLiteralData.Binary,
+                                    "_CONSOLE",
+                                    (UInt64) dataBytes.Length,
+                                    testDateTime,
+                                    new UncloseableStream(bcOut));
 
             int ch;
             while ((ch = testIn.ReadByte()) >= 0)
@@ -431,12 +430,11 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
 
             PgpLiteralDataGenerator lGen = new PgpLiteralDataGenerator();
             DateTime testDateTime = new DateTime(1973, 7, 27);
-            Stream lOut = lGen.Open(
-                new UncloseableStream(bcOut),
-                PgpLiteralData.Text,
-                "_CONSOLE",
-                (UInt64) dataBytes.Length,
-                testDateTime);
+            Stream lOut = lGen.Open(PgpLiteralData.Text,
+                                    "_CONSOLE",
+                                    (UInt64) dataBytes.Length,
+                                    testDateTime,
+                                    new UncloseableStream(bcOut));
 
             while ((ch = testIn.ReadByte()) >= 0)
             {

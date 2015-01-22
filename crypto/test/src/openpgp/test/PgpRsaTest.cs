@@ -356,12 +356,11 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
             //
             MemoryStream bOut = new MemoryStream();
             PgpLiteralDataGenerator lGen = new PgpLiteralDataGenerator();
-            Stream lOut = lGen.Open(
-                bOut,
-                PgpLiteralData.Binary,
-                PgpLiteralData.Console,
-                (UInt64) text.Length,
-                DateTime.UtcNow);
+            Stream lOut = lGen.Open(PgpLiteralData.Binary,
+                                    PgpLiteralData.Console,
+                                    (UInt64) text.Length,
+                                    DateTime.UtcNow,
+                                    bOut);
 
             lOut.Write(text, 0, text.Length);
 
@@ -379,7 +378,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
                 true,
                 new SecureRandom());
 
-            encGen.AddMethod(pgpPubKey);
+            encGen.AddPublicKey(pgpPubKey);
 
             encGen.AddMethod("password");
 
@@ -697,10 +696,10 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
             byte[] shortText = { (byte)'h', (byte)'e', (byte)'l', (byte)'l', (byte)'o' };
 
             MemoryStream cbOut = new UncloseableMemoryStream();
-            PgpEncryptedDataGenerator cPk = new PgpEncryptedDataGenerator(SymmetricKeyAlgorithms.Cast5, new SecureRandom());
-            PgpPublicKey puK = pgpPriv.GetSecretKeyByKeyId(encP.KeyId).PublicKey;
+            var cPk = new PgpEncryptedDataGenerator(SymmetricKeyAlgorithms.Cast5);
+            var puK = pgpPriv.GetSecretKeyByKeyId(encP.KeyId).PublicKey;
 
-            cPk.AddMethod(puK);
+            cPk.AddPublicKey(puK);
 
             Stream cOut = cPk.Open(new UncloseableStream(cbOut), (UInt64) shortText.Length);
 
@@ -732,11 +731,11 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
             //
             // encrypt
             //
-            cbOut = new UncloseableMemoryStream();
-            cPk = new PgpEncryptedDataGenerator(SymmetricKeyAlgorithms.Cast5, new SecureRandom());
-            puK = pgpPriv.GetSecretKeyByKeyId(encP.KeyId).PublicKey;
+            cbOut  = new UncloseableMemoryStream();
+            cPk    = new PgpEncryptedDataGenerator(SymmetricKeyAlgorithms.Cast5);
+            puK    = pgpPriv.GetSecretKeyByKeyId(encP.KeyId).PublicKey;
 
-            cPk.AddMethod(puK);
+            cPk.AddPublicKey(puK);
 
             cOut = cPk.Open(new UncloseableStream(cbOut), (UInt64) text.Length);
 
@@ -744,16 +743,12 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
 
             cOut.Close();
 
-            pgpF = new PgpObjectFactory(cbOut.ToArray());
-
-            encList = (PgpEncryptedDataList)pgpF.NextPgpObject();
-
-            encP = (PgpPublicKeyEncryptedData)encList[0];
-
-            pgpPrivKey = pgpPriv.GetSecretKeyByKeyId(encP.KeyId).ExtractPrivateKey(pass);
-
-            clear = encP.GetDataStream(pgpPrivKey);
-            outBytes = Streams.ReadAll(clear);
+            pgpF        = new PgpObjectFactory(cbOut.ToArray());
+            encList     = (PgpEncryptedDataList)pgpF.NextPgpObject();
+            encP        = (PgpPublicKeyEncryptedData)encList[0];
+            pgpPrivKey  = pgpPriv.GetSecretKeyByKeyId(encP.KeyId).ExtractPrivateKey(pass);
+            clear       = encP.GetDataStream(pgpPrivKey);
+            outBytes    = Streams.ReadAll(clear);
 
             if (!Arrays.AreEqual(outBytes, text))
             {
@@ -775,30 +770,27 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
             // key pair generation - CAST5 encryption
             //
             String passPhrase = "hello";
-            IAsymmetricCipherKeyPairGenerator kpg = GeneratorUtilities.GetKeyPairGenerator("RSA");
-            RsaKeyGenerationParameters genParam = new RsaKeyGenerationParameters(
-                BigInteger.ValueOf(0x10001), new SecureRandom(), 1024, 25);
+            var kpg       = GeneratorUtilities.GetKeyPairGenerator("RSA");
+            var genParam  = new RsaKeyGenerationParameters(BigInteger.ValueOf(0x10001), new SecureRandom(), 1024, 25);
 
             kpg.Init(genParam);
 
 
-            AsymmetricCipherKeyPair kp = kpg.GenerateKeyPair();
+            var kp = kpg.GenerateKeyPair();
 
-            PgpSecretKey secretKey = new PgpSecretKey(
-                PgpSignatureTypes.DefaultCertification,
-                PublicKeyAlgorithms.RsaGeneral,
-                kp.Public,
-                kp.Private,
-                DateTime.UtcNow,
-                "fred",
-                SymmetricKeyAlgorithms.Cast5,
-                passPhrase,
-                null,
-                null,
-                new SecureRandom()
-                );
+            var secretKey = new PgpSecretKey(PgpSignatureTypes.DefaultCertification,
+                                             PublicKeyAlgorithms.RsaGeneral,
+                                             kp.Public,
+                                             kp.Private,
+                                             DateTime.UtcNow,
+                                             "fred",
+                                             SymmetricKeyAlgorithms.Cast5,
+                                             passPhrase,
+                                             null,
+                                             null,
+                                             new SecureRandom());
 
-            PgpPublicKey key = secretKey.PublicKey;
+            var key = secretKey.PublicKey;
 
 
             enumerator = key.UserIds.GetEnumerator();
@@ -941,8 +933,11 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
             PgpLiteralDataGenerator lGen = new PgpLiteralDataGenerator();
 
             DateTime testDateTime = new DateTime(1973, 7, 27);
-            Stream lOut = lGen.Open(new UncloseableStream(bcOut), PgpLiteralData.Binary, "_CONSOLE",
-                (UInt64) dataBytes.Length, testDateTime);
+            Stream lOut = lGen.Open(PgpLiteralData.Binary,
+                                    "_CONSOLE",
+                                    (UInt64) dataBytes.Length,
+                                    testDateTime,
+                                    new UncloseableStream(bcOut));
 
             // TODO Need a stream object to automatically call Update?
             // (via ISigner implementation of PgpSignatureGenerator)
@@ -1013,12 +1008,11 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
             sGen.GenerateOnePassVersion(false).Encode(bcOut);
 
             lGen = new PgpLiteralDataGenerator();
-            lOut = lGen.Open(
-                new UncloseableStream(bcOut),
-                PgpLiteralData.Binary,
-                "_CONSOLE",
-                (UInt64) dataBytes.Length,
-                testDateTime);
+            lOut = lGen.Open(PgpLiteralData.Binary,
+                             "_CONSOLE",
+                             (UInt64) dataBytes.Length,
+                             testDateTime,
+                             new UncloseableStream(bcOut));
 
             // TODO Need a stream object to automatically call Update?
             // (via ISigner implementation of PgpSignatureGenerator)
@@ -1113,12 +1107,11 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
 
             PgpLiteralDataGenerator lGen = new PgpLiteralDataGenerator();
             DateTime testDateTime = new DateTime(1973, 7, 27);
-            Stream lOut = lGen.Open(
-                new UncloseableStream(bcOut),
-                PgpLiteralData.Binary,
-                "_CONSOLE",
-                (UInt64) dataBytes.Length,
-                testDateTime);
+            Stream lOut = lGen.Open(PgpLiteralData.Binary,
+                                    "_CONSOLE",
+                                    (UInt64) dataBytes.Length,
+                                    testDateTime,
+                                    new UncloseableStream(bcOut));
 
             // TODO Need a stream object to automatically call Update?
             // (via ISigner implementation of PgpSignatureGenerator)

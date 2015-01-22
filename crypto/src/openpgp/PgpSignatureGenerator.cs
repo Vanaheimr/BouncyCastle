@@ -8,6 +8,7 @@ using Org.BouncyCastle.Crypto;
 using Org.BouncyCastle.Crypto.Parameters;
 using Org.BouncyCastle.Security;
 using Org.BouncyCastle.Utilities;
+using System.Text;
 
 namespace Org.BouncyCastle.Bcpg.OpenPgp
 {
@@ -378,7 +379,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
             UpdateWithPublicKey(PublicKey);
 
             // Hash in the id
-            UpdateWithIdData(0xb4, Strings.ToUtf8ByteArray(Id));
+            UpdateWithIdData(0xb4, Encoding.UTF8.GetBytes(Id));
 
             return Generate();
 

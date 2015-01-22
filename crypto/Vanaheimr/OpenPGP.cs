@@ -24,6 +24,7 @@ using System.Text;
 
 using Org.BouncyCastle.Bcpg;
 using Org.BouncyCastle.Bcpg.OpenPgp;
+using Org.BouncyCastle.Security;
 
 #endregion
 
@@ -33,65 +34,159 @@ namespace org.GraphDefined.Vanaheimr.BouncyCastle
     public static class OpenPGP
     {
 
-        public static MemoryStream ToMemoryStream(this String InputStream)
+        #region KeyManagement
+
+        #region ToMemoryStream(this Text)
+
+        public static MemoryStream ToMemoryStream(this String Text)
         {
 
-            var inputstream = new MemoryStream();
-            var Bytes = Encoding.UTF8.GetBytes(InputStream);
-            inputstream.Write(Bytes, 0, Bytes.Length);
-            inputstream.Seek(0, SeekOrigin.Begin);
+            var OutputStream = new MemoryStream();
+            var Bytes = Encoding.UTF8.GetBytes(Text);
+            OutputStream.Write(Bytes, 0, Bytes.Length);
+            OutputStream.Seek(0, SeekOrigin.Begin);
 
-            return inputstream;
+            return OutputStream;
 
         }
 
+        #endregion
 
-        public static PgpPublicKeyRingBundle ReadPgpPublicKeyRingBundle(String Text)
+
+        #region ReadPublicKeyRingBundle(Text)
+
+        public static PgpPublicKeyRingBundle ReadPublicKeyRingBundle(String Text)
         {
             return new PgpPublicKeyRingBundle(PgpUtilities.GetDecoderStream(Text.ToMemoryStream()));
         }
 
-        public static PgpPublicKeyRingBundle ReadPgpPublicKeyRingBundle(Stream InputStream)
+        #endregion
+
+        #region ReadPublicKeyRingBundle(InputStream)
+
+        public static PgpPublicKeyRingBundle ReadPublicKeyRingBundle(Stream InputStream)
         {
             return new PgpPublicKeyRingBundle(PgpUtilities.GetDecoderStream(InputStream));
         }
 
+        #endregion
+
+        #region ReadPublicKeyRing(Text)
 
         public static PgpPublicKeyRing ReadPublicKeyRing(String Text)
         {
-            return new PgpPublicKeyRingBundle(PgpUtilities.GetDecoderStream(Text.ToMemoryStream())).First();
+
+            var InputStream          = PgpUtilities.GetDecoderStream(Text.ToMemoryStream());
+            if (InputStream == null)
+                throw new ArgumentException("The given text input is not valid PGP/GPG data!");
+
+            PgpPublicKeyRing PublicKeyRing = null;
+
+            var PublicKeyRingBundle  = new PgpPublicKeyRingBundle(InputStream);
+            if (PublicKeyRingBundle != null)
+                PublicKeyRing = PublicKeyRingBundle.First();
+
+            else
+                PublicKeyRing = new PgpPublicKeyRing(InputStream);
+
+            if (PublicKeyRing == null)
+                throw new ArgumentException("The given text input does not contain a valid PGP/GPG public key ring!");
+
+            return PublicKeyRing;
+
         }
+
+        #endregion
+
+        #region TryReadPublicKeyRing(Text, out PublicKeyRing)
+
+        public static Boolean TryReadPublicKeyRing(String Text, out PgpPublicKeyRing PublicKeyRing)
+        {
+
+            PublicKeyRing = null;
+
+            try
+            {
+
+                var InputStream = PgpUtilities.GetDecoderStream(Text.ToMemoryStream());
+                if (InputStream == null)
+                    return false;
+
+                var PublicKeyRingBundle = new PgpPublicKeyRingBundle(InputStream);
+                if (PublicKeyRingBundle != null)
+                    PublicKeyRing = PublicKeyRingBundle.First();
+
+                else
+                    PublicKeyRing = new PgpPublicKeyRing(InputStream);
+
+                return PublicKeyRing != null;
+
+            }
+            catch (Exception e)
+            {
+                return false;
+            }
+
+        }
+
+        #endregion
+
+        #region ReadPublicKeyRing(InputStream)
 
         public static PgpPublicKeyRing ReadPublicKeyRing(Stream InputStream)
         {
             return new PgpPublicKeyRingBundle(PgpUtilities.GetDecoderStream(InputStream)).First();
         }
 
+        #endregion
+
+        #region ReadPublicKey(Text)
 
         public static PgpPublicKey ReadPublicKey(String Text)
         {
             return ReadPublicKeyRing(Text.ToMemoryStream()).First();
         }
 
+        #endregion
+
+        #region ReadPublicKey(InputStream)
+
         public static PgpPublicKey ReadPublicKey(Stream InputStream)
         {
             return ReadPublicKeyRing(InputStream).First();
         }
 
+        #endregion
 
 
+        #region ReadSecretKeyRingBundle(Text)
 
-        public static PgpSecretKeyRingBundle ReadPgpSecretKeyRingBundle(String Text)
+        public static PgpSecretKeyRingBundle ReadSecretKeyRingBundle(String Text)
         {
             return new PgpSecretKeyRingBundle(PgpUtilities.GetDecoderStream(Text.ToMemoryStream()));
         }
 
-        public static PgpSecretKeyRingBundle ReadPgpSecretKeyRingBundle(Stream InputStream)
+        #endregion
+
+        #region ReadSecretKeyRingBundle(InputStream)
+
+        public static PgpSecretKeyRingBundle ReadSecretKeyRingBundle(Stream InputStream)
         {
             return new PgpSecretKeyRingBundle(PgpUtilities.GetDecoderStream(InputStream));
         }
 
+        #endregion
 
+        #region ReadSecretKeyRing(Text)
+
+        public static PgpSecretKeyRing ReadSecretKeyRing(String Text)
+        {
+            return new PgpSecretKeyRing(Text.ToMemoryStream());
+        }
+
+        #endregion
+
+        #region ReadSecretKeyRing(InputStream)
 
         public static PgpSecretKeyRing ReadSecretKeyRing(Stream InputStream)
         {
@@ -113,19 +208,30 @@ namespace org.GraphDefined.Vanaheimr.BouncyCastle
 
         }
 
+        #endregion
+
+        #region ReadSecretKey(Text)
 
         public static PgpSecretKey ReadSecretKey(String Text)
         {
             return ReadSecretKeyRing(Text.ToMemoryStream()).First();
         }
 
+        #endregion
+
+        #region ReadSecretKey(InputStream)
+
         public static PgpSecretKey ReadSecretKey(Stream InputStream)
         {
             return ReadSecretKeyRing(InputStream).First();
         }
 
+        #endregion
+
+        #endregion
 
 
+        #region CreateSignature(InputStream, SecretKey, Passphrase, HashAlgorithm = HashAlgorithms.Sha512, BufferSize = 2 MByte)
 
         public static PgpSignature CreateSignature(Stream          InputStream,
                                                    PgpSecretKey    SecretKey,
@@ -164,6 +270,10 @@ namespace org.GraphDefined.Vanaheimr.BouncyCastle
             return SignatureGenerator.Generate();
 
         }
+
+        #endregion
+
+        #region WriteTo<T>(this Signature, OutputStream, ArmoredOutput = true, CloseOutputStream = true)
 
         public static T WriteTo<T>(this PgpSignature  Signature,
                                    T                  OutputStream,
@@ -205,225 +315,222 @@ namespace org.GraphDefined.Vanaheimr.BouncyCastle
 
         }
 
+        #endregion
 
 
 
+        #region (internal) CreateSignatureGenerator(SecretKey, Passphrase, HashAlgorithm)
 
-
-
-
-        private static void VerifySignature2(String fileName,
-                                    Stream inputStream,
-                                    Stream keyIn)
+        internal static PgpSignatureGenerator CreateSignatureGenerator(PgpSecretKey    SecretKey,
+                                                                       String          Passphrase,
+                                                                       HashAlgorithms  HashAlgorithm)
         {
 
-            inputStream = PgpUtilities.GetDecoderStream(inputStream);
+            var SignatureGenerator = new PgpSignatureGenerator(SecretKey.PublicKey.Algorithm, HashAlgorithm);
+            SignatureGenerator.InitSign(PgpSignatureTypes.CanonicalTextDocument, SecretKey.ExtractPrivateKey(Passphrase));
 
-            var pgpFact = new PgpObjectFactory(inputStream);
-            PgpSignatureList p3 = null;
-            var PGPObject = pgpFact.NextPgpObject();
-
-            if (PGPObject is PgpCompressedData)
+            foreach (var UserId in SecretKey.PublicKey.UserIds)
             {
-                var c1 = (PgpCompressedData)PGPObject;
-                pgpFact = new PgpObjectFactory(c1.GetDataStream());
-                p3 = (PgpSignatureList)pgpFact.NextPgpObject();
+                var SignatureSubpacketGenerator = new PgpSignatureSubpacketGenerator();
+                SignatureSubpacketGenerator.SetSignerUserId(IsCritical: false, UserId: UserId);
+                SignatureGenerator.SetHashedSubpackets(SignatureSubpacketGenerator.Generate());
+                break; //wtf?
             }
 
-            else
-                p3 = (PgpSignatureList)PGPObject;
-
-            var pgpPubRingCollection = new PgpPublicKeyRingBundle(PgpUtilities.GetDecoderStream(keyIn));
-            Stream dIn = File.OpenRead(fileName);
-            var sig = p3[0];
-            var key = pgpPubRingCollection.GetPublicKey(sig.KeyId);
-            sig.InitVerify(key);
-
-            int ch;
-            while ((ch = dIn.ReadByte()) >= 0)
-            {
-                sig.Update((byte)ch);
-            }
-
-            dIn.Close();
-
-            if (sig.IsValid)
-                Console.WriteLine("signature verified.");
-            else
-                Console.WriteLine("signature verification failed.");
+            return SignatureGenerator;
 
         }
 
+        #endregion
 
-        public class res
+        #region (internal) EncryptWith(this InputStream, PublicKey, SymmetricKeyAlgorithm, BufferSize = 0x10000)
+
+        internal static Stream EncryptWith(this Stream             InputStream,
+                                           PgpPublicKey            PublicKey,
+                                           SymmetricKeyAlgorithms  SymmetricKeyAlgorithm,
+                                           UInt32                  BufferSize = 0x10000)
         {
 
-            #region Properties
+            var EncryptedDataGenerator = new PgpEncryptedDataGenerator(SymmetricKeyAlgorithm, true, new SecureRandom());
+            EncryptedDataGenerator.AddPublicKey(PublicKey);
 
-            #region Signature
-
-            public PgpSignature _Signature;
-
-            public PgpSignature Signature
-            {
-                get
-                {
-                    return _Signature;
-                }
-            }
-
-            #endregion
-
-            #region CreationTime
-
-            public DateTime CreationTime
-            {
-                get
-                {
-                    return _Signature.CreationTime;
-                }
-            }
-
-            #endregion
-
-            #region HashAlgorithm
-
-            public HashAlgorithms HashAlgorithm
-            {
-                get
-                {
-                    return _Signature.HashAlgorithm;
-                }
-            }
-
-            #endregion
-
-            #region KeyAlgorithm
-
-            public PublicKeyAlgorithms KeyAlgorithm
-            {
-                get
-                {
-                    return _Signature.KeyAlgorithm;
-                }
-            }
-
-            #endregion
-
-            #region KeyIdHex
-
-            public String KeyIdHex
-            {
-                get
-                {
-                    return _Signature.KeyIdHex;
-                }
-            }
-
-            #endregion
-
-            #region KeyId
-
-            public UInt64 KeyId
-            {
-                get
-                {
-                    return _Signature.KeyId;
-                }
-            }
-
-            #endregion
-
-            #region PublicKey
-
-            private PgpPublicKey _PublicKey;
-
-            public PgpPublicKey PublicKey
-            {
-                get
-                {
-                    return _PublicKey;
-                }
-            }
-
-            #endregion
-
-            #region IsValid
-
-            public Boolean _IsValid;
-
-            /// <summary>
-            /// Verifies the signature.
-            /// (Will consume as constant verification time for security reasons!)
-            /// </summary>
-            public Boolean IsValid
-            {
-
-                get
-                {
-                    return _IsValid;
-                }
-
-            }
-
-            #endregion
-
-            #endregion
+            return EncryptedDataGenerator.Open(InputStream, new Byte[BufferSize]);
 
         }
 
-        private static res VerifySignature(String  FileToVerify,
-                                           Stream  SignatureInputStream,
-                                           Stream  keyIn)
+        #endregion
+
+        #region (internal) CompressWith(this InputStream, CompressionAlgorithm)
+
+        internal static Stream CompressWith(this Stream InputStream, CompressionAlgorithms CompressionAlgorithm)
         {
 
-            SignatureInputStream = PgpUtilities.GetDecoderStream(SignatureInputStream);
+            var CompressedDataGenerator = new PgpCompressedDataGenerator(CompressionAlgorithm);
 
-            var               pgpFact        = new PgpObjectFactory(SignatureInputStream);
-            PgpSignatureList  SignatureList  = null;
-            var               PGPObject      = pgpFact.NextPgpObject();
-
-            if (PGPObject is PgpCompressedData)
-            {
-                var c1         = (PgpCompressedData) PGPObject;
-                pgpFact        = new PgpObjectFactory(c1.GetDataStream());
-                SignatureList  = (PgpSignatureList) pgpFact.NextPgpObject();
-            }
-
-            else
-                SignatureList  = (PgpSignatureList) PGPObject;
-
-            var pgpPubRingCollection  = new PgpPublicKeyRingBundle(PgpUtilities.GetDecoderStream(keyIn));
-            var FileToVerifyStream    = File.OpenRead(FileToVerify);
-            var Signature             = SignatureList[0];
-            var PublicKey             = pgpPubRingCollection.GetPublicKey(Signature.KeyId);
-
-            Signature.InitVerify(PublicKey);
-
-            int ch;
-            while ((ch = FileToVerifyStream.ReadByte()) >= 0)
-            {
-                Signature.Update((byte) ch);
-            }
-
-            FileToVerifyStream.Close();
-
-            var aa = new res();
-            aa._Signature = Signature;
-            aa._IsValid = Signature.IsValid;
-
-            return aa;
+            return CompressedDataGenerator.Open(InputStream);
 
         }
 
+        #endregion
+
+        #region (internal) LiteralOutputPipe(Name, Length, ModificationTime, OutputStream)
+
+        /// <summary>
+        /// Returns a stream to write your data into.
+        /// </summary>
+        internal static Stream LiteralOutputPipe(String    Name,
+                                                 UInt64    Length,
+                                                 DateTime  ModificationTime,
+                                                 Stream    OutputStream)
+        {
+
+            var LiteralDataGenerator = new PgpLiteralDataGenerator();
+
+            return LiteralDataGenerator.Open(PgpLiteralData.Binary,
+                                             Name,
+                                             Length,
+                                             ModificationTime,
+                                             OutputStream);
+
+        }
+
+        #endregion
+
+        #region (internal) CopyAndHash(this InputStream, LiteralOutputStream, SignatureGenerator, OutputStream, BufferSize = 0x10000)
+
+        /// <summary>
+        /// Will read the input stream and copy it to the literal output stream and updates the signature generator.
+        /// </summary>
+        /// <param name="InputStream">A data source.</param>
+        /// <param name="LiteralOutputStream">A literal output stream.</param>
+        /// <param name="SignatureGenerator">A signature generator.</param>
+        /// <param name="BufferSize">An optional buffer size.</param>
+        internal static void CopyAndHash(this Stream            InputStream,
+                                         Stream                 LiteralOutputStream,
+                                         PgpSignatureGenerator  SignatureGenerator,
+                                         UInt32                 BufferSize = 0x10000)
+        {
+
+            var Read    = 0;
+            var Buffer  = new Byte[BufferSize];
+
+            while ((Read = InputStream.Read(Buffer, 0, Buffer.Length)) > 0)
+            {
+                LiteralOutputStream.Write (Buffer, 0, Read);
+                SignatureGenerator. Update(Buffer, 0, Read);
+            }
+
+        }
+
+        #endregion
+
+        #region EncryptSignAndZip(InputStream, Length, SecretKey, Passphrase, PublicKey, OutputStream, SymmetricKeyAlgorithm, HashAlgorithm, CompressionAlgorithm, ArmoredOutput, Filename, LastModificationTime)
+
+        public static void EncryptSignAndZip(Stream                  InputStream,
+                                             UInt64                  Length,
+                                             PgpSecretKey            SecretKey,
+                                             String                  Passphrase,
+                                             PgpPublicKey            PublicKey,
+                                             Stream                  OutputStream,
+                                             SymmetricKeyAlgorithms  SymmetricKeyAlgorithm  = SymmetricKeyAlgorithms.Aes256,
+                                             HashAlgorithms          HashAlgorithm          = HashAlgorithms.Sha512,
+                                             CompressionAlgorithms   CompressionAlgorithm   = CompressionAlgorithms.Zip,
+                                             Boolean                 ArmoredOutput          = true,
+                                             String                  Filename               = "encrypted.asc",
+                                             DateTime?               LastModificationTime   = null)
+        {
+
+            #region Initial checks
+
+            if (InputStream == null)
+                throw new ArgumentNullException("The Input stream must not be null!");
+
+            if (SecretKey == null)
+                throw new ArgumentNullException("The secret key must not be null!");
+
+            if (Passphrase == null)
+                throw new ArgumentNullException("The pass phrase must not be null!");
+
+            if (PublicKey == null)
+                throw new ArgumentNullException("The public key must not be null!");
+
+            if (OutputStream == null)
+                throw new ArgumentNullException("The output stream must not be null!");
+
+            #endregion
+
+            var InternalOutputStream = ArmoredOutput ? new ArmoredOutputStream(OutputStream) : OutputStream;
+
+            using (var EncryptionPipe          = InternalOutputStream.EncryptWith(PublicKey, SymmetricKeyAlgorithm))
+            using (var CompressAndEncryptPipe  = EncryptionPipe.CompressWith(CompressionAlgorithm))
+            {
+
+                // Create signature generator...
+                var SignatureGenerator = CreateSignatureGenerator(SecretKey,
+                                                                  Passphrase,
+                                                                  HashAlgorithm);
+
+                // ...and write signature infos to the output stream
+                SignatureGenerator.
+                    GenerateOnePassVersion(IsNested: false).
+                    Encode(CompressAndEncryptPipe);
 
 
+                using (var _LiteralOutputPipe = LiteralOutputPipe(Filename,
+                                                                  Length,
+                                                                  LastModificationTime != null ? LastModificationTime.Value : DateTime.UtcNow,
+                                                                  CompressAndEncryptPipe))
+                {
 
+                    // Read plaintext and copy&hash it...
+                    InputStream.CopyAndHash(_LiteralOutputPipe,
+                                             SignatureGenerator);
 
+                    // Write the generated signature to the output stream
+                    SignatureGenerator.
+                        Generate().
+                        Encode(CompressAndEncryptPipe);
 
+                }
 
+            }
 
+            InternalOutputStream.Flush();
+            InternalOutputStream.Close();
 
+        }
+
+        #endregion
+
+        #region EncryptSignAndZip(InputFile, SecretKey, Passphrase, PublicKey, OutputFile, ...)
+
+        public static void EncryptSignAndZip(FileInfo                InputFile,
+                                             PgpSecretKey            SecretKey,
+                                             String                  Passphrase,
+                                             PgpPublicKey            PublicKey,
+                                             FileInfo                OutputFile,
+                                             SymmetricKeyAlgorithms  SymmetricKeyAlgorithm  = SymmetricKeyAlgorithms.Aes256,
+                                             HashAlgorithms          HashAlgorithm          = HashAlgorithms.Sha512,
+                                             CompressionAlgorithms   CompressionAlgorithm   = CompressionAlgorithms.Zip,
+                                             Boolean                 ArmoredOutput          = true)
+        {
+
+            EncryptSignAndZip(InputFile.OpenRead(),
+                              (UInt64) InputFile.Length,
+                              SecretKey,
+                              Passphrase,
+                              PublicKey,
+                              OutputFile.OpenWrite(),
+                              SymmetricKeyAlgorithm,
+                              HashAlgorithm,
+                              CompressionAlgorithm,
+                              ArmoredOutput,
+                              InputFile.Name,
+                              InputFile.LastWriteTime);
+
+        }
+
+        #endregion
 
     }
 

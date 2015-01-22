@@ -221,36 +221,6 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
 
         #region Constructor(s)
 
-        #region PgpEncryptedDataGenerator(EncryptionAlgorithm)
-
-        public PgpEncryptedDataGenerator(SymmetricKeyAlgorithms EncryptionAlgorithm)
-        {
-            this._EncryptionAlgorithm  = EncryptionAlgorithm;
-            this._SecureRandom         = new SecureRandom();
-            this._Methods              = new List<EncMethod>();
-        }
-
-        #endregion
-
-        #region PgpEncryptedDataGenerator(EncryptionAlgorithm, SecureRandom)
-
-        /// <summary>
-        /// Existing SecureRandom constructor.
-        /// </summary>
-        /// <param name="EncryptionAlgorithm">The symmetric algorithm to use.</param>
-        /// <param name="SecureRandom">Source of randomness.</param>
-        public PgpEncryptedDataGenerator(SymmetricKeyAlgorithms  EncryptionAlgorithm,
-                                         SecureRandom            SecureRandom)
-        {
-            this._EncryptionAlgorithm  = EncryptionAlgorithm;
-            this._SecureRandom         = SecureRandom;
-            this._Methods              = new List<EncMethod>();
-        }
-
-        #endregion
-
-        #region PgpEncryptedDataGenerator(EncryptionAlgorithm, WithIntegrityPacket, SecureRandom)
-
         /// <summary>
         /// Creates a cipher stream which will have an integrity packet associated with it.
         /// </summary>
@@ -259,18 +229,18 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
         /// <param name="SecureRandom">Source of randomness.</param>
         /// <param name="UseOldFormat">PGP 2.6.x compatibility required.</param>
         public PgpEncryptedDataGenerator(SymmetricKeyAlgorithms  EncryptionAlgorithm,
-                                         Boolean                 WithIntegrityPacket,
-                                         SecureRandom            SecureRandom = null,
-                                         Boolean                 UseOldFormat = false)
+                                         Boolean                 WithIntegrityPacket  = true,
+                                         SecureRandom            SecureRandom         = null,
+                                         Boolean                 UseOldFormat         = false)
         {
+
             this._EncryptionAlgorithm  = EncryptionAlgorithm;
             this._WithIntegrityPacket  = WithIntegrityPacket;
             this._SecureRandom         = SecureRandom != null ? SecureRandom : new SecureRandom();
             this._UseOldFormat         = UseOldFormat;
             this._Methods              = new List<EncMethod>();
-        }
 
-        #endregion
+        }
 
         #endregion
 
@@ -307,12 +277,12 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
 
         #endregion
 
-        #region AddMethod(PublicKey)
+        #region AddPublicKey(PublicKey)
 
         /// <summary>
         /// Add a public key encrypted session key to the encrypted object.
         /// </summary>
-        public void AddMethod(PgpPublicKey PublicKey)
+        public void AddPublicKey(PgpPublicKey PublicKey)
         {
 
             if (!PublicKey.IsEncryptionKey)
@@ -408,7 +378,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
 
                     key              = PgpUtilities.MakeRandomKey(_EncryptionAlgorithm, _SecureRandom);
                     var sessionInfo  = CreateSessionInfo(_EncryptionAlgorithm, key);
-                    var m            = (PubMethod)_Methods[0];
+                    var m            = (PubMethod) _Methods[0];
 
                     try
                     {

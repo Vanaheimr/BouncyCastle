@@ -198,7 +198,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Examples
 
                 PgpEncryptedDataGenerator encGen = new PgpEncryptedDataGenerator(
                     SymmetricKeyAlgorithms.Cast5, withIntegrityCheck, new SecureRandom());
-                encGen.AddMethod(encKey);
+                encGen.AddPublicKey(encKey);
 
                 Stream cOut = encGen.Open(outputStream, (UInt64) bytes.Length);
 

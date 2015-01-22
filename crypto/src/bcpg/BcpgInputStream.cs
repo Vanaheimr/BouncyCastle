@@ -13,27 +13,171 @@ namespace Org.BouncyCastle.Bcpg
     public class BcpgInputStream : BaseInputStream
     {
 
-        private Stream   m_in;
-        private Boolean  next = false;
-        private Int32    nextB;
+        #region (private, class) PartialInputStream
 
-        internal static BcpgInputStream Wrap(Stream inStr)
+        /// <summary>
+        /// A stream that overlays our input stream, allowing the user to only read a segment of it.
+        /// NB: dataLength will be negative if the segment length is in the upper range above 2**31.
+        /// </summary>
+        private class PartialInputStream : BaseInputStream
         {
 
-            if (inStr is BcpgInputStream)
-                return (BcpgInputStream) inStr;
+            #region Data
 
-            return new BcpgInputStream(inStr);
+            private readonly BcpgInputStream  BCPGInputStream;
+            private          Boolean          Partial;
+            private          UInt64           DataLength;
+
+            #endregion
+
+            #region (internal) Constructor(s)
+
+            internal PartialInputStream(BcpgInputStream  BCPGInputStream,
+                                        Boolean          Partial,
+                                        UInt64           DataLength)
+            {
+
+                this.BCPGInputStream  = BCPGInputStream;
+                this.Partial          = Partial;
+                this.DataLength       = DataLength;
+
+            }
+
+            #endregion
+
+
+            #region ReadByte()
+
+            public override Int32 ReadByte()
+            {
+
+                do
+                {
+                    if (DataLength != 0)
+                    {
+
+                        var ch = BCPGInputStream.ReadByte();
+                        if (ch < 0)
+                            throw new EndOfStreamException("Premature end of stream in PartialInputStream");
+
+                        DataLength--;
+
+                        return ch;
+
+                    }
+                }
+                while (Partial && ReadPartialDataLength() >= 0);
+
+                return -1;
+
+            }
+
+            #endregion
+
+            #region Read(Buffer, Offset, Count)
+
+            public override Int32 Read(Byte[] Buffer, Int32 Offset, Int32 Count)
+            {
+
+                do
+                {
+                    if (DataLength != 0)
+                    {
+
+                        var readLen  = ((Int32) DataLength > Count || (Int32) DataLength < 0) ? Count : (Int32) DataLength;
+                        var len      = BCPGInputStream.Read(Buffer, Offset, readLen);
+                        if (len < 1)
+                            throw new EndOfStreamException("Premature end of stream in PartialInputStream");
+
+                        DataLength -= (UInt64) len;
+                        return len;
+
+                    }
+                }
+                while (Partial && ReadPartialDataLength() >= 0);
+
+                return 0;
+
+            }
+
+            #endregion
+
+            #region ReadPartialDataLength()
+
+            private Int32 ReadPartialDataLength()
+            {
+
+                var l = BCPGInputStream.ReadByte();
+
+                if (l < 0)
+                    return -1;
+
+                Partial = false;
+
+                if (l < 192)
+                    DataLength  = (UInt64) l;
+
+                else if (l <= 223)
+                    DataLength  = (UInt64) (((l - 192) << 8) + (BCPGInputStream.ReadByte()) + 192);
+
+                else if (l == 255)
+                    DataLength  = (UInt64) ((BCPGInputStream.ReadByte() << 24) |
+                                            (BCPGInputStream.ReadByte() << 16) |
+                                            (BCPGInputStream.ReadByte() <<  8) |
+                                             BCPGInputStream.ReadByte());
+
+                else
+                {
+                    Partial     = true;
+                    DataLength  = (UInt64) (1 << (l & 0x1f));
+                }
+
+                return 0;
+
+            }
+
+            #endregion
 
         }
 
-        private BcpgInputStream(Stream inputStream)
+        #endregion
+
+        #region Data
+
+        private readonly Stream   InputStream;
+        private          Boolean  next = false;
+        private          Int32    nextB;
+
+        #endregion
+
+        #region (internal) Constructor(s)
+
+        private BcpgInputStream(Stream InputStream)
         {
-            this.m_in = inputStream;
+            this.InputStream = InputStream;
         }
 
+        #endregion
 
-        public override int ReadByte()
+
+        #region (internal, static) Wrap(InputStream)
+
+        internal static BcpgInputStream Wrap(Stream InputStream)
+        {
+
+            if (InputStream is BcpgInputStream)
+                return (BcpgInputStream) InputStream;
+
+            return new BcpgInputStream(InputStream);
+
+        }
+
+        #endregion
+
+
+        #region ReadByte()
+
+        public override Int32 ReadByte()
         {
 
             if (next)
@@ -42,13 +186,17 @@ namespace Org.BouncyCastle.Bcpg
                 return nextB;
             }
 
-            return m_in.ReadByte();
+            return InputStream.ReadByte();
 
         }
 
-        public override Int32 Read(Byte[]  buffer,
-                                   Int32   offset,
-                                   Int32   count)
+        #endregion
+
+        #region Read(Buffer, Offset, Count)
+
+        public override Int32 Read(Byte[]  Buffer,
+                                   Int32   Offset,
+                                   Int32   Count)
         {
 
             // Strangely, when count == 0, we should still attempt to read a byte
@@ -56,42 +204,60 @@ namespace Org.BouncyCastle.Bcpg
 //                return 0;
 
             if (!next)
-                return m_in.Read(buffer, offset, count);
+                return InputStream.Read(Buffer, Offset, Count);
 
             // We have next byte waiting, so return it
 
             if (nextB < 0)
                 return 0; // EndOfStream
 
-            if (buffer == null)
+            if (Buffer == null)
                 throw new ArgumentNullException("buffer");
 
-            buffer[offset] = (byte) nextB;
+            Buffer[Offset] = (byte) nextB;
             next = false;
 
             return 1;
 
         }
 
+        #endregion
+
+        #region ReadAll()
+
         public Byte[] ReadAll()
         {
             return Streams.ReadAll(this);
         }
 
-        public void ReadFully(Byte[]  buffer,
-                              Int32   off,
-                              Int32   len)
+        #endregion
+
+        #region ReadFully(Buffer, Offset, Length)
+
+        public void ReadFully(Byte[]  Buffer,
+                              Int32   Offset,
+                              Int32   Length)
         {
-            if (Streams.ReadFully(this, buffer, off, len) < len)
+            if (Streams.ReadFully(this, Buffer, Offset, Length) < Length)
                 throw new EndOfStreamException();
         }
+
+        #endregion
+
+        #region ReadFully(buffer)
 
         public void ReadFully(Byte[] buffer)
         {
             ReadFully(buffer, 0, buffer.Length);
         }
 
-        /// <summary>Returns the next packet tag in the stream.</summary>
+        #endregion
+
+        #region NextPacketTag()
+
+        /// <summary>
+        /// Returns the next packet tag in the stream.
+        /// </summary>
         public PacketTag NextPacketTag()
         {
 
@@ -100,7 +266,7 @@ namespace Org.BouncyCastle.Bcpg
 
                 try
                 {
-                    nextB = m_in.ReadByte();
+                    nextB = InputStream.ReadByte();
                 }
                 catch (EndOfStreamException)
                 {
@@ -128,11 +294,19 @@ namespace Org.BouncyCastle.Bcpg
 
         }
 
+        #endregion
+
+        #region ReadPacket<T>()
+
         public T ReadPacket<T>()
             where T : Packet
         {
             return ReadPacket() as T;
         }
+
+        #endregion
+
+        #region ReadPacket()
 
         public Packet ReadPacket()
         {
@@ -162,13 +336,13 @@ namespace Org.BouncyCastle.Bcpg
                 }
                 else if (l <= 223)
                 {
-                    int b = m_in.ReadByte();
+                    int b = InputStream.ReadByte();
                     bodyLen = ((l - 192) << 8) + (b) + 192;
                 }
                 else if (l == 255)
                 {
-                    bodyLen = (m_in.ReadByte() << 24) | (m_in.ReadByte() << 16)
-                        |  (m_in.ReadByte() << 8)  | m_in.ReadByte();
+                    bodyLen = (InputStream.ReadByte() << 24) | (InputStream.ReadByte() << 16)
+                        |  (InputStream.ReadByte() << 8)  | InputStream.ReadByte();
                 }
                 else
                 {
@@ -209,7 +383,7 @@ namespace Org.BouncyCastle.Bcpg
 
             else
             {
-                var pis = new PartialInputStream(this, partial, bodyLen);
+                var pis = new PartialInputStream(this, partial, (UInt64) bodyLen);
                 objStream = new BcpgInputStream(pis);
             }
 
@@ -261,106 +435,19 @@ namespace Org.BouncyCastle.Bcpg
             }
         }
 
+        #endregion
+
+
+        #region Close()
+
         public override void Close()
         {
-            m_in.Close();
+            InputStream.Close();
             base.Close();
         }
 
-        /// <summary>
-        /// A stream that overlays our input stream, allowing the user to only read a segment of it.
-        /// NB: dataLength will be negative if the segment length is in the upper range above 2**31.
-        /// </summary>
-        private class PartialInputStream : BaseInputStream
-        {
+        #endregion
 
-            private BcpgInputStream m_in;
-            private bool partial;
-            private int dataLength;
-
-            internal PartialInputStream(
-                BcpgInputStream    bcpgIn,
-                bool            partial,
-                int                dataLength)
-            {
-                this.m_in = bcpgIn;
-                this.partial = partial;
-                this.dataLength = dataLength;
-            }
-
-            public override int ReadByte()
-            {
-                do
-                {
-                    if (dataLength != 0)
-                    {
-                        int ch = m_in.ReadByte();
-                        if (ch < 0)
-                        {
-                            throw new EndOfStreamException("Premature end of stream in PartialInputStream");
-                        }
-                        dataLength--;
-                        return ch;
-                    }
-                }
-                while (partial && ReadPartialDataLength() >= 0);
-
-                return -1;
-            }
-
-            public override int Read(byte[] buffer, int offset, int count)
-            {
-                do
-                {
-                    if (dataLength != 0)
-                    {
-                        int readLen = (dataLength > count || dataLength < 0) ? count : dataLength;
-                        int len = m_in.Read(buffer, offset, readLen);
-                        if (len < 1)
-                        {
-                            throw new EndOfStreamException("Premature end of stream in PartialInputStream");
-                        }
-                        dataLength -= len;
-                        return len;
-                    }
-                }
-                while (partial && ReadPartialDataLength() >= 0);
-
-                return 0;
-            }
-
-            private int ReadPartialDataLength()
-            {
-                int l = m_in.ReadByte();
-
-                if (l < 0)
-                {
-                    return -1;
-                }
-
-                partial = false;
-
-                if (l < 192)
-                {
-                    dataLength = l;
-                }
-                else if (l <= 223)
-                {
-                    dataLength = ((l - 192) << 8) + (m_in.ReadByte()) + 192;
-                }
-                else if (l == 255)
-                {
-                    dataLength = (m_in.ReadByte() << 24) | (m_in.ReadByte() << 16)
-                        |  (m_in.ReadByte() << 8)  | m_in.ReadByte();
-                }
-                else
-                {
-                    partial = true;
-                    dataLength = 1 << (l & 0x1f);
-                }
-
-                return 0;
-            }
-        }
     }
+
 }

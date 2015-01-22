@@ -1,42 +1,112 @@
 using System;
-using System.Collections;
 using System.IO;
 using System.Text;
+using System.Linq;
+using System.Collections;
+using System.Collections.Generic;
 
 using Org.BouncyCastle.Utilities;
 using Org.BouncyCastle.Utilities.IO;
-using System.Collections.Generic;
 
 namespace Org.BouncyCastle.Bcpg
 {
-    /**
-    * reader for Base64 armored objects - read the headers and then start returning
-    * bytes when the data is reached. An IOException is thrown if the CRC check
-    * fails.
-    */
+
+    /// <summary>
+    /// Reader for Base64 armored objects - read the headers and then start returning
+    /// bytes when the data is reached. An IOException is thrown if the CRC check
+    /// fails.
+    /// </summary>
     public class ArmoredInputStream : BaseInputStream
     {
 
         #region Data
 
-        private readonly static byte[] decodingTable;
+        private readonly static Byte[] decodingTable;
 
-        Stream        input;
-        bool          start = true;
-        int[]         outBuf = new int[3];
-        int           bufPtr = 3;
-        Crc24         crc = new Crc24();
-        bool          crcFound = false;
-        bool          hasHeaders = true;
-        string        header = null;
-        bool          NewLineFound = false;
-        bool          clearText = false;
-        bool          restart = false;
-        List<String>  headerList;
-        int           lastC = 0;
-        bool          isEndOfStream;
+        Stream        InputStream;
+        Boolean       _Start        = true;
+        Int32[]       outBuf        = new Int32[3];
+        Int32         bufPtr        = 3;
+        Crc24         crc           = new Crc24();
+        Boolean       crcFound      = false;
+        Boolean       HasHeaders    = true;
+        String        header        = null;
+        Boolean       NewLineFound  = false;
+        Boolean       clearText     = false;
+        Boolean       restart       = false;
+        List<String>  HeaderList;
+        Int32         lastC         = 0;
+        Boolean       isEndOfStream;
 
         #endregion
+
+        #region Properties
+
+        #region IsClearText
+
+        /// <summary>
+        /// True if we are inside the clear text section of a PGP signed message.
+        /// </summary>
+        public Boolean IsClearText
+        {
+            get
+            {
+                return clearText;
+            }
+        }
+
+        #endregion
+
+        #region IsEndOfStream
+
+        /// <summary>
+        /// True if the stream is actually at end of file.
+        /// </summary>
+        public Boolean IsEndOfStream
+        {
+            get
+            {
+                return isEndOfStream;
+            }
+        }
+
+        #endregion
+
+        #region ArmorHeaderLine
+
+        /// <summary>
+        /// Return the armor header line (if there is one)
+        /// </summary>
+        public String ArmorHeaderLine
+        {
+            get
+            {
+                return header;
+            }
+        }
+
+        #endregion
+
+        #region ArmorHeaders
+
+        /// <summary>
+        /// Return the armor headers (the lines after the armor header line)
+        /// </summary>
+        public IEnumerable<String> ArmorHeaders
+        {
+            get
+            {
+                return HeaderList.Skip(1);
+            }
+        }
+
+        #endregion
+
+        #endregion
+
+        #region Constructor(s)
+
+        #region (static) ArmoredInputStream()
 
         static ArmoredInputStream()
         {
@@ -44,94 +114,113 @@ namespace Org.BouncyCastle.Bcpg
             decodingTable = new byte[128];
 
             for (int i = 'A'; i <= 'Z'; i++)
-                decodingTable[i] = (byte)(i - 'A');
+                decodingTable[i] = (byte) (i - 'A');
 
             for (int i = 'a'; i <= 'z'; i++)
-                decodingTable[i] = (byte)(i - 'a' + 26);
+                decodingTable[i] = (byte) (i - 'a' + 26);
 
             for (int i = '0'; i <= '9'; i++)
-                decodingTable[i] = (byte)(i - '0' + 52);
+                decodingTable[i] = (byte) (i - '0' + 52);
 
             decodingTable['+'] = 62;
             decodingTable['/'] = 63;
 
         }
 
-        #region Constructor(s)
+        #endregion
 
-        /**
-        * Create a stream for reading a PGP armoured message, parsing up to a header
-        * and then reading the data that follows.
-        *
-        * @param input
-        */
-        public ArmoredInputStream(Stream input)
-            : this(input, true)
+        #region ArmoredInputStream(InputStream)
+
+        /// <summary>
+        /// Create a stream for reading a PGP armoured message, parsing up to a header
+        /// and then reading the data that follows.
+        /// </summary>
+        /// <param name="InputStream">The input stream.</param>
+        public ArmoredInputStream(Stream InputStream)
+            : this(InputStream, true)
         { }
 
-        /**
-        * Create an armoured input stream which will assume the data starts
-        * straight away, or parse for headers first depending on the value of
-        * hasHeaders.
-        *
-        * @param input
-        * @param hasHeaders true if headers are to be looked for, false otherwise.
-        */
-        public ArmoredInputStream(Stream   input,
-                                  Boolean  hasHeaders)
+        #endregion
+
+        #region ArmoredInputStream(InputStream, HasHeaders)
+
+        /// <summary>
+        /// Create an armoured input stream which will assume the data starts
+        /// straight away, or parse for headers first depending on the value of
+        /// hasHeaders.
+        /// </summary>
+        /// <param name="InputStream">The input stream.</param>
+        /// <param name="HasHeaders">True if headers are to be looked for, false otherwise.</param>
+        public ArmoredInputStream(Stream   InputStream,
+                                  Boolean  HasHeaders)
         {
 
-            this.input       = input;
-            this.hasHeaders  = hasHeaders;
-            this.headerList  = new List<String>();
+            this.InputStream  = InputStream;
+            this.HasHeaders   = HasHeaders;
+            this.HeaderList   = new List<String>();
 
-            if (hasHeaders)
+            if (HasHeaders)
                 ParseHeaders();
 
-            start       = false;
+            _Start            = false;
 
         }
 
         #endregion
 
+        #endregion
 
 
-        /**
-        * decode the base 64 encoded input data.
-        *
-        * @return the offset the data starts in out.
-        */
-        private int Decode(
-            int      in0,
-            int      in1,
-            int      in2,
-            int      in3,
-            int[]    result)
+        #region Decode(in0, in1, in2, in3, result)
+
+        /// <summary>
+        /// Decode the base 64 encoded input data.
+        /// </summary>
+        /// <param name="in0"></param>
+        /// <param name="in1"></param>
+        /// <param name="in2"></param>
+        /// <param name="in3"></param>
+        /// <param name="result"></param>
+        /// <returns>The offset the data starts in out.</returns>
+        private Int32 Decode(Int32    in0,
+                             Int32    in1,
+                             Int32    in2,
+                             Int32    in3,
+                             Int32[]  result)
         {
-            if (in3 < 0)
-            {
-                throw new EndOfStreamException("unexpected end of file in armored stream.");
-            }
 
-            int    b1, b2, b3, b4;
+            if (in3 < 0)
+                throw new EndOfStreamException("unexpected end of file in armored stream.");
+
+            Int32 b1, b2, b3, b4;
+
             if (in2 == '=')
             {
+
                 b1 = decodingTable[in0] &0xff;
                 b2 = decodingTable[in1] & 0xff;
                 result[2] = ((b1 << 2) | (b2 >> 4)) & 0xff;
+
                 return 2;
+
             }
+
             else if (in3 == '=')
             {
+
                 b1 = decodingTable[in0];
                 b2 = decodingTable[in1];
                 b3 = decodingTable[in2];
                 result[1] = ((b1 << 2) | (b2 >> 4)) & 0xff;
                 result[2] = ((b2 << 4) | (b3 >> 2)) & 0xff;
+
                 return 1;
+
             }
+
             else
             {
+
                 b1 = decodingTable[in0];
                 b2 = decodingTable[in1];
                 b3 = decodingTable[in2];
@@ -139,12 +228,18 @@ namespace Org.BouncyCastle.Bcpg
                 result[0] = ((b1 << 2) | (b2 >> 4)) & 0xff;
                 result[1] = ((b2 << 4) | (b3 >> 2)) & 0xff;
                 result[2] = ((b3 << 6) | b4) & 0xff;
+
                 return 0;
+
             }
+
         }
 
+        #endregion
 
-        private bool ParseHeaders()
+        #region ParseHeaders()
+
+        private Boolean ParseHeaders()
         {
 
             header = null;
@@ -159,7 +254,7 @@ namespace Org.BouncyCastle.Bcpg
 
             else
             {
-                while ((c = input.ReadByte()) >= 0)
+                while ((c = InputStream.ReadByte()) >= 0)
                 {
                     if (c == '-' && (last == 0 || last == '\n' || last == '\r'))
                     {
@@ -182,26 +277,24 @@ namespace Org.BouncyCastle.Bcpg
                     Buffer.Append('-');
                 }
 
-                while ((c = input.ReadByte()) >= 0)
+                while ((c = InputStream.ReadByte()) >= 0)
                 {
+
                     if (last == '\r' && c == '\n')
-                    {
                         crLf = true;
-                    }
+
                     if (eolReached && (last != '\r' && c == '\n'))
-                    {
                         break;
-                    }
+
                     if (eolReached && c == '\r')
-                    {
                         break;
-                    }
+
                     if (c == '\r' || (last != '\r' && c == '\n'))
                     {
-                        string line = Buffer.ToString();
+                        var line = Buffer.ToString();
                         if (line.Trim().Length < 1)
                             break;
-                        headerList.Add(line);
+                        HeaderList.Add(line);
                         Buffer.Length = 0;
                     }
 
@@ -213,23 +306,20 @@ namespace Org.BouncyCastle.Bcpg
                     else
                     {
                         if (c == '\r' || (last != '\r' && c == '\n'))
-                        {
                             eolReached = true;
-                        }
                     }
 
                     last = c;
+
                 }
 
                 if (crLf)
-                {
-                    input.ReadByte(); // skip last \n
-                }
+                    InputStream.ReadByte(); // skip last \n
 
             }
 
-            if (headerList.Count > 0)
-                header = headerList[0];
+            if (HeaderList.Count > 0)
+                header = HeaderList[0];
 
             clearText = "-----BEGIN PGP SIGNED MESSAGE-----".Equals(header);
             NewLineFound = true;
@@ -238,138 +328,114 @@ namespace Org.BouncyCastle.Bcpg
 
         }
 
-        /**
-        * @return true if we are inside the clear text section of a PGP
-        * signed message.
-        */
-        public bool IsClearText
+        #endregion
+
+
+        #region (private) ReadIgnoreSpace()
+
+        private Int32 ReadIgnoreSpace()
         {
-            get
-            {
-                return clearText;
-            }
-        }
 
-        /**
-         * @return true if the stream is actually at end of file.
-         */
-        public bool IsEndOfStream
-        {
-            get
-            {
-                return isEndOfStream;
-            }
-        }
-
-        /**
-        * Return the armor header line (if there is one)
-        * @return the armor header line, null if none present.
-        */
-        public string GetArmorHeaderLine()
-        {
-            return header;
-        }
-
-        /**
-        * Return the armor headers (the lines after the armor header line),
-        * @return an array of armor headers, null if there aren't any.
-        */
-        public string[] GetArmorHeaders()
-        {
-            if (headerList.Count <= 1)
-            {
-                return null;
-            }
-
-            string[] hdrs = new string[headerList.Count - 1];
-            for (int i = 0; i != hdrs.Length; i++)
-            {
-                hdrs[i] = (string) headerList[i + 1];
-            }
-
-            return hdrs;
-        }
-
-        private int ReadIgnoreSpace()
-        {
             int c;
+
             do
             {
-                c = input.ReadByte();
+                c = InputStream.ReadByte();
             }
             while (c == ' ' || c == '\t');
 
             return c;
+
         }
 
-        private int ReadIgnoreWhitespace()
+        #endregion
+
+        #region (private) ReadIgnoreWhitespace()
+
+        private Int32 ReadIgnoreWhitespace()
         {
+
             int c;
+
             do
             {
-                c = input.ReadByte();
+                c = InputStream.ReadByte();
             }
             while (c == ' ' || c == '\t' || c == '\r' || c == '\n');
 
             return c;
+
         }
 
-        private int ReadByteClearText()
+        #endregion
+
+        #region (private) ReadByteClearText()
+
+        private Int32 ReadByteClearText()
         {
-            int c = input.ReadByte();
+
+            int c = InputStream.ReadByte();
 
             if (c == '\r' || (c == '\n' && lastC != '\r'))
-            {
                 NewLineFound = true;
-            }
+
             else if (NewLineFound && c == '-')
             {
-                c = input.ReadByte();
+
+                c = InputStream.ReadByte();
+
                 if (c == '-')            // a header, not dash escaped
                 {
                     clearText = false;
-                    start = true;
-                    restart = true;
+                    _Start    = true;
+                    restart   = true;
                 }
                 else                   // a space - must be a dash escape
-                {
-                    c = input.ReadByte();
-                }
+                    c = InputStream.ReadByte();
+
                 NewLineFound = false;
+
             }
             else
             {
                 if (c != '\n' && lastC != '\r')
-                {
                     NewLineFound = false;
-                }
             }
 
             lastC = c;
 
             if (c < 0)
-            {
                 isEndOfStream = true;
-            }
 
             return c;
+
         }
 
-        private int ReadClearText(byte[] buffer, int offset, int count)
+        #endregion
+
+        #region (private) ReadClearText(buffer, offset, count)
+
+        private Int32 ReadClearText(Byte[] buffer, Int32 offset, Int32 count)
         {
-            int pos = offset;
+
+            var pos = offset;
+
             try
             {
-                int end = offset + count;
+
+                var end = offset + count;
+
                 while (pos < end)
                 {
-                    int c = ReadByteClearText();
+
+                    var c = ReadByteClearText();
                     if (c == -1)
-                    {
                         break;
-                    }
+
                     buffer[pos++] = (byte) c;
+
                 }
+
             }
             catch (IOException ioe)
             {
@@ -377,24 +443,33 @@ namespace Org.BouncyCastle.Bcpg
             }
 
             return pos - offset;
+
         }
 
-        private int DoReadByte()
+        #endregion
+
+        #region (private) DoReadByte()
+
+        private Int32 DoReadByte()
         {
+
             if (bufPtr > 2 || crcFound)
             {
-                int c = ReadIgnoreSpace();
+
+                var c = ReadIgnoreSpace();
+
                 if (c == '\n' || c == '\r')
                 {
+
                     c = ReadIgnoreWhitespace();
+
                     if (c == '=')            // crc reached
                     {
+
                         bufPtr = Decode(ReadIgnoreSpace(), ReadIgnoreSpace(), ReadIgnoreSpace(), ReadIgnoreSpace(), outBuf);
 
                         if (bufPtr != 0)
-                        {
                             throw new IOException("no crc found in armored message.");
-                        }
 
                         crcFound = true;
 
@@ -403,39 +478,35 @@ namespace Org.BouncyCastle.Bcpg
                                  (outBuf[2] & 0xff);
 
                         if (i != crc.Value)
-                        {
                             throw new IOException("crc check failed in armored message.");
-                        }
 
                         return ReadByte();
+
                     }
 
                     if (c == '-')        // end of record reached
                     {
-                        while ((c = input.ReadByte()) >= 0)
+
+                        while ((c = InputStream.ReadByte()) >= 0)
                         {
                             if (c == '\n' || c == '\r')
-                            {
                                 break;
-                            }
                         }
 
                         if (!crcFound)
-                        {
                             throw new IOException("crc check not found.");
-                        }
 
-                        crcFound = false;
-                        start = true;
-                        bufPtr = 3;
+                        crcFound  = false;
+                        _Start    = true;
+                        bufPtr    = 3;
 
                         if (c < 0)
-                        {
                             isEndOfStream = true;
-                        }
 
                         return -1;
+
                     }
+
                 }
 
                 if (c < 0)
@@ -448,77 +519,103 @@ namespace Org.BouncyCastle.Bcpg
             }
 
             return outBuf[bufPtr++];
+
         }
 
-        public override int ReadByte()
+        #endregion
+
+
+        #region ReadByte()
+
+        public override Int32 ReadByte()
         {
-            if (start)
+
+            if (_Start)
             {
-                if (hasHeaders)
-                {
+
+                if (HasHeaders)
                     ParseHeaders();
-                }
 
                 crc.Reset();
-                start = false;
-                clearText = false;
+
+                _Start     = false;
+                clearText  = false;
+
             }
 
             if (clearText)
-            {
                 return ReadByteClearText();
-            }
 
-            int c = DoReadByte();
+            var c = DoReadByte();
 
             crc.Update(c);
 
             return c;
+
         }
 
-        public override int Read(byte[] buffer, int offset, int count)
+        #endregion
+
+        #region Read(Buffer, Offset, Count)
+
+        public override Int32 Read(Byte[] Buffer, Int32 Offset, Int32 Count)
         {
-            if (start && count > 0)
+
+            if (_Start && Count > 0)
             {
-                if (hasHeaders)
-                {
+
+                if (HasHeaders)
                     ParseHeaders();
-                }
-                start = false;
+
+                _Start = false;
+
             }
 
             if (clearText)
-            {
-                return ReadClearText(buffer, offset, count);
-            }
+                return ReadClearText(Buffer, Offset, Count);
 
-            int pos = offset;
+            var pos = Offset;
+
             try
             {
-                int end = offset + count;
+
+                var end = Offset + Count;
+
                 while (pos < end)
                 {
-                    int c = DoReadByte();
+
+                    var c = DoReadByte();
                     crc.Update(c);
+
                     if (c == -1)
-                    {
                         break;
-                    }
-                    buffer[pos++] = (byte) c;
+
+                    Buffer[pos++] = (byte) c;
+
                 }
+
             }
             catch (IOException ioe)
             {
-                if (pos == offset) throw ioe;
+                if (pos == Offset) throw ioe;
             }
 
-            return pos - offset;
+            return pos - Offset;
+
         }
+
+        #endregion
+
+        #region Close()
 
         public override void Close()
         {
-            input.Close();
+            InputStream.Close();
             base.Close();
         }
+
+        #endregion
+
     }
+
 }

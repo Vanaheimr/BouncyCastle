@@ -339,7 +339,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
                                                   FileInfo  file)
         {
             var lData = new PgpLiteralDataGenerator();
-            var pOut = lData.Open(output, fileType, file.Name, (UInt64) file.Length, file.LastWriteTime);
+            var pOut = lData.Open(fileType, file.Name, (UInt64) file.Length, file.LastWriteTime, output);
             PipeFileContents(file, pOut, 4096);
         }
 
@@ -352,7 +352,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
                                                   Byte[]    buffer)
         {
             var lData = new PgpLiteralDataGenerator();
-            var pOut  = lData.Open(output, fileType, file.Name, file.LastWriteTime, buffer);
+            var pOut  = lData.Open(fileType, file.Name, file.LastWriteTime, output, buffer);
             PipeFileContents(file, pOut, buffer.Length);
         }
 
@@ -394,76 +394,72 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
         /// Return either an ArmoredInputStream or a BcpgInputStream based on whether
         /// the initial characters of the stream are binary PGP encodings or not.
         /// </summary>
-        public static Stream GetDecoderStream(Stream inputStream)
+        public static Stream GetDecoderStream(Stream InputStream)
         {
 
             // TODO Remove this restriction?
-            if (!inputStream.CanSeek)
+            if (!InputStream.CanSeek)
                 throw new ArgumentException("inputStream must be seek-able", "inputStream");
 
-            long markedPos = inputStream.Position;
+            var markedPos = InputStream.Position;
 
-            int ch = inputStream.ReadByte();
+            int ch = InputStream.ReadByte();
             if ((ch & 0x80) != 0)
             {
-                inputStream.Position = markedPos;
-
-                return inputStream;
+                InputStream.Position = markedPos;
+                return InputStream;
             }
+
             else
             {
 
                 if (!IsPossiblyBase64(ch))
                 {
-                    inputStream.Position = markedPos;
-                    return new ArmoredInputStream(inputStream);
+                    InputStream.Position = markedPos;
+                    return new ArmoredInputStream(InputStream);
                 }
 
-                byte[]    buf = new byte[ReadAhead];
-                int        count = 1;
-                int        index = 1;
+                var buf    = new Byte[ReadAhead];
+                var count  = 1;
+                var index  = 1;
 
-                buf[0] = (byte)ch;
-                while (count != ReadAhead && (ch = inputStream.ReadByte()) >= 0)
+                buf[0] = (byte) ch;
+                while (count != ReadAhead && (ch = InputStream.ReadByte()) >= 0)
                 {
+
                     if (!IsPossiblyBase64(ch))
                     {
-                        inputStream.Position = markedPos;
 
-                        return new ArmoredInputStream(inputStream);
+                        InputStream.Position = markedPos;
+
+                        return new ArmoredInputStream(InputStream);
+
                     }
 
                     if (ch != '\n' && ch != '\r')
-                    {
                         buf[index++] = (byte)ch;
-                    }
 
                     count++;
+
                 }
 
-                inputStream.Position = markedPos;
+                InputStream.Position = markedPos;
 
-                //
                 // nothing but new lines, little else, assume regular armoring
-                //
                 if (count < 4)
-                {
-                    return new ArmoredInputStream(inputStream);
-                }
+                    return new ArmoredInputStream(InputStream);
 
-                //
+
                 // test our non-blank data
-                //
-                byte[] firstBlock = new byte[8];
+                var firstBlock = new byte[8];
                 Array.Copy(buf, 0, firstBlock, 0, firstBlock.Length);
-                byte[] decoded = Base64.Decode(firstBlock);
+                var decoded = Base64.Decode(firstBlock);
 
-                //
+
                 // it's a base64 PGP block.
-                //
-                bool hasHeaders = (decoded[0] & 0x80) == 0;
+                var hasHeaders = (decoded[0] & 0x80) == 0;
 
-                return new ArmoredInputStream(inputStream, hasHeaders);
+                return new ArmoredInputStream(InputStream, hasHeaders);
 
             }
 

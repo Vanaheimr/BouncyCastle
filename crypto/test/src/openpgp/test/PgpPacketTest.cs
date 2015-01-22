@@ -26,12 +26,11 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
 
                 var bOut = new MemoryStream();
 
-                var outputStream = generator.Open(
-                    new UncloseableStream(bOut),
-                    PgpLiteralData.Binary,
-                    PgpLiteralData.Console,
-                    (UInt64) i,
-                    DateTime.UtcNow);
+                var outputStream = generator.Open(PgpLiteralData.Binary,
+                                                  PgpLiteralData.Console,
+                                                  (UInt64) i,
+                                                  DateTime.UtcNow,
+                                                  new UncloseableStream(bOut));
 
                 outputStream.Write(buf, 0, i);
 

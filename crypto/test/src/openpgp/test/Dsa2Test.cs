@@ -130,12 +130,11 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
             DateTime testDate = new DateTime(
                 (DateTime.UtcNow.Ticks / TimeSpan.TicksPerSecond) * TimeSpan.TicksPerSecond);
 
-            Stream lOut = lGen.Open(
-                new UncloseableStream(bcOut),
-                PgpLiteralData.Binary,
-                "_CONSOLE",
-                (UInt64) dataBytes.Length,
-                testDate);
+            Stream lOut = lGen.Open(PgpLiteralData.Binary,
+                                    "_CONSOLE",
+                                    (UInt64) dataBytes.Length,
+                                    testDate,
+                                    new UncloseableStream(bcOut));
 
             int ch;
             while ((ch = testIn.ReadByte()) >= 0)

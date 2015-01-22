@@ -1,7 +1,8 @@
 using System;
-using System.Collections;
 using System.IO;
 using System.Text;
+using System.Linq;
+using System.Collections;
 
 using NUnit.Framework;
 
@@ -170,16 +171,16 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
             ArmoredInputStream aIn = new ArmoredInputStream(
                 new MemoryStream(Encoding.ASCII.GetBytes(message)));
 
-            string[] headers = aIn.GetArmorHeaders();
+            var headers = aIn.ArmorHeaders;
 
-            if (headers == null || headers.Length != 1)
+            if (headers == null || headers.Count() != 1)
             {
                 Fail("wrong number of headers found");
             }
 
-            if (!"Hash: SHA256".Equals(headers[0]))
+            if (!"Hash: SHA256".Equals(headers.First()))
             {
-                Fail("header value wrong: " + headers[0]);
+                Fail("header value wrong: " + headers.First());
             }
 
             //

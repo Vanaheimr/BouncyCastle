@@ -1,100 +1,49 @@
 using System;
+using System.Linq;
 using System.Text;
 
 namespace Org.BouncyCastle.Utilities
 {
-    /// <summary> General string utilities.</summary>
+
+    /// <summary>
+    /// General string utilities.
+    /// </summary>
     public abstract class Strings
     {
-        internal static bool IsOneOf(string s, params string[] candidates)
+
+        internal static Boolean IsOneOf(String StringValue, params String[] Candidates)
         {
-            foreach (string candidate in candidates)
-            {
-                if (s == candidate)
-                    return true;
-            }
-            return false;
+            return Candidates.Any(v => v == StringValue);
         }
 
-        public static string FromByteArray(
-            byte[] bs)
+        public static String FromByteArray(Byte[] ByteArray)
         {
-            char[] cs = new char[bs.Length];
-            for (int i = 0; i < cs.Length; ++i)
-            {
-                cs[i] = Convert.ToChar(bs[i]);
-            }
-            return new string(cs);
+            return new String(ByteArray.Select(v => Convert.ToChar(v)).ToArray());
         }
 
-        public static byte[] ToByteArray(
-            char[] cs)
+        public static Byte[] ToByteArray(Char[] CharArray)
         {
-            byte[] bs = new byte[cs.Length];
-            for (int i = 0; i < bs.Length; ++i)
-            {
-                bs[i] = Convert.ToByte(cs[i]);
-            }
-            return bs;
+            return CharArray.Select(v => Convert.ToByte(v)).ToArray();
         }
 
-        public static byte[] ToByteArray(
-            string s)
+        public static Byte[] ToByteArray(String StringValue)
         {
-            byte[] bs = new byte[s.Length];
-            for (int i = 0; i < bs.Length; ++i)
-            {
-                bs[i] = Convert.ToByte(s[i]);
-            }
-            return bs;
+            return StringValue.Select(v => Convert.ToByte(v)).ToArray();
         }
 
-        public static string FromAsciiByteArray(
-            byte[] bytes)
+        public static String FromAsciiByteArray(Byte[] ByteArray)
         {
-#if SILVERLIGHT
-            // TODO Check for non-ASCII bytes in input?
-            return Encoding.UTF8.GetString(bytes, 0, bytes.Length);
-#else
-            return Encoding.ASCII.GetString(bytes, 0, bytes.Length);
-#endif
+            return Encoding.ASCII.GetString(ByteArray, 0, ByteArray.Length);
         }
 
-        public static byte[] ToAsciiByteArray(
-            char[] cs)
+        public static Byte[] ToAsciiByteArray(Char[] CharArray)
         {
-#if SILVERLIGHT
-            // TODO Check for non-ASCII characters in input?
-            return Encoding.UTF8.GetBytes(cs);
-#else
-            return Encoding.ASCII.GetBytes(cs);
-#endif
+            return Encoding.ASCII.GetBytes(CharArray);
         }
 
-        public static byte[] ToAsciiByteArray(
-            string s)
+        public static Byte[] ToAsciiByteArray(String StringValue)
         {
-#if SILVERLIGHT
-            // TODO Check for non-ASCII characters in input?
-            return Encoding.UTF8.GetBytes(s);
-#else
-            return Encoding.ASCII.GetBytes(s);
-#endif
-        }
-
-        public static String FromUtf8ByteArray(Byte[] bytes)
-        {
-            return Encoding.UTF8.GetString(bytes, 0, bytes.Length);
-        }
-
-        public static Byte[] ToUtf8ByteArray(Char[] cs)
-        {
-            return Encoding.UTF8.GetBytes(cs);
-        }
-
-        public static Byte[] ToUtf8ByteArray(String s)
-        {
-            return Encoding.UTF8.GetBytes(s);
+            return Encoding.ASCII.GetBytes(StringValue);
         }
 
     }

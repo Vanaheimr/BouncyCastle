@@ -149,12 +149,11 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
 
             PgpLiteralDataGenerator lData = new PgpLiteralDataGenerator();
             Stream comOut = comData.Open(new UncloseableStream(bOut));
-            Stream ldOut = lData.Open(
-                new UncloseableStream(comOut),
-                PgpLiteralData.Binary,
-                PgpLiteralData.Console,
-                (UInt64) text.Length,
-                TestDateTime);
+            Stream ldOut = lData.Open(PgpLiteralData.Binary,
+                                      PgpLiteralData.Console,
+                                      (UInt64) text.Length,
+                                      TestDateTime,
+                                      new UncloseableStream(comOut));
 
             ldOut.Write(text, 0, text.Length);
             ldOut.Close();
@@ -165,12 +164,11 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
             // encrypt - with stream close
             //
             MemoryStream cbOut = new UncloseableMemoryStream();
-            PgpEncryptedDataGenerator cPk = new PgpEncryptedDataGenerator(
-                SymmetricKeyAlgorithms.Cast5, new SecureRandom());
+            var cPk = new PgpEncryptedDataGenerator(SymmetricKeyAlgorithms.Cast5);
 
             cPk.AddMethod(pass);
 
-            byte[] bOutData = bOut.ToArray();
+            var bOutData = bOut.ToArray();
             Stream cOut = cPk.Open(new UncloseableStream(cbOut), (UInt64) bOutData.Length);
             cOut.Write(bOutData, 0, bOutData.Length);
             cOut.Close();
@@ -185,8 +183,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
             // encrypt - with generator close
             //
             cbOut = new UncloseableMemoryStream();
-            cPk = new PgpEncryptedDataGenerator(
-                SymmetricKeyAlgorithms.Cast5, new SecureRandom());
+            cPk   = new PgpEncryptedDataGenerator(SymmetricKeyAlgorithms.Cast5);
 
             cPk.AddMethod(pass);
 
@@ -206,32 +203,29 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
             //
             // encrypt - partial packet style.
             //
-            SecureRandom rand = new SecureRandom();
-            byte[] test = new byte[1233];
+            var rand  = new SecureRandom();
+            var test  = new byte[1233];
 
             rand.NextBytes(test);
 
             bOut = new UncloseableMemoryStream();
 
-            comData = new PgpCompressedDataGenerator(
-                CompressionAlgorithms.Zip);
-            comOut = comData.Open(new UncloseableStream(bOut));
+            comData = new PgpCompressedDataGenerator(CompressionAlgorithms.Zip);
+            comOut  = comData.Open(new UncloseableStream(bOut));
 
-            lData = new PgpLiteralDataGenerator();
-            ldOut = lData.Open(
-                new UncloseableStream(comOut),
-                PgpLiteralData.Binary,
-                PgpLiteralData.Console,
-                TestDateTime,
-                new byte[16]);
+            lData   = new PgpLiteralDataGenerator();
+            ldOut   = lData.Open(PgpLiteralData.Binary,
+                                 PgpLiteralData.Console,
+                                 TestDateTime,
+                                 new UncloseableStream(comOut),
+                                 new Byte[16]);
 
             ldOut.Write(test, 0, test.Length);
             lData.Close();
 
             comData.Close();
             cbOut = new UncloseableMemoryStream();
-            cPk = new PgpEncryptedDataGenerator(
-                SymmetricKeyAlgorithms.Cast5, rand);
+            cPk   = new PgpEncryptedDataGenerator(SymmetricKeyAlgorithms.Cast5, SecureRandom: rand);
 
             cPk.AddMethod(pass);
 
@@ -253,8 +247,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
             // with integrity packet
             //
             cbOut = new UncloseableMemoryStream();
-            cPk = new PgpEncryptedDataGenerator(
-                SymmetricKeyAlgorithms.Cast5, true, rand);
+            cPk   = new PgpEncryptedDataGenerator(SymmetricKeyAlgorithms.Cast5, true, rand);
 
             cPk.AddMethod(pass);
 
@@ -281,12 +274,9 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
             //
             // sample message
             //
-            PgpObjectFactory pgpFact = new PgpObjectFactory(testPBEAsym);
-
-            PgpEncryptedDataList enc = (PgpEncryptedDataList)pgpFact.NextPgpObject();
-
-            PgpPbeEncryptedData pbe = (PgpPbeEncryptedData) enc[1];
-
+            var pgpFact  = new PgpObjectFactory(testPBEAsym);
+            var enc      = (PgpEncryptedDataList) pgpFact.NextPgpObject();
+            var pbe      = (PgpPbeEncryptedData) enc[1];
             Stream clear = pbe.GetDataStream("password");
 
             pgpFact = new PgpObjectFactory(clear);
@@ -312,12 +302,11 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
 
             lData = new PgpLiteralDataGenerator();
             comOut = comData.Open(new UncloseableStream(bOut));
-            ldOut = lData.Open(
-                new UncloseableStream(comOut),
-                PgpLiteralData.Binary,
-                PgpLiteralData.Console,
-                (UInt64) msg.Length,
-                TestDateTime);
+            ldOut = lData.Open(PgpLiteralData.Binary,
+                               PgpLiteralData.Console,
+                               (UInt64) msg.Length,
+                               TestDateTime,
+                               new UncloseableStream(comOut));
 
             ldOut.Write(msg, 0, msg.Length);
 

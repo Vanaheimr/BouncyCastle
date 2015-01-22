@@ -57,7 +57,12 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
 
         public PgpObjectFactory(Stream InputStream)
         {
+
+            if (InputStream == null)
+                throw new ArgumentNullException("InputStream");
+
             this._BCPGInputStream = BcpgInputStream.Wrap(InputStream);
+
         }
 
         #endregion

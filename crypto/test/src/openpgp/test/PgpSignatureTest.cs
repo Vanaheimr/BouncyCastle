@@ -748,12 +748,11 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
             sGen.GenerateOnePassVersion(false).Encode(bOut);
 
             PgpLiteralDataGenerator lGen = new PgpLiteralDataGenerator();
-            Stream lOut = lGen.Open(
-                new UncloseableStream(bOut),
-                PgpLiteralData.Binary,
-                "_CONSOLE",
-                (UInt64) TEST_DATA.Length * 2,
-                DateTime.UtcNow);
+            Stream lOut = lGen.Open(PgpLiteralData.Binary,
+                                    "_CONSOLE",
+                                    (UInt64) TEST_DATA.Length * 2,
+                                    DateTime.UtcNow,
+                                    new UncloseableStream(bOut));
 
             int ch;
             while ((ch = testIn.ReadByte()) >= 0)
@@ -789,12 +788,11 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
             sGen.GenerateOnePassVersion(false).Encode(bOut);
 
             PgpLiteralDataGenerator lGen = new PgpLiteralDataGenerator();
-            Stream lOut = lGen.Open(
-                new UncloseableStream(bOut),
-                PgpLiteralData.Text,
-                "_CONSOLE",
-                (UInt64) data.Length * 2,
-                creationTime);
+            Stream lOut = lGen.Open(PgpLiteralData.Text,
+                                    "_CONSOLE",
+                                    (UInt64) data.Length * 2,
+                                    creationTime,
+                                    new UncloseableStream(bOut));
 
             int ch;
             while ((ch = testIn.ReadByte()) >= 0)
@@ -844,12 +842,11 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
             sGen.GenerateOnePassVersion(false).Encode(bOut);
 
             PgpLiteralDataGenerator lGen = new PgpLiteralDataGenerator();
-            Stream lOut = lGen.Open(
-                new UncloseableStream(bOut),
-                PgpLiteralData.Binary,
-                "_CONSOLE",
-                (UInt64) TEST_DATA.Length * 2,
-                DateTime.UtcNow);
+            Stream lOut = lGen.Open(PgpLiteralData.Binary,
+                                    "_CONSOLE",
+                                    (UInt64) TEST_DATA.Length * 2,
+                                    DateTime.UtcNow,
+                                    new UncloseableStream(bOut));
 
             int ch;
             while ((ch = testIn.ReadByte()) >= 0)
@@ -884,12 +881,11 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp.Tests
             sGen.GenerateOnePassVersion(false).Encode(bOut);
 
             PgpLiteralDataGenerator lGen = new PgpLiteralDataGenerator();
-            Stream lOut = lGen.Open(
-                new UncloseableStream(bOut),
-                PgpLiteralData.Text,
-                "_CONSOLE",
-                (UInt64) data.Length * 2,
-                DateTime.UtcNow);
+            Stream lOut = lGen.Open(PgpLiteralData.Text,
+                                    "_CONSOLE",
+                                    (UInt64) data.Length * 2,
+                                    DateTime.UtcNow,
+                                    new UncloseableStream(bOut));
 
             int ch;
             while ((ch = testIn.ReadByte()) >= 0)
