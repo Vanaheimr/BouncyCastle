@@ -81,7 +81,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
                 var _UserAttributePacket  = _Packet as UserAttributePacket;
 
                 if (_UserIdPacket != null)
-                    Ids.Add(_UserIdPacket.GetId());
+                    Ids.Add(_UserIdPacket.Id);
 
                 else if (_UserAttributePacket != null)
                     Ids.Add(new PgpUserAttributeSubpacketVector(_UserAttributePacket.GetSubpackets()));

@@ -3379,6 +3379,7 @@
     <Compile Include="src\openpgp\PgpException.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="src\openpgp\PgpUserId.cs" />
     <Compile Include="src\openpgp\PgpExperimental.cs">
       <SubType>Code</SubType>
     </Compile>

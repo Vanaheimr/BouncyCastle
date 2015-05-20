@@ -3,35 +3,86 @@ using System.Text;
 
 namespace Org.BouncyCastle.Bcpg
 {
-    /**
-    * Basic type for a user ID packet.
-    */
-    public class UserIdPacket
-        : ContainedPacket
+
+    /// <summary>
+    /// Basic type for a user ID packet.
+    /// </summary>
+    public class UserIdPacket : ContainedPacket
     {
-        private readonly byte[] idData;
 
-        public UserIdPacket(
-            BcpgInputStream bcpgIn)
+        #region Data
+
+        private readonly Byte[] _IdData;
+
+        #endregion
+
+        #region Properties
+
+        #region Id
+
+        private readonly String _Id;
+
+        /// <summary>
+        /// The Id.
+        /// </summary>
+        public String Id
         {
-            this.idData = bcpgIn.ReadAll();
+            get
+            {
+                return _Id;
+            }
         }
 
-		public UserIdPacket(
-			string id)
+        #endregion
+
+        #endregion
+
+        #region Constructor(s)
+
+        #region UserIdPacket(BCPGInputStream)
+
+        /// <summary>
+        /// Read a UserId packet from the given stream.
+        /// </summary>
+        /// <param name="BCPGInputStream">An input stream.</param>
+        public UserIdPacket(BcpgInputStream BCPGInputStream)
         {
-            this.idData = Encoding.UTF8.GetBytes(id);
+
+            this._IdData  = BCPGInputStream.ReadAll();
+            this._Id      = Encoding.UTF8.GetString(_IdData, 0, _IdData.Length);
+
         }
 
-		public string GetId()
+        #endregion
+
+        #region UserIdPacket(Id)
+
+        /// <summary>
+        /// Create a new UserId packet from the given string.
+        /// </summary>
+        /// <param name="Id">A UserId.</param>
+        public UserIdPacket(String Id)
         {
-			return Encoding.UTF8.GetString(idData, 0, idData.Length);
+
+            this._Id      = Id;
+            this._IdData  = Encoding.UTF8.GetBytes(Id);
+
         }
 
-		public override void Encode(
-            BcpgOutputStream bcpgOut)
+        #endregion
+
+        #endregion
+
+
+        #region Encode(BCPGOutputStream)
+
+        public override void Encode(BcpgOutputStream BCPGOutputStream)
         {
-            bcpgOut.WritePacket(PacketTag.UserId, idData, true);
+            BCPGOutputStream.WritePacket(PacketTag.UserId, _IdData, true);
         }
+
+        #endregion
+
     }
+
 }

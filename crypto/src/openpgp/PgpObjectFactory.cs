@@ -173,6 +173,9 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
                 case PacketTag.Experimental4:
                     return new PgpExperimental(_BCPGInputStream);
 
+                case PacketTag.UserId:
+                    return new PgpUserId(_BCPGInputStream);
+
             }
 
             throw new IOException("unknown object in stream " + _BCPGInputStream.NextPacketTag());
