@@ -56,7 +56,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
         {
             get
             {
-                return _ExtraPubKeys.Values;
+                return _ExtraPubKeys.Select(KVP => KVP.Value);
             }
         }
 
