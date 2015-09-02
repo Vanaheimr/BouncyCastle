@@ -50,14 +50,14 @@ namespace Org.BouncyCastle.Crypto.Parameters
 				return false;
 			}
 
-			return kp.IsPrivate == this.IsPrivate
+			return kp.IsPrivateKey == this.IsPrivateKey
 				&& kp.Modulus.Equals(this.modulus)
 				&& kp.Exponent.Equals(this.exponent);
         }
 
 		public override int GetHashCode()
         {
-            return modulus.GetHashCode() ^ exponent.GetHashCode() ^ IsPrivate.GetHashCode();
+            return modulus.GetHashCode() ^ exponent.GetHashCode() ^ IsPrivateKey.GetHashCode();
         }
     }
 }

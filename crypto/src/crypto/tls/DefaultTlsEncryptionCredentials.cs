@@ -21,7 +21,7 @@ namespace Org.BouncyCastle.Crypto.Tls
                 throw new ArgumentException("cannot be empty", "certificate");
             if (privateKey == null)
                 throw new ArgumentNullException("'privateKey' cannot be null");
-            if (!privateKey.IsPrivate)
+            if (!privateKey.IsPrivateKey)
                 throw new ArgumentException("must be private", "privateKey");
 
             if (privateKey is RsaKeyParameters)

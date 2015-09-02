@@ -37,7 +37,7 @@ namespace Org.BouncyCastle.Crypto.Generators
 				random = new SecureRandom();
 			}
 
-			if (key.IsPrivate)
+			if (key.IsPrivateKey)
 				throw new ArgumentException("generator requires RSA public key");
 		}
 

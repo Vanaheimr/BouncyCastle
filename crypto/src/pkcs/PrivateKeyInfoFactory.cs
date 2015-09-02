@@ -26,7 +26,7 @@ namespace Org.BouncyCastle.Pkcs
         {
             if (key == null)
                 throw new ArgumentNullException("key");
-            if (!key.IsPrivate)
+            if (!key.IsPrivateKey)
                 throw new ArgumentException("Public key passed - private key expected", "key");
 
             if (key is ElGamalPrivateKeyParameters)

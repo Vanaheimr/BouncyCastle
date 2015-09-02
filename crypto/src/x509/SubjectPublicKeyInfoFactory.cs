@@ -37,7 +37,7 @@ namespace Org.BouncyCastle.X509
         {
             if (key == null)
                 throw new ArgumentNullException("key");
-            if (key.IsPrivate)
+            if (key.IsPrivateKey)
                 throw new ArgumentException("Private key passed - public key expected.", "key");
 
             if (key is ElGamalPublicKeyParameters)

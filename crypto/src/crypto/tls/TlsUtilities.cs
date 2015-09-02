@@ -1030,7 +1030,7 @@ namespace Org.BouncyCastle.Crypto.Tls
             try
             {
                 AsymmetricKeyParameter publicKey = PublicKeyFactory.CreateKey(keyInfo);
-                if (publicKey.IsPrivate)
+                if (publicKey.IsPrivateKey)
                     throw new TlsFatalAlert(AlertDescription.internal_error);
 
                 /*

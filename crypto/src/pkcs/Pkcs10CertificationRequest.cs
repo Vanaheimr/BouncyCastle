@@ -221,9 +221,9 @@ namespace Org.BouncyCastle.Pkcs
 				throw new ArgumentNullException("subject");
 			if (publicKey == null)
 				throw new ArgumentNullException("publicKey");
-			if (publicKey.IsPrivate)
+			if (publicKey.IsPrivateKey)
 				throw new ArgumentException("expected public key", "publicKey");
-			if (!signingKey.IsPrivate)
+			if (!signingKey.IsPrivateKey)
 				throw new ArgumentException("key for signing must be private", "signingKey");
 
 //			DerObjectIdentifier sigOid = SignerUtilities.GetObjectIdentifier(signatureAlgorithm);

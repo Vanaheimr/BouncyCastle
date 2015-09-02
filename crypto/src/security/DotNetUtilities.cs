@@ -180,7 +180,7 @@ namespace Org.BouncyCastle.Security
 		{
 			RSAParameters rp = new RSAParameters();
 			rp.Modulus = rsaKey.Modulus.ToByteArrayUnsigned();
-			if (rsaKey.IsPrivate)
+			if (rsaKey.IsPrivateKey)
 				rp.D = ConvertRSAParametersField(rsaKey.Exponent, rp.Modulus.Length);
 			else
 				rp.Exponent = rsaKey.Exponent.ToByteArrayUnsigned();

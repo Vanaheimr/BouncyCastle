@@ -14,7 +14,7 @@ namespace Org.BouncyCastle.Crypto.Parameters
 			RsaKeyParameters	publicKey,
 			BigInteger			blindingFactor)
 		{
-			if (publicKey.IsPrivate)
+			if (publicKey.IsPrivateKey)
 				throw new ArgumentException("RSA parameters should be for a public key");
 
 			this.publicKey = publicKey;

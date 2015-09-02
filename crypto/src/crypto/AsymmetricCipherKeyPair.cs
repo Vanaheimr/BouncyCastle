@@ -20,9 +20,9 @@ namespace Org.BouncyCastle.Crypto
             AsymmetricKeyParameter    publicParameter,
             AsymmetricKeyParameter    privateParameter)
         {
-			if (publicParameter.IsPrivate)
+			if (publicParameter.IsPrivateKey)
 				throw new ArgumentException("Expected a public key", "publicParameter");
-			if (!privateParameter.IsPrivate)
+			if (!privateParameter.IsPrivateKey)
 				throw new ArgumentException("Expected a private key", "privateParameter");
 
 			this.publicParameter = publicParameter;

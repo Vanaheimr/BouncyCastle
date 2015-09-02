@@ -152,7 +152,7 @@ namespace Org.BouncyCastle.Cms.Tests
 		{
 			byte[] privKeyData = GetRfc4134Data("BobPrivRSAEncrypt.pri");
 			AsymmetricKeyParameter privKey = PrivateKeyFactory.CreateKey(privKeyData);
-			Assert.IsTrue(privKey.IsPrivate);
+			Assert.IsTrue(privKey.IsPrivateKey);
 			Assert.IsTrue(privKey is RsaKeyParameters);
 
 			RecipientInformationStore recipients = envelopedData.GetRecipientInfos();
@@ -177,7 +177,7 @@ namespace Org.BouncyCastle.Cms.Tests
 		{
 			byte[] privKeyData = GetRfc4134Data("BobPrivRSAEncrypt.pri");
 			AsymmetricKeyParameter privKey = PrivateKeyFactory.CreateKey(privKeyData);
-			Assert.IsTrue(privKey.IsPrivate);
+			Assert.IsTrue(privKey.IsPrivateKey);
 			Assert.IsTrue(privKey is RsaKeyParameters);
 
 			RecipientInformationStore recipients = envelopedParser.GetRecipientInfos();
@@ -200,7 +200,7 @@ namespace Org.BouncyCastle.Cms.Tests
 
 		private void VerifyRecipient(RecipientInformation recipient, AsymmetricKeyParameter privKey)
 		{
-			Assert.IsTrue(privKey.IsPrivate);
+			Assert.IsTrue(privKey.IsPrivateKey);
 
 			Assert.AreEqual(recipient.KeyEncryptionAlgOid, PkcsObjectIdentifiers.RsaEncryption.Id);
 

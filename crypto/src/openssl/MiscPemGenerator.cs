@@ -96,7 +96,7 @@ namespace Org.BouncyCastle.OpenSsl
             else if (obj is AsymmetricKeyParameter)
             {
                 AsymmetricKeyParameter akp = (AsymmetricKeyParameter) obj;
-                if (akp.IsPrivate)
+                if (akp.IsPrivateKey)
                 {
                     string keyType;
                     encoding = EncodePrivateKey(akp, out keyType);
@@ -173,7 +173,7 @@ namespace Org.BouncyCastle.OpenSsl
             if (obj is AsymmetricKeyParameter)
             {
                 AsymmetricKeyParameter akp = (AsymmetricKeyParameter) obj;
-                if (akp.IsPrivate)
+                if (akp.IsPrivateKey)
                 {
                     string keyType;
                     keyData = EncodePrivateKey(akp, out keyType);

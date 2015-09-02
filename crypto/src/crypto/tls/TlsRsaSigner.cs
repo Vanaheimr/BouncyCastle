@@ -42,7 +42,7 @@ namespace Org.BouncyCastle.Crypto.Tls
 
         public override bool IsValidPublicKey(AsymmetricKeyParameter publicKey)
         {
-            return publicKey is RsaKeyParameters && !publicKey.IsPrivate;
+            return publicKey is RsaKeyParameters && !publicKey.IsPrivateKey;
         }
 
         protected virtual ISigner MakeSigner(SignatureAndHashAlgorithm algorithm, bool raw, bool forSigning,

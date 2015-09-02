@@ -48,10 +48,10 @@ namespace Org.BouncyCastle.Crypto.Signers
                 k = (AsymmetricKeyParameter)parameters;
             }
 
-            if (forSigning && !k.IsPrivate)
+            if (forSigning && !k.IsPrivateKey)
                 throw new InvalidKeyException("Signing requires private key.");
 
-            if (!forSigning && k.IsPrivate)
+            if (!forSigning && k.IsPrivateKey)
                 throw new InvalidKeyException("Verification requires public key.");
 
             Reset();

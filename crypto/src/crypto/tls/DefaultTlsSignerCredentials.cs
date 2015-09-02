@@ -29,7 +29,7 @@ namespace Org.BouncyCastle.Crypto.Tls
                 throw new ArgumentException("cannot be empty", "clientCertificate");
             if (privateKey == null)
                 throw new ArgumentNullException("privateKey");
-            if (!privateKey.IsPrivate)
+            if (!privateKey.IsPrivateKey)
                 throw new ArgumentException("must be private", "privateKey");
             if (TlsUtilities.IsTlsV12(context) && signatureAndHashAlgorithm == null)
                 throw new ArgumentException("cannot be null for (D)TLS 1.2+", "signatureAndHashAlgorithm");

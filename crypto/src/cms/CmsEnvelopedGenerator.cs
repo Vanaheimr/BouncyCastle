@@ -244,9 +244,9 @@ namespace Org.BouncyCastle.Cms
 			ICollection				recipientCerts,
 			string					cekWrapAlgorithm)
 		{
-			if (!senderPrivateKey.IsPrivate)
+			if (!senderPrivateKey.IsPrivateKey)
 				throw new ArgumentException("Expected private key", "senderPrivateKey");
-			if (senderPublicKey.IsPrivate)
+			if (senderPublicKey.IsPrivateKey)
 				throw new ArgumentException("Expected public key", "senderPublicKey");
 
 			/* TODO

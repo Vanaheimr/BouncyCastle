@@ -2,10 +2,12 @@ using System;
 
 namespace Org.BouncyCastle.Crypto
 {
-    /**
-     * all parameter classes implement this.
-     */
+
+    /// <summary>
+    /// All parameter classes implement this.
+    /// </summary>
     public interface ICipherParameters
     {
     }
+
 }

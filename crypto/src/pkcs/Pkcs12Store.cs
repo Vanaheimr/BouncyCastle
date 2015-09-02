@@ -616,7 +616,7 @@ namespace Org.BouncyCastle.Pkcs
                 throw new ArgumentNullException("alias");
             if (keyEntry == null)
                 throw new ArgumentNullException("keyEntry");
-            if (keyEntry.Key.IsPrivate && (chain == null))
+            if (keyEntry.Key.IsPrivateKey && (chain == null))
                 throw new ArgumentException("No certificate chain for private key");
 
             if (keys[alias] != null)

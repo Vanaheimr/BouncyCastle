@@ -4,45 +4,58 @@ using Org.BouncyCastle.Security;
 
 namespace Org.BouncyCastle.Crypto.Parameters
 {
-    public class ParametersWithRandom
-		: ICipherParameters
+
+    public class ParametersWithRandom : ICipherParameters
     {
-        private readonly ICipherParameters	parameters;
-		private readonly SecureRandom		random;
 
-		public ParametersWithRandom(
-            ICipherParameters	parameters,
-            SecureRandom		random)
+        #region Properties
+
+        #region Random
+
+        private readonly SecureRandom _Random;
+
+        public SecureRandom Random
         {
-			if (parameters == null)
-				throw new ArgumentNullException("random");
-			if (random == null)
-				throw new ArgumentNullException("random");
-
-			this.parameters = parameters;
-			this.random = random;
-		}
-
-		public ParametersWithRandom(
-            ICipherParameters parameters)
-			: this(parameters, new SecureRandom())
-        {
-		}
-
-		[Obsolete("Use Random property instead")]
-		public SecureRandom GetRandom()
-		{
-			return Random;
-		}
-
-		public SecureRandom Random
-        {
-			get { return random; }
+            get
+            {
+                return _Random;
+            }
         }
 
-		public ICipherParameters Parameters
+        #endregion
+
+        #region Parameters
+
+        private readonly ICipherParameters _Parameters;
+
+        public ICipherParameters Parameters
         {
-            get { return parameters; }
+            get
+            {
+                return _Parameters;
+            }
         }
+
+        #endregion
+
+        #endregion
+
+        #region Constructor(s)
+
+        public ParametersWithRandom(ICipherParameters  CipherParameters,
+                                    SecureRandom       SecureRandom = null)
+        {
+
+            if (CipherParameters == null)
+                throw new ArgumentNullException("random");
+
+            this._Parameters  = CipherParameters;
+            this._Random      = SecureRandom != null ? SecureRandom : new SecureRandom();
+
+        }
+
+        #endregion
+
     }
+
 }

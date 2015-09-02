@@ -101,7 +101,7 @@ namespace Org.BouncyCastle.Cms
 
 			if (key is RsaKeyParameters)
 			{
-				if (!((RsaKeyParameters) key).IsPrivate)
+				if (!((RsaKeyParameters) key).IsPrivateKey)
 					throw new ArgumentException("Expected RSA private key");
 
 				encOID = EncryptionRsa;

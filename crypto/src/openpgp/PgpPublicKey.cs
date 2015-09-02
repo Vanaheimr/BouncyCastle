@@ -485,7 +485,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
                             DateTime                CreationTime)
         {
 
-            if (AsymKeyParameter.IsPrivate)
+            if (AsymKeyParameter.IsPrivateKey)
                 throw new ArgumentException("Expected a public key", "pubKey");
 
             IBcpgKey bcpgKey;

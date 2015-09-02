@@ -61,7 +61,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
                              UInt64                  KeyId)
         {
 
-            if (!PrivateKey.IsPrivate)
+            if (!PrivateKey.IsPrivateKey)
                 throw new ArgumentException("Expected a private key", "privateKey");
 
             this._PrivateKey  = PrivateKey;

@@ -124,7 +124,7 @@ namespace Org.BouncyCastle.Crypto.Encodings
 
             engine.Init(forEncryption, parameters);
 
-            this.forPrivateKey = kParam.IsPrivate;
+            this.forPrivateKey = kParam.IsPrivateKey;
             this.forEncryption = forEncryption;
         }
 

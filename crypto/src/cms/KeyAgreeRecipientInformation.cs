@@ -215,7 +215,7 @@ namespace Org.BouncyCastle.Cms
 
             AsymmetricKeyParameter receiverPrivateKey = (AsymmetricKeyParameter) key;
 
-            if (!receiverPrivateKey.IsPrivate)
+            if (!receiverPrivateKey.IsPrivateKey)
                 throw new ArgumentException("Expected private key", "key");
 
             KeyParameter sKey = GetSessionKey(receiverPrivateKey);

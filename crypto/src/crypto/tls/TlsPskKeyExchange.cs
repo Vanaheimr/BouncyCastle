@@ -120,7 +120,7 @@ namespace Org.BouncyCastle.Crypto.Tls
             }
 
             // Sanity check the PublicKeyFactory
-            if (this.mServerPublicKey.IsPrivate)
+            if (this.mServerPublicKey.IsPrivateKey)
                 throw new TlsFatalAlert(AlertDescription.internal_error);
 
             this.mRsaServerPublicKey = ValidateRsaPublicKey((RsaKeyParameters)this.mServerPublicKey);

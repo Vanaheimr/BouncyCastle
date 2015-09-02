@@ -318,7 +318,6 @@ namespace org.GraphDefined.Vanaheimr.BouncyCastle
         #endregion
 
 
-
         #region (internal) CreateSignatureGenerator(SecretKey, Passphrase, HashAlgorithm)
 
         internal static PgpSignatureGenerator CreateSignatureGenerator(PgpSecretKey    SecretKey,
