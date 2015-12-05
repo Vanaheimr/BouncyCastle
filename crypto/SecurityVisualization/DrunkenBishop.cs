@@ -18,14 +18,9 @@
 #region Usings
 
 using System;
-using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Collections.Generic;
 
-using Org.BouncyCastle.Bcpg;
-using Org.BouncyCastle.Bcpg.OpenPgp;
 using org.GraphDefined.Vanaheimr.Illias;
 
 #endregion
