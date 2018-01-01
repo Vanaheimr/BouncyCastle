@@ -5019,7 +5019,6 @@
     <Compile Include="test\src\x509\test\TestCertificateGen.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="SecurityVisualization\DrunkenBishop.cs" />
     <Compile Include="Vanaheimr\OpenPGP2.cs" />
     <Compile Include="Vanaheimr\OpenPGP.cs" />
     <Content Include="Contributors.html" />
@@ -5862,12 +5861,6 @@
       <ProductName>.NET Framework 3.5 SP1</ProductName>
       <Install>true</Install>
     </BootstrapperPackage>
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\Illias\Illias\Illias.csproj">
-      <Project>{23d37453-2d4e-4bd8-b40f-3e731fee7712}</Project>
-      <Name>Illias</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
