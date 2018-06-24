@@ -1,14 +1,12 @@
 using System;
-using System.Linq;
-using System.Collections;
-using System.Diagnostics;
 using System.IO;
+using System.Linq;
+using System.Diagnostics;
 using System.Reflection;
-using System.Text;
+using System.Collections.Generic;
 
 using Org.BouncyCastle.Utilities;
 using Org.BouncyCastle.Utilities.IO;
-using System.Collections.Generic;
 
 namespace Org.BouncyCastle.Bcpg
 {

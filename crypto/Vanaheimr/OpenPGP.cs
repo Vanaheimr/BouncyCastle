@@ -56,18 +56,14 @@ namespace org.GraphDefined.Vanaheimr.BouncyCastle
         #region ReadPublicKeyRingBundle(Text)
 
         public static PgpPublicKeyRingBundle ReadPublicKeyRingBundle(String Text)
-        {
-            return new PgpPublicKeyRingBundle(PgpUtilities.GetDecoderStream(Text.ToMemoryStream()));
-        }
+            => new PgpPublicKeyRingBundle(PgpUtilities.GetDecoderStream(Text.ToMemoryStream()));
 
         #endregion
 
         #region ReadPublicKeyRingBundle(InputStream)
 
         public static PgpPublicKeyRingBundle ReadPublicKeyRingBundle(Stream InputStream)
-        {
-            return new PgpPublicKeyRingBundle(PgpUtilities.GetDecoderStream(InputStream));
-        }
+            => new PgpPublicKeyRingBundle(PgpUtilities.GetDecoderStream(InputStream));
 
         #endregion
 
@@ -76,7 +72,7 @@ namespace org.GraphDefined.Vanaheimr.BouncyCastle
         public static PgpPublicKeyRing ReadPublicKeyRing(String Text)
         {
 
-            var InputStream          = PgpUtilities.GetDecoderStream(Text.ToMemoryStream());
+            var InputStream = PgpUtilities.GetDecoderStream(Text.ToMemoryStream());
             if (InputStream == null)
                 throw new ArgumentException("The given text input is not valid PGP/GPG data!");
 
@@ -131,30 +127,31 @@ namespace org.GraphDefined.Vanaheimr.BouncyCastle
 
         #endregion
 
+        #region ReadPublicKeyRing(ByteArray)
+
+        public static PgpPublicKeyRing ReadPublicKeyRing(Byte[] ByteArray)
+            => ReadPublicKeyRing(new MemoryStream(ByteArray));
+
+        #endregion
+
         #region ReadPublicKeyRing(InputStream)
 
         public static PgpPublicKeyRing ReadPublicKeyRing(Stream InputStream)
-        {
-            return new PgpPublicKeyRingBundle(PgpUtilities.GetDecoderStream(InputStream)).First();
-        }
+            => new PgpPublicKeyRingBundle(PgpUtilities.GetDecoderStream(InputStream)).FirstOrDefault();
 
         #endregion
 
         #region ReadPublicKey(Text)
 
         public static PgpPublicKey ReadPublicKey(String Text)
-        {
-            return ReadPublicKeyRing(Text.ToMemoryStream()).First();
-        }
+            => ReadPublicKeyRing(Text.ToMemoryStream()).First();
 
         #endregion
 
         #region ReadPublicKey(InputStream)
 
         public static PgpPublicKey ReadPublicKey(Stream InputStream)
-        {
-            return ReadPublicKeyRing(InputStream).First();
-        }
+            => ReadPublicKeyRing(InputStream).First();
 
         #endregion
 
@@ -162,27 +159,28 @@ namespace org.GraphDefined.Vanaheimr.BouncyCastle
         #region ReadSecretKeyRingBundle(Text)
 
         public static PgpSecretKeyRingBundle ReadSecretKeyRingBundle(String Text)
-        {
-            return new PgpSecretKeyRingBundle(PgpUtilities.GetDecoderStream(Text.ToMemoryStream()));
-        }
+            => new PgpSecretKeyRingBundle(PgpUtilities.GetDecoderStream(Text.ToMemoryStream()));
 
         #endregion
 
         #region ReadSecretKeyRingBundle(InputStream)
 
         public static PgpSecretKeyRingBundle ReadSecretKeyRingBundle(Stream InputStream)
-        {
-            return new PgpSecretKeyRingBundle(PgpUtilities.GetDecoderStream(InputStream));
-        }
+            => new PgpSecretKeyRingBundle(PgpUtilities.GetDecoderStream(InputStream));
 
         #endregion
 
         #region ReadSecretKeyRing(Text)
 
         public static PgpSecretKeyRing ReadSecretKeyRing(String Text)
-        {
-            return new PgpSecretKeyRing(Text.ToMemoryStream());
-        }
+            => new PgpSecretKeyRing(Text.ToMemoryStream());
+
+        #endregion
+
+        #region ReadSecretKeyRing(ByteArray)
+
+        public static PgpSecretKeyRing ReadSecretKeyRing(Byte[] ByteArray)
+            => ReadSecretKeyRing(new MemoryStream(ByteArray));
 
         #endregion
 
@@ -213,18 +211,14 @@ namespace org.GraphDefined.Vanaheimr.BouncyCastle
         #region ReadSecretKey(Text)
 
         public static PgpSecretKey ReadSecretKey(String Text)
-        {
-            return ReadSecretKeyRing(Text.ToMemoryStream()).First();
-        }
+            => ReadSecretKeyRing(Text.ToMemoryStream()).First();
 
         #endregion
 
         #region ReadSecretKey(InputStream)
 
         public static PgpSecretKey ReadSecretKey(Stream InputStream)
-        {
-            return ReadSecretKeyRing(InputStream).First();
-        }
+            => ReadSecretKeyRing(InputStream).First();
 
         #endregion
 

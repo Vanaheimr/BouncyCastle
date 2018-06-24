@@ -1,21 +1,19 @@
 using System;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Collections;
 using System.Collections.Generic;
-
-using Org.BouncyCastle.Utilities;
-using Org.BouncyCastle.Utilities.Collections;
 
 namespace Org.BouncyCastle.Bcpg.OpenPgp
 {
 
-    /// <remarks>
+    /// <summary>
     /// Class to hold a single master public key and its subkeys.
-    /// <p>
+    /// </summary>
+    /// <remarks>
     /// Often PGP keyring files consist of multiple master keys, if you are trying to process
     /// or construct one of these you should use the <c>PgpPublicKeyRingBundle</c> class.
-    /// </p>
     /// </remarks>
     public class PgpPublicKeyRing : PgpKeyRing,
                                     IEnumerable<PgpPublicKey>
@@ -33,12 +31,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
         /// Return the first public key in the ring.
         /// </summary>
         public virtual PgpPublicKey PublicKey
-        {
-            get
-            {
-                return _PublicKeys.Values.First();
-            }
-        }
+            => _PublicKeys.Values.FirstOrDefault();
 
         #endregion
 
@@ -80,16 +73,16 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
                     + "tag 0x" + ((int)initialTag).ToString("X"));
             }
 
-            var pubPk   = BCPGInputStream.ReadPacket<PublicKeyPacket>();;
+            var pubPk   = BCPGInputStream.ReadPacket<PublicKeyPacket>();
             var trustPk = ReadOptionalTrustPacket(BCPGInputStream);
 
             // direct signatures and revocations
             var keySigs = new List<PgpSignature>(ReadSignaturesAndTrust(BCPGInputStream));
 
-            List<Object>              Ids;
-            List<TrustPacket>         IdTrusts;
-            List<List<PgpSignature>>  IdSigs;
-            ReadUserIds(BCPGInputStream, out Ids, out IdTrusts, out IdSigs);
+            ReadUserIds(BCPGInputStream,
+                        out List<Object>              Ids,
+                        out List<TrustPacket>         IdTrusts,
+                        out List<List<PgpSignature>>  IdSigs);
 
             this._PublicKeys = new Dictionary<UInt64, PgpPublicKey>();
             var pubKey = new PgpPublicKey(pubPk, trustPk, keySigs, Ids, IdTrusts, IdSigs);
@@ -146,6 +139,18 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
             Encode(bOut);
 
             return bOut.ToArray();
+
+        }
+
+        public String GetASCIIArmored()
+        {
+
+            var memoryStream  = new MemoryStream();
+            var armoredStream = new ArmoredOutputStream(memoryStream);
+            Encode(armoredStream);
+            armoredStream.Close();
+
+            return Encoding.UTF8.GetString(memoryStream.ToArray());
 
         }
 

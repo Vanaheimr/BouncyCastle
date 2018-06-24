@@ -1,21 +1,20 @@
 using System;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Collections.Generic;
 
 using Org.BouncyCastle.Security;
-using Org.BouncyCastle.Utilities;
-using Org.BouncyCastle.Utilities.Collections;
 
 namespace Org.BouncyCastle.Bcpg.OpenPgp
 {
 
-    /// <remarks>
+    /// <summary>
     /// Class to hold a single master secret key and its subkeys.
-    /// <p>
+    /// </summary>
+    /// <remarks>
     /// Often PGP keyring files consist of multiple master keys, if you are trying to process
     /// or construct one of these you should use the <c>PgpSecretKeyRingBundle</c> class.
-    /// </p>
     /// </remarks>
     public class PgpSecretKeyRing : PgpKeyRing,
                                     IEnumerable<PgpSecretKey>
@@ -30,22 +29,11 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
 
         #region Properties
 
-        #region FirstSecretKey
-
         /// <summary>
         /// Return the master private key.
         /// </summary>
         public PgpSecretKey FirstSecretKey
-        {
-            get
-            {
-                return _SecretKeys.First().Value;
-            }
-        }
-
-        #endregion
-
-        #region ExtraPublicKeys
+            => _SecretKeys.Values.FirstOrDefault();
 
         /// <summary>
         /// Return an iterator of the public keys in the secret key ring that
@@ -53,29 +41,13 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
         /// appears in this fashion.
         /// </summary>
         public IEnumerable<PgpPublicKey> ExtraPublicKeys
-        {
-            get
-            {
-                return _ExtraPubKeys.Select(KVP => KVP.Value);
-            }
-        }
-
-        #endregion
-
-        #region FirstPublicKey
+            => _ExtraPubKeys.Select(KVP => KVP.Value);
 
         /// <summary>
         /// Return the public key for the master key.
         /// </summary>
         public PgpPublicKey FirstPublicKey
-        {
-            get
-            {
-                return _SecretKeys.First().Value.PublicKey;
-            }
-        }
-
-        #endregion
+            => _SecretKeys.Values.FirstOrDefault()?.PublicKey;
 
         #endregion
 
@@ -174,8 +146,6 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
         #endregion
 
 
-
-
         public Byte[] GetEncoded()
         {
 
@@ -186,6 +156,17 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
 
         }
 
+        public String GetASCIIArmored()
+        {
+
+            var memoryStream  = new MemoryStream();
+            var armoredStream = new ArmoredOutputStream(memoryStream);
+            EncodeToStream(armoredStream);
+            armoredStream.Close();
+
+            return Encoding.UTF8.GetString(memoryStream.ToArray());
+
+        }
 
         #region EncodeToStream(OutStream)
 

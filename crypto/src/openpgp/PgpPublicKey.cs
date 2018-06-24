@@ -5,11 +5,8 @@ using System.Collections;
 using System.Collections.Generic;
 
 using Org.BouncyCastle.Crypto;
-using Org.BouncyCastle.Crypto.IO;
 using Org.BouncyCastle.Crypto.Parameters;
 using Org.BouncyCastle.Security;
-using Org.BouncyCastle.Utilities;
-using Org.BouncyCastle.Utilities.Collections;
 
 namespace Org.BouncyCastle.Bcpg.OpenPgp
 {
@@ -689,7 +686,8 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
 
                 try
                 {
-                    IDigest digest = DigestUtilities.GetDigest("MD5");
+
+                    var digest = DigestUtilities.GetDigest("MD5");
 
                     byte[] bytes = rK.Modulus.ToByteArrayUnsigned();
                     digest.BlockUpdate(bytes, 0, bytes.Length);
@@ -698,6 +696,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
                     digest.BlockUpdate(bytes, 0, bytes.Length);
 
                     this._Fingerprint = DigestUtilities.DoFinal(digest);
+
                 }
                 //catch (NoSuchAlgorithmException)
                 catch (Exception e)
@@ -706,20 +705,24 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
                 }
 
                 this._KeyStrength = (UInt32) rK.Modulus.BitLength;
+
             }
             else
             {
+
                 byte[] kBytes = _PublicKeyPacket.GetEncodedContents();
 
                 try
                 {
-                    IDigest digest = DigestUtilities.GetDigest("SHA1");
+
+                    var digest = DigestUtilities.GetDigest("SHA1");
 
                     digest.Update(0x99);
                     digest.Update((byte)(kBytes.Length >> 8));
                     digest.Update((byte)kBytes.Length);
                     digest.BlockUpdate(kBytes, 0, kBytes.Length);
                     this._Fingerprint = DigestUtilities.DoFinal(digest);
+
                 }
                 catch (Exception e)
                 {
@@ -1194,9 +1197,11 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
 
 
         public override String ToString()
-        {
-            return (_UserIds.FirstOrDefault() != null ? _UserIds.FirstOrDefault().ToString() : "") + " 0x" + _KeyId.ToString("X") + " " + CreationTime.ToString();
-        }
+
+            => String.Concat(_UserIds.FirstOrDefault()?.ToString(),
+                             " 0x", _KeyId.ToString("X"),
+                             " ",
+                             CreationTime.ToString()).Trim();
 
     }
 
