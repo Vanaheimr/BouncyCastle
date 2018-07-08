@@ -74,7 +74,7 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
         public PgpSecretKeyRing(Stream inputStream)
         {
 
-            this._SecretKeys          = new Dictionary<UInt64, PgpSecretKey>();
+            this._SecretKeys    = new Dictionary<UInt64, PgpSecretKey>();
             this._ExtraPubKeys  = new Dictionary<UInt64, PgpPublicKey>();
 
             var bcpgInput = BcpgInputStream.Wrap(inputStream);
@@ -96,12 +96,19 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
             // revocation and direct signatures
             var keySigs = new List<PgpSignature>(ReadSignaturesAndTrust(bcpgInput));
 
-            List<Object>              ids;
-            List<TrustPacket>         idTrusts;
-            List<List<PgpSignature>>  idSigs;
-            ReadUserIds(bcpgInput, out ids, out idTrusts, out idSigs);
+            ReadUserIds(bcpgInput,
+                        out List<Object>              ids,
+                        out List<TrustPacket>         idTrusts,
+                        out List<List<PgpSignature>>  idSigs);
 
-            var newSecretKey = new PgpSecretKey(secret, new PgpPublicKey(secret.PublicKeyPacket, trust, keySigs, ids, idTrusts, idSigs));
+            var newSecretKey = new PgpSecretKey(secret,
+                                                new PgpPublicKey(secret.PublicKeyPacket,
+                                                                 trust,
+                                                                 keySigs,
+                                                                 ids,
+                                                                 idTrusts,
+                                                                 idSigs));
+
             _SecretKeys.Add(newSecretKey.KeyId, newSecretKey);
 
 

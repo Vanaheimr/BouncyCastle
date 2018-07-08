@@ -92,6 +92,8 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
             if ((int) tag == -1)
                 return null;
 
+            PgpSecretKeyRing lastSecretKeyRing = null;
+
             switch (tag)
             {
 
@@ -119,12 +121,29 @@ namespace Org.BouncyCastle.Bcpg.OpenPgp
                 case PacketTag.SecretKey:
                     try
                     {
-                        return new PgpSecretKeyRing(_BCPGInputStream);
+                        lastSecretKeyRing = new PgpSecretKeyRing(_BCPGInputStream);
+                        return lastSecretKeyRing;
                     }
                     catch (PgpException e)
                     {
                         throw new IOException("can't create secret key object: " + e);
                     }
+
+                case PacketTag.SecretSubkey:
+                    var secretSubkeyPacket = _BCPGInputStream.ReadPacket<SecretSubkeyPacket>();
+
+                    // ignore GPG comment packets if found.
+                    while (_BCPGInputStream.NextPacketTag() == PacketTag.Experimental2)
+                        _BCPGInputStream.ReadPacket();
+
+                    if (lastSecretKeyRing != null)
+                        PgpSecretKeyRing.InsertSecretKey(lastSecretKeyRing,
+                                                         new PgpSecretKey(secretSubkeyPacket,
+                                                                          new PgpPublicKey(secretSubkeyPacket.PublicKeyPacket,
+                                                                                           PgpKeyRing.ReadOptionalTrustPacket(_BCPGInputStream),
+                                                                                           new List<PgpSignature>(PgpKeyRing.ReadSignaturesAndTrust(_BCPGInputStream)))));
+
+                    return lastSecretKeyRing;
 
                 case PacketTag.PublicKey:
                     return new PgpPublicKeyRing(_BCPGInputStream);

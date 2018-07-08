@@ -10,10 +10,11 @@ using Org.BouncyCastle.Utilities.Collections;
 
 namespace Org.BouncyCastle.Bcpg.OpenPgp
 {
-    /// <remarks>
+
+    /// <summary>
     /// Often a PGP key ring file is made up of a succession of master/sub-key key rings.
     /// If you want to read an entire secret key file in one hit this is the class for you.
-    /// </remarks>
+    /// </summary>
     public class PgpSecretKeyRingBundle : IEnumerable<PgpSecretKeyRing>
     {
 
