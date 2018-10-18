@@ -111,10 +111,33 @@ namespace Org.BouncyCastle.Crypto.Signers
 				BigInteger[] sig = DerDecode(signature);
 				return dsaSigner.VerifySignature(hash, sig[0], sig[1]);
 			}
-			catch (IOException)
+			catch (IOException e)
 			{
 				return false;
 			}
+		}
+
+
+        public bool VerifySignature(
+            BigInteger sig0,
+            BigInteger sig1)
+		{
+
+			if (forSigning)
+				throw new InvalidOperationException("DSADigestSigner not initialised for verification");
+
+			byte[] hash = new byte[digest.GetDigestSize()];
+			digest.DoFinal(hash, 0);
+
+			try
+			{
+				return dsaSigner.VerifySignature(hash, sig0, sig1);
+			}
+			catch (IOException e)
+			{
+				return false;
+			}
+
 		}
 
 		/// <summary>Reset the internal state</summary>
