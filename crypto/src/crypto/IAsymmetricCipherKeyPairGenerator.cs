@@ -1,24 +1,24 @@
-using System;
 
 namespace Org.BouncyCastle.Crypto
 {
-    /**
-     * interface that a public/private key pair generator should conform to.
-     */
+
+    /// <summary>
+    /// The interface for all public/private key pair generators.
+    /// </summary>
     public interface IAsymmetricCipherKeyPairGenerator
     {
-        /**
-         * intialise the key pair generator.
-         *
-         * @param the parameters the key pair is to be initialised with.
-         */
+
+        /// <summary>
+        /// Intialise the key pair generator.
+        /// </summary>
+        /// <param name="parameters">The parameters the key pair is to be initialised with.</param>
         void Init(KeyGenerationParameters parameters);
 
-        /**
-         * return an AsymmetricCipherKeyPair containing the Generated keys.
-         *
-         * @return an AsymmetricCipherKeyPair containing the Generated keys.
-         */
+        /// <summary>
+        /// Generate the key pair.
+        /// </summary>
+        /// <returns></returns>
         AsymmetricCipherKeyPair GenerateKeyPair();
+
     }
 }

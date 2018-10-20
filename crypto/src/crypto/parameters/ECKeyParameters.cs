@@ -11,126 +11,129 @@ using Org.BouncyCastle.Utilities.Collections;
 
 namespace Org.BouncyCastle.Crypto.Parameters
 {
-    public abstract class ECKeyParameters
-        : AsymmetricKeyParameter
+
+    public abstract class ECKeyParameters : AsymmetricKeyParameter
     {
-        private static readonly string[] algorithms = { "EC", "ECDSA", "ECDH", "ECDHC", "ECGOST3410", "ECMQV" };
 
-        private readonly string algorithm;
-        private readonly ECDomainParameters parameters;
-        private readonly DerObjectIdentifier publicKeyParamSet;
+        private static readonly String[] algorithms = { "EC", "ECDSA", "ECDH", "ECDHC", "ECGOST3410", "ECMQV" };
 
-        protected ECKeyParameters(
-            string				algorithm,
-            bool				isPrivate,
-            ECDomainParameters	parameters)
+        public String               AlgorithmName       { get; }
+
+        public ECDomainParameters   Parameters          { get; }
+
+        public DerObjectIdentifier  PublicKeyParamSet   { get; }
+
+
+        protected ECKeyParameters(String              algorithm,
+                                  Boolean             isPrivate,
+                                  ECDomainParameters  parameters)
+
             : base(isPrivate)
+
         {
+
             if (algorithm == null)
                 throw new ArgumentNullException("algorithm");
+
             if (parameters == null)
                 throw new ArgumentNullException("parameters");
 
-            this.algorithm = VerifyAlgorithmName(algorithm);
-            this.parameters = parameters;
+            this.AlgorithmName  = VerifyAlgorithmName(algorithm);
+            this.Parameters     = parameters;
+
         }
 
-        protected ECKeyParameters(
-            string				algorithm,
-            bool				isPrivate,
-            DerObjectIdentifier	publicKeyParamSet)
+        protected ECKeyParameters(String               algorithm,
+                                  Boolean              isPrivate,
+                                  DerObjectIdentifier  publicKeyParamSet)
+
             : base(isPrivate)
+
         {
+
             if (algorithm == null)
                 throw new ArgumentNullException("algorithm");
+
             if (publicKeyParamSet == null)
                 throw new ArgumentNullException("publicKeyParamSet");
 
-            this.algorithm = VerifyAlgorithmName(algorithm);
-            this.parameters = LookupParameters(publicKeyParamSet);
-            this.publicKeyParamSet = publicKeyParamSet;
+            this.AlgorithmName      = VerifyAlgorithmName(algorithm);
+            this.Parameters         = LookupParameters(publicKeyParamSet);
+            this.PublicKeyParamSet  = publicKeyParamSet;
+
         }
 
-        public string AlgorithmName
-        {
-            get { return algorithm; }
-        }
 
-        public ECDomainParameters Parameters
-        {
-            get { return parameters; }
-        }
 
-        public DerObjectIdentifier PublicKeyParamSet
+        public override Boolean Equals(Object obj)
         {
-            get { return publicKeyParamSet; }
-        }
 
-        public override bool Equals(
-            object obj)
-        {
             if (obj == this)
                 return true;
 
-            ECDomainParameters other = obj as ECDomainParameters;
-
-            if (other == null)
+            if (!(obj is ECDomainParameters other))
                 return false;
 
             return Equals(other);
+
         }
 
-        protected bool Equals(
-            ECKeyParameters other)
+        protected Boolean Equals(ECKeyParameters other)
         {
-            return parameters.Equals(other.parameters) && base.Equals(other);
+            return Parameters.Equals(other.Parameters) && base.Equals(other);
         }
 
         public override int GetHashCode()
         {
-            return parameters.GetHashCode() ^ base.GetHashCode();
+            return Parameters.GetHashCode() ^ base.GetHashCode();
         }
 
-        internal ECKeyGenerationParameters CreateKeyGenerationParameters(
-            SecureRandom random)
+        internal ECKeyGenerationParameters CreateKeyGenerationParameters(SecureRandom random)
         {
-            if (publicKeyParamSet != null)
-            {
-                return new ECKeyGenerationParameters(publicKeyParamSet, random);
-            }
 
-            return new ECKeyGenerationParameters(parameters, random);
+            if (PublicKeyParamSet != null)
+                return new ECKeyGenerationParameters(PublicKeyParamSet, random);
+
+            return new ECKeyGenerationParameters(Parameters, random);
+
         }
 
-        internal static string VerifyAlgorithmName(string algorithm)
+        internal static string VerifyAlgorithmName(String algorithm)
         {
-            string upper = Platform.ToUpperInvariant(algorithm);
+
+            var upper = Platform.ToUpperInvariant(algorithm);
+
             if (Array.IndexOf(algorithms, algorithm, 0, algorithms.Length) < 0)
                 throw new ArgumentException("unrecognised algorithm: " + algorithm, "algorithm");
+
             return upper;
+
         }
 
-        internal static ECDomainParameters LookupParameters(
-            DerObjectIdentifier publicKeyParamSet)
+        internal static ECDomainParameters LookupParameters(DerObjectIdentifier publicKeyParamSet)
         {
+
             if (publicKeyParamSet == null)
                 throw new ArgumentNullException("publicKeyParamSet");
 
-            ECDomainParameters p = ECGost3410NamedCurves.GetByOid(publicKeyParamSet);
+            var p = ECGost3410NamedCurves.GetByOid(publicKeyParamSet);
 
             if (p == null)
             {
-                X9ECParameters x9 = ECKeyPairGenerator.FindECCurveByOid(publicKeyParamSet);
+
+                var x9 = ECKeyPairGenerator.FindECCurveByOid(publicKeyParamSet);
 
                 if (x9 == null)
-                {
                     throw new ArgumentException("OID is not a valid public key parameter set", "publicKeyParamSet");
-                }
 
                 p = new ECDomainParameters(x9.Curve, x9.G, x9.N, x9.H, x9.GetSeed());
+
             }
 
             return p;
+
         }
+
     }
+
 }

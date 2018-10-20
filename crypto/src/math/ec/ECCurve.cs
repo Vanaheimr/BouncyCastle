@@ -9,9 +9,13 @@ using Org.BouncyCastle.Utilities;
 
 namespace Org.BouncyCastle.Math.EC
 {
-    /// <remarks>Base class for an elliptic curve.</remarks>
+
+    /// <summary>
+    /// Base class for an elliptic curve.
+    /// </summary>
     public abstract class ECCurve
     {
+
         public const int COORD_AFFINE = 0;
         public const int COORD_HOMOGENEOUS = 1;
         public const int COORD_JACOBIAN = 2;
@@ -29,6 +33,7 @@ namespace Org.BouncyCastle.Math.EC
 
         public class Config
         {
+
             protected ECCurve outer;
             protected int coord;
             protected ECEndomorphism endomorphism;
@@ -362,12 +367,14 @@ namespace Org.BouncyCastle.Math.EC
          */
         public virtual ECPoint DecodePoint(byte[] encoded)
         {
+
             ECPoint p = null;
             int expectedLength = (FieldSize + 7) / 8;
 
             byte type = encoded[0];
             switch (type)
             {
+
                 case 0x00: // infinity
                 {
                     if (encoded.Length != 1)
@@ -384,7 +391,7 @@ namespace Org.BouncyCastle.Math.EC
                         throw new ArgumentException("Incorrect length for compressed encoding", "encoded");
 
                     int yTilde = type & 1;
-                    BigInteger X = new BigInteger(1, encoded, 1, expectedLength);
+                    var X      = new BigInteger(1, encoded, 1, expectedLength);
 
                     p = DecompressPoint(yTilde, X);
                     if (!p.SatisfiesCofactor())
@@ -398,8 +405,8 @@ namespace Org.BouncyCastle.Math.EC
                     if (encoded.Length != (2 * expectedLength + 1))
                         throw new ArgumentException("Incorrect length for uncompressed encoding", "encoded");
 
-                    BigInteger X = new BigInteger(1, encoded, 1, expectedLength);
-                    BigInteger Y = new BigInteger(1, encoded, 1 + expectedLength, expectedLength);
+                    var X = new BigInteger(1, encoded, 1, expectedLength);
+                    var Y = new BigInteger(1, encoded, 1 + expectedLength, expectedLength);
 
                     p = ValidatePoint(X, Y);
                     break;
@@ -411,8 +418,8 @@ namespace Org.BouncyCastle.Math.EC
                     if (encoded.Length != (2 * expectedLength + 1))
                         throw new ArgumentException("Incorrect length for hybrid encoding", "encoded");
 
-                    BigInteger X = new BigInteger(1, encoded, 1, expectedLength);
-                    BigInteger Y = new BigInteger(1, encoded, 1 + expectedLength, expectedLength);
+                    var X = new BigInteger(1, encoded, 1, expectedLength);
+                    var Y = new BigInteger(1, encoded, 1 + expectedLength, expectedLength);
 
                     if (Y.TestBit(0) != (type == 0x07))
                         throw new ArgumentException("Inconsistent Y coordinate in hybrid encoding", "encoded");
@@ -423,6 +430,7 @@ namespace Org.BouncyCastle.Math.EC
 
                 default:
                     throw new FormatException("Invalid point encoding " + type);
+
             }
 
             if (type != 0x00 && p.IsInfinity)

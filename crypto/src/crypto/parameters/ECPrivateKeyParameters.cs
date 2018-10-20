@@ -6,82 +6,78 @@ using Org.BouncyCastle.Math;
 
 namespace Org.BouncyCastle.Crypto.Parameters
 {
-    public class ECPrivateKeyParameters
-        : ECKeyParameters
+
+    public class ECPrivateKeyParameters : ECKeyParameters
     {
-        private readonly BigInteger d;
 
-        public ECPrivateKeyParameters(
-            BigInteger			d,
-            ECDomainParameters	parameters)
+        public ECPrivateKeyParameters(BigInteger          d,
+                                      ECDomainParameters  parameters)
+
             : this("EC", d, parameters)
-        {
-        }
 
-        [Obsolete("Use version with explicit 'algorithm' parameter")]
-        public ECPrivateKeyParameters(
-            BigInteger			d,
-            DerObjectIdentifier publicKeyParamSet)
-            : base("ECGOST3410", true, publicKeyParamSet)
-        {
-            if (d == null)
-                throw new ArgumentNullException("d");
+        { }
 
-            this.d = d;
-        }
+        //[Obsolete("Use version with explicit 'algorithm' parameter")]
+        //public ECPrivateKeyParameters(BigInteger           d,
+        //                              DerObjectIdentifier  publicKeyParamSet)
 
-        public ECPrivateKeyParameters(
-            string				algorithm,
-            BigInteger			d,
-            ECDomainParameters	parameters)
+        //    : base("ECGOST3410", true, publicKeyParamSet)
+
+        //{
+
+        //    this.D = d ?? throw new ArgumentNullException("d");
+
+        //}
+
+        public ECPrivateKeyParameters(String              algorithm,
+                                      BigInteger          d,
+                                      ECDomainParameters  parameters)
+
             : base(algorithm, true, parameters)
-        {
-            if (d == null)
-                throw new ArgumentNullException("d");
 
-            this.d = d;
+        {
+
+            this.D = d ?? throw new ArgumentNullException("d");
+
         }
 
-        public ECPrivateKeyParameters(
-            string				algorithm,
-            BigInteger			d,
-            DerObjectIdentifier publicKeyParamSet)
+        public ECPrivateKeyParameters(String               algorithm,
+                                      BigInteger           d,
+                                      DerObjectIdentifier  publicKeyParamSet)
+
             : base(algorithm, true, publicKeyParamSet)
-        {
-            if (d == null)
-                throw new ArgumentNullException("d");
 
-            this.d = d;
+        {
+
+            this.D = d ?? throw new ArgumentNullException("d");
+
         }
 
-        public BigInteger D
-        {
-            get { return d; }
-        }
+        public BigInteger D { get; }
 
-        public override bool Equals(
-            object obj)
+        public override bool Equals(object obj)
         {
+
             if (obj == this)
                 return true;
 
-            ECPrivateKeyParameters other = obj as ECPrivateKeyParameters;
-
-            if (other == null)
+            if (!(obj is ECPrivateKeyParameters other))
                 return false;
 
             return Equals(other);
+
         }
 
-        protected bool Equals(
-            ECPrivateKeyParameters other)
+        protected bool Equals(ECPrivateKeyParameters other)
         {
-            return d.Equals(other.d) && base.Equals(other);
+            return D.Equals(other.D) && base.Equals(other);
         }
 
         public override int GetHashCode()
         {
-            return d.GetHashCode() ^ base.GetHashCode();
+            return D.GetHashCode() ^ base.GetHashCode();
         }
+
     }
+
 }

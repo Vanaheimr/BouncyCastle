@@ -18,20 +18,22 @@ using Org.BouncyCastle.Utilities;
 
 namespace Org.BouncyCastle.Security
 {
+
     /// <summary>
-    ///  Signer Utility class contains methods that can not be specifically grouped into other classes.
+    /// Signer Utility class contains methods that can not be specifically grouped into other classes.
     /// </summary>
     public sealed class SignerUtilities
     {
+
         private SignerUtilities()
-        {
-        }
+        { }
 
         internal static readonly IDictionary algorithms = Platform.CreateHashtable();
         internal static readonly IDictionary oids = Platform.CreateHashtable();
 
         static SignerUtilities()
         {
+
             algorithms["MD2WITHRSA"] = "MD2withRSA";
             algorithms["MD2WITHRSAENCRYPTION"] = "MD2withRSA";
             algorithms[PkcsObjectIdentifiers.MD2WithRsaEncryption.Id] = "MD2withRSA";
@@ -227,37 +229,38 @@ namespace Org.BouncyCastle.Security
 
 
 
-            oids["MD2withRSA"] = PkcsObjectIdentifiers.MD2WithRsaEncryption;
-            oids["MD4withRSA"] = PkcsObjectIdentifiers.MD4WithRsaEncryption;
-            oids["MD5withRSA"] = PkcsObjectIdentifiers.MD5WithRsaEncryption;
+            oids["MD2withRSA"]              = PkcsObjectIdentifiers.MD2WithRsaEncryption;
+            oids["MD4withRSA"]              = PkcsObjectIdentifiers.MD4WithRsaEncryption;
+            oids["MD5withRSA"]              = PkcsObjectIdentifiers.MD5WithRsaEncryption;
 
-            oids["SHA-1withRSA"] = PkcsObjectIdentifiers.Sha1WithRsaEncryption;
-            oids["SHA-224withRSA"] = PkcsObjectIdentifiers.Sha224WithRsaEncryption;
-            oids["SHA-256withRSA"] = PkcsObjectIdentifiers.Sha256WithRsaEncryption;
-            oids["SHA-384withRSA"] = PkcsObjectIdentifiers.Sha384WithRsaEncryption;
-            oids["SHA-512withRSA"] = PkcsObjectIdentifiers.Sha512WithRsaEncryption;
+            oids["SHA-1withRSA"]            = PkcsObjectIdentifiers.Sha1WithRsaEncryption;
+            oids["SHA-224withRSA"]          = PkcsObjectIdentifiers.Sha224WithRsaEncryption;
+            oids["SHA-256withRSA"]          = PkcsObjectIdentifiers.Sha256WithRsaEncryption;
+            oids["SHA-384withRSA"]          = PkcsObjectIdentifiers.Sha384WithRsaEncryption;
+            oids["SHA-512withRSA"]          = PkcsObjectIdentifiers.Sha512WithRsaEncryption;
 
-            oids["PSSwithRSA"] = PkcsObjectIdentifiers.IdRsassaPss;
-            oids["SHA-1withRSAandMGF1"] = PkcsObjectIdentifiers.IdRsassaPss;
-            oids["SHA-224withRSAandMGF1"] = PkcsObjectIdentifiers.IdRsassaPss;
-            oids["SHA-256withRSAandMGF1"] = PkcsObjectIdentifiers.IdRsassaPss;
-            oids["SHA-384withRSAandMGF1"] = PkcsObjectIdentifiers.IdRsassaPss;
-            oids["SHA-512withRSAandMGF1"] = PkcsObjectIdentifiers.IdRsassaPss;
+            oids["PSSwithRSA"]              = PkcsObjectIdentifiers.IdRsassaPss;
+            oids["SHA-1withRSAandMGF1"]     = PkcsObjectIdentifiers.IdRsassaPss;
+            oids["SHA-224withRSAandMGF1"]   = PkcsObjectIdentifiers.IdRsassaPss;
+            oids["SHA-256withRSAandMGF1"]   = PkcsObjectIdentifiers.IdRsassaPss;
+            oids["SHA-384withRSAandMGF1"]   = PkcsObjectIdentifiers.IdRsassaPss;
+            oids["SHA-512withRSAandMGF1"]   = PkcsObjectIdentifiers.IdRsassaPss;
 
-            oids["RIPEMD128withRSA"] = TeleTrusTObjectIdentifiers.RsaSignatureWithRipeMD128;
-            oids["RIPEMD160withRSA"] = TeleTrusTObjectIdentifiers.RsaSignatureWithRipeMD160;
-            oids["RIPEMD256withRSA"] = TeleTrusTObjectIdentifiers.RsaSignatureWithRipeMD256;
+            oids["RIPEMD128withRSA"]        = TeleTrusTObjectIdentifiers.RsaSignatureWithRipeMD128;
+            oids["RIPEMD160withRSA"]        = TeleTrusTObjectIdentifiers.RsaSignatureWithRipeMD160;
+            oids["RIPEMD256withRSA"]        = TeleTrusTObjectIdentifiers.RsaSignatureWithRipeMD256;
 
-            oids["SHA-1withDSA"] = X9ObjectIdentifiers.IdDsaWithSha1;
+            oids["SHA-1withDSA"]            = X9ObjectIdentifiers.IdDsaWithSha1;
 
-            oids["SHA-1withECDSA"] = X9ObjectIdentifiers.ECDsaWithSha1;
-            oids["SHA-224withECDSA"] = X9ObjectIdentifiers.ECDsaWithSha224;
-            oids["SHA-256withECDSA"] = X9ObjectIdentifiers.ECDsaWithSha256;
-            oids["SHA-384withECDSA"] = X9ObjectIdentifiers.ECDsaWithSha384;
-            oids["SHA-512withECDSA"] = X9ObjectIdentifiers.ECDsaWithSha512;
+            oids["SHA-1withECDSA"]          = X9ObjectIdentifiers.ECDsaWithSha1;
+            oids["SHA-224withECDSA"]        = X9ObjectIdentifiers.ECDsaWithSha224;
+            oids["SHA-256withECDSA"]        = X9ObjectIdentifiers.ECDsaWithSha256;
+            oids["SHA-384withECDSA"]        = X9ObjectIdentifiers.ECDsaWithSha384;
+            oids["SHA-512withECDSA"]        = X9ObjectIdentifiers.ECDsaWithSha512;
 
-            oids["GOST3410"] = CryptoProObjectIdentifiers.GostR3411x94WithGostR3410x94;
-            oids["ECGOST3410"] = CryptoProObjectIdentifiers.GostR3411x94WithGostR3410x2001;
+            oids["GOST3410"]                = CryptoProObjectIdentifiers.GostR3411x94WithGostR3410x94;
+            oids["ECGOST3410"]              = CryptoProObjectIdentifiers.GostR3411x94WithGostR3410x2001;
+
         }
 
         /// <summary>
@@ -266,9 +269,9 @@ namespace Org.BouncyCastle.Security
         /// <param name="mechanism">A string representation of the encoding.</param>
         /// <returns>A DerObjectIdentifier, null if the Oid is not available.</returns>
         // TODO Don't really want to support this
-        public static DerObjectIdentifier GetObjectIdentifier(
-            string mechanism)
+        public static DerObjectIdentifier GetObjectIdentifier(String mechanism)
         {
+
             if (mechanism == null)
                 throw new ArgumentNullException("mechanism");
 
@@ -279,22 +282,24 @@ namespace Org.BouncyCastle.Security
                 mechanism = aliased;
 
             return (DerObjectIdentifier) oids[mechanism];
+
         }
 
         public static ICollection Algorithms
         {
-            get { return oids.Keys; }
+            get {
+                return oids.Keys;
+            }
         }
 
-        public static Asn1Encodable GetDefaultX509Parameters(
-            DerObjectIdentifier id)
+        public static Asn1Encodable GetDefaultX509Parameters(DerObjectIdentifier id)
         {
             return GetDefaultX509Parameters(id.Id);
         }
 
-        public static Asn1Encodable GetDefaultX509Parameters(
-            string algorithm)
+        public static Asn1Encodable GetDefaultX509Parameters(String algorithm)
         {
+
             if (algorithm == null)
                 throw new ArgumentNullException("algorithm");
 
@@ -319,32 +324,36 @@ namespace Org.BouncyCastle.Security
             }
 
             return DerNull.Instance;
+
         }
 
-        private static Asn1Encodable GetPssX509Parameters(
-            string	digestName)
+        private static Asn1Encodable GetPssX509Parameters(String  digestName)
         {
-            AlgorithmIdentifier hashAlgorithm = new AlgorithmIdentifier(
-                DigestUtilities.GetObjectIdentifier(digestName), DerNull.Instance);
+
+            var hashAlgorithm     = new AlgorithmIdentifier(DigestUtilities.GetObjectIdentifier(digestName),
+                                                            DerNull.Instance);
 
             // TODO Is it possible for the MGF hash alg to be different from the PSS one?
-            AlgorithmIdentifier maskGenAlgorithm = new AlgorithmIdentifier(
-                PkcsObjectIdentifiers.IdMgf1, hashAlgorithm);
+            var maskGenAlgorithm  = new AlgorithmIdentifier(PkcsObjectIdentifiers.IdMgf1,
+                                                            hashAlgorithm);
 
-            int saltLen = DigestUtilities.GetDigest(digestName).GetDigestSize();
-            return new RsassaPssParameters(hashAlgorithm, maskGenAlgorithm,
-                new DerInteger(saltLen), new DerInteger(1));
+            var saltLen = DigestUtilities.GetDigest(digestName).GetDigestSize();
+
+            return new RsassaPssParameters(hashAlgorithm,
+                                           maskGenAlgorithm,
+                                           new DerInteger(saltLen),
+                                           new DerInteger(1));
+
         }
 
-        public static ISigner GetSigner(
-            DerObjectIdentifier id)
+        public static ISigner GetSigner(DerObjectIdentifier id)
         {
             return GetSigner(id.Id);
         }
 
-        public static ISigner GetSigner(
-            string algorithm)
+        public static ISigner GetSigner(String algorithm)
         {
+
             if (algorithm == null)
                 throw new ArgumentNullException("algorithm");
 
@@ -535,12 +544,14 @@ namespace Org.BouncyCastle.Security
             }
 
             throw new SecurityUtilityException("Signer " + algorithm + " not recognised.");
+
         }
 
-        public static string GetEncodingName(
-            DerObjectIdentifier oid)
+        public static string GetEncodingName(DerObjectIdentifier oid)
         {
             return (string) algorithms[oid.Id];
         }
+
     }
+
 }

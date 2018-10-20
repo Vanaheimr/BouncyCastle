@@ -7,11 +7,13 @@ using Org.BouncyCastle.Math.EC.Multiplier;
 
 namespace Org.BouncyCastle.Math.EC
 {
+
     /**
      * base class for points on elliptic curves.
      */
     public abstract class ECPoint
     {
+
         protected static ECFieldElement[] EMPTY_ZS = new ECFieldElement[0];
 
         protected static ECFieldElement[] GetInitialZCoords(ECCurve curve)
@@ -405,10 +407,9 @@ namespace Org.BouncyCastle.Math.EC
 
         public override string ToString()
         {
+
             if (this.IsInfinity)
-            {
                 return "INF";
-            }
 
             StringBuilder sb = new StringBuilder();
             sb.Append('(');
@@ -462,6 +463,7 @@ namespace Org.BouncyCastle.Math.EC
         {
             return TwicePlus(this);
         }
+
     }
 
     public abstract class ECPointBase
@@ -598,9 +600,9 @@ namespace Org.BouncyCastle.Math.EC
     /**
      * Elliptic curve points over Fp
      */
-    public class FpPoint
-        : AbstractFpPoint
+    public class FpPoint : AbstractFpPoint
     {
+
         /**
          * Create a point which encodes without point compression.
          *
@@ -651,10 +653,13 @@ namespace Org.BouncyCastle.Math.EC
         // B.3 pg 62
         public override ECPoint Add(ECPoint b)
         {
+
             if (this.IsInfinity)
                 return b;
+
             if (b.IsInfinity)
                 return this;
+
             if (this == b)
                 return Twice();
 
@@ -662,7 +667,7 @@ namespace Org.BouncyCastle.Math.EC
             int coord = curve.CoordinateSystem;
 
             ECFieldElement X1 = this.RawXCoord, Y1 = this.RawYCoord;
-            ECFieldElement X2 = b.RawXCoord, Y2 = b.RawYCoord;
+            ECFieldElement X2 = b.RawXCoord,    Y2 = b.RawYCoord;
 
             switch (coord)
             {
@@ -1282,6 +1287,7 @@ namespace Org.BouncyCastle.Math.EC
 
         protected virtual FpPoint TwiceJacobianModified(bool calculateW)
         {
+
             ECFieldElement X1 = this.RawXCoord, Y1 = this.RawYCoord, Z1 = this.RawZCoords[0], W1 = GetJacobianModifiedW();
 
             ECFieldElement X1Squared = X1.Square();
@@ -1297,6 +1303,7 @@ namespace Org.BouncyCastle.Math.EC
             ECFieldElement Z3 = Z1.IsOne ? _2Y1 : _2Y1.Multiply(Z1);
 
             return new FpPoint(this.Curve, X3, Y3, new ECFieldElement[] { Z3, W3 }, IsCompressed);
+
         }
     }
 
@@ -1388,9 +1395,9 @@ namespace Org.BouncyCastle.Math.EC
     /**
      * Elliptic curve points over F2m
      */
-    public class F2mPoint
-        : AbstractF2mPoint
+    public class F2mPoint : AbstractF2mPoint
     {
+
         /**
          * @param curve base curve
          * @param x x point
@@ -2086,4 +2093,5 @@ namespace Org.BouncyCastle.Math.EC
             }
         }
     }
+
 }

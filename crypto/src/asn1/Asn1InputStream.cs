@@ -147,6 +147,7 @@ namespace Org.BouncyCastle.Asn1
 
         public Asn1Object ReadObject()
         {
+
             int tag = ReadByte();
             if (tag <= 0)
             {

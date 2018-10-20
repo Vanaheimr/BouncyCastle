@@ -7,7 +7,6 @@ namespace Org.BouncyCastle.Crypto
     /// All parameter classes implement this.
     /// </summary>
     public interface ICipherParameters
-    {
-    }
+    { }
 
 }

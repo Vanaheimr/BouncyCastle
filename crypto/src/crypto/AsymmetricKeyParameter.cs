@@ -10,19 +10,7 @@ namespace Org.BouncyCastle.Crypto
 
         #region Properties
 
-        #region IsPrivateKey
-
-        private readonly Boolean _IsPrivateKey;
-
-        public Boolean IsPrivateKey
-        {
-            get
-            {
-                return _IsPrivateKey;
-            }
-        }
-
-        #endregion
+        public Boolean  IsPrivateKey   { get; }
 
         #endregion
 
@@ -30,7 +18,7 @@ namespace Org.BouncyCastle.Crypto
 
         protected AsymmetricKeyParameter(Boolean IsPrivateKey)
         {
-            this._IsPrivateKey = IsPrivateKey;
+            this.IsPrivateKey = IsPrivateKey;
         }
 
         #endregion
@@ -51,12 +39,10 @@ namespace Org.BouncyCastle.Crypto
             if (Object == null)
                 return false;
 
-            // Check if the given object is an AsymmetricKeyParameter.
-            var AsymmetricKeyParameter = Object as AsymmetricKeyParameter;
-            if ((Object) AsymmetricKeyParameter == null)
+            if (!(Object is AsymmetricKeyParameter AsymmetricKeyParameter))
                 return false;
 
-            return this.Equals(AsymmetricKeyParameter);
+            return Equals(AsymmetricKeyParameter);
 
         }
 
@@ -75,7 +61,7 @@ namespace Org.BouncyCastle.Crypto
             if ((Object) AsymmetricKeyParameter == null)
                 return false;
 
-            return _IsPrivateKey.Equals(AsymmetricKeyParameter._IsPrivateKey);
+            return IsPrivateKey.Equals(AsymmetricKeyParameter.IsPrivateKey);
 
         }
 
@@ -86,9 +72,7 @@ namespace Org.BouncyCastle.Crypto
         #region GetHashCode()
 
         public override Int32 GetHashCode()
-        {
-            return _IsPrivateKey.GetHashCode();
-        }
+            => IsPrivateKey.GetHashCode();
 
         #endregion
 

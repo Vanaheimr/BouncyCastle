@@ -6,74 +6,94 @@ using Org.BouncyCastle.Math.EC;
 
 namespace Org.BouncyCastle.Crypto.Parameters
 {
-    public class ECPublicKeyParameters
-        : ECKeyParameters
+
+    public class ECPublicKeyParameters : ECKeyParameters
     {
+
         private readonly ECPoint q;
 
-        public ECPublicKeyParameters(
-            ECPoint				q,
-            ECDomainParameters	parameters)
+        public ECPublicKeyParameters(ECPoint             q,
+                                     ECDomainParameters  parameters)
+
             : this("EC", q, parameters)
-        {
-        }
+
+        { }
+
 
         [Obsolete("Use version with explicit 'algorithm' parameter")]
-        public ECPublicKeyParameters(
-            ECPoint				q,
-            DerObjectIdentifier publicKeyParamSet)
-            : base("ECGOST3410", false, publicKeyParamSet)
+        public ECPublicKeyParameters(ECPoint              q,
+                                     DerObjectIdentifier  publicKeyParamSet)
+
+            : base("ECGOST3410",
+                   false,
+                   publicKeyParamSet)
+
         {
+
             if (q == null)
                 throw new ArgumentNullException("q");
 
             this.q = q.Normalize();
+
         }
 
-        public ECPublicKeyParameters(
-            string				algorithm,
-            ECPoint				q,
-            ECDomainParameters	parameters)
-            : base(algorithm, false, parameters)
+        public ECPublicKeyParameters(String              algorithm,
+                                     ECPoint             q,
+                                     ECDomainParameters  parameters)
+
+            : base(algorithm,
+                   false,
+                   parameters)
+
         {
+
             if (q == null)
                 throw new ArgumentNullException("q");
 
             this.q = q.Normalize();
+
         }
 
-        public ECPublicKeyParameters(
-            string				algorithm,
-            ECPoint				q,
-            DerObjectIdentifier publicKeyParamSet)
-            : base(algorithm, false, publicKeyParamSet)
+        public ECPublicKeyParameters(String               algorithm,
+                                     ECPoint              q,
+                                     DerObjectIdentifier  publicKeyParamSet)
+
+            : base(algorithm,
+                   false,
+                   publicKeyParamSet)
+
         {
+
             if (q == null)
                 throw new ArgumentNullException("q");
 
             this.q = q.Normalize();
+
         }
 
         public ECPoint Q
         {
-            get { return q; }
+            get {
+                return q;
+            }
         }
 
         public override bool Equals(object obj)
         {
+
             if (obj == this)
                 return true;
 
-            ECPublicKeyParameters other = obj as ECPublicKeyParameters;
+            var other = obj as ECPublicKeyParameters;
 
             if (other == null)
                 return false;
 
             return Equals(other);
+
         }
 
-        protected bool Equals(
-            ECPublicKeyParameters other)
+        protected bool Equals(ECPublicKeyParameters other)
         {
             return q.Equals(other.q) && base.Equals(other);
         }
@@ -82,5 +102,7 @@ namespace Org.BouncyCastle.Crypto.Parameters
         {
             return q.GetHashCode() ^ base.GetHashCode();
         }
+
     }
+
 }

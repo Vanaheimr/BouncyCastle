@@ -11,158 +11,169 @@ using Org.BouncyCastle.Security;
 
 namespace Org.BouncyCastle.Crypto.Signers
 {
-	public class DsaDigestSigner
-		: ISigner
-	{
-		private readonly IDigest digest;
-		private readonly IDsa dsaSigner;
-		private bool forSigning;
 
-		public DsaDigestSigner(
-			IDsa	signer,
-			IDigest	digest)
-		{
-			this.digest = digest;
-			this.dsaSigner = signer;
-		}
+    public class DsaDigestSigner : ISigner
+    {
 
-		public string AlgorithmName
-		{
-			get { return digest.AlgorithmName + "with" + dsaSigner.AlgorithmName; }
-		}
+        private readonly IDigest  digest;
+        private readonly IDsa     dsaSigner;
+        private          Boolean  forSigning;
 
-		public void Init(
-			bool							forSigning,
-			ICipherParameters	parameters)
-		{
-			this.forSigning = forSigning;
+        public DsaDigestSigner(IDsa     signer,
+                               IDigest  digest)
+        {
 
-			AsymmetricKeyParameter k;
+            this.digest     = digest;
+            this.dsaSigner  = signer;
 
-			if (parameters is ParametersWithRandom)
-			{
-				k = (AsymmetricKeyParameter)((ParametersWithRandom)parameters).Parameters;
-			}
-			else
-			{
-				k = (AsymmetricKeyParameter)parameters;
-			}
+        }
 
-			if (forSigning && !k.IsPrivateKey)
-				throw new InvalidKeyException("Signing Requires Private Key.");
+        public string AlgorithmName
+        {
+            get
+            {
+                return digest.AlgorithmName + "with" + dsaSigner.AlgorithmName;
+            }
+        }
 
-			if (!forSigning && k.IsPrivateKey)
-				throw new InvalidKeyException("Verification Requires Public Key.");
+        public void Init(Boolean            forSigning,
+                         ICipherParameters  parameters)
+        {
 
-			Reset();
+            this.forSigning = forSigning;
 
-			dsaSigner.Init(forSigning, parameters);
-		}
+            AsymmetricKeyParameter k;
 
-		/**
-		 * update the internal digest with the byte b
-		 */
-		public void Update(
-			byte input)
-		{
-			digest.Update(input);
-		}
+            if (parameters is ParametersWithRandom)
+            {
+                k = (AsymmetricKeyParameter) ((ParametersWithRandom) parameters).Parameters;
+            }
+            else
+            {
+                k = (AsymmetricKeyParameter) parameters;
+            }
 
-		/**
-		 * update the internal digest with the byte array in
-		 */
-		public void BlockUpdate(
-			byte[]	input,
-			int			inOff,
-			int			length)
-		{
-			digest.BlockUpdate(input, inOff, length);
-		}
+            if (forSigning && !k.IsPrivateKey)
+                throw new InvalidKeyException("Signing Requires Private Key.");
 
-		/**
-		 * Generate a signature for the message we've been loaded with using
-		 * the key we were initialised with.
-     */
-		public byte[] GenerateSignature()
-		{
-			if (!forSigning)
-				throw new InvalidOperationException("DSADigestSigner not initialised for signature generation.");
+            if (!forSigning && k.IsPrivateKey)
+                throw new InvalidKeyException("Verification Requires Public Key.");
 
-			byte[] hash = new byte[digest.GetDigestSize()];
-			digest.DoFinal(hash, 0);
+            Reset();
 
-			BigInteger[] sig = dsaSigner.GenerateSignature(hash);
+            dsaSigner.Init(forSigning, parameters);
 
-			return DerEncode(sig[0], sig[1]);
-		}
+        }
 
-		/// <returns>true if the internal state represents the signature described in the passed in array.</returns>
-		public bool VerifySignature(
-			byte[] signature)
-		{
-			if (forSigning)
-				throw new InvalidOperationException("DSADigestSigner not initialised for verification");
+        /// <summary>
+        /// Update the internal digest with the byte b.
+        /// </summary>
+        public void Update(Byte input)
+        {
+            digest.Update(input);
+        }
 
-			byte[] hash = new byte[digest.GetDigestSize()];
-			digest.DoFinal(hash, 0);
+        /// <summary>
+        /// update the internal digest with the byte array in.
+        /// </summary>
+        public void BlockUpdate(Byte[]  input,
+                                int     inOff,
+                                int     length)
+        {
+            digest.BlockUpdate(input, inOff, length);
+        }
 
-			try
-			{
-				BigInteger[] sig = DerDecode(signature);
-				return dsaSigner.VerifySignature(hash, sig[0], sig[1]);
-			}
-			catch (IOException e)
-			{
-				return false;
-			}
-		}
+        /// <summary>
+        /// Generate a signature for the message we've been loaded with using the key we were initialised with.
+        /// </summary>
+        public byte[] GenerateSignature()
+        {
+
+            if (!forSigning)
+                throw new InvalidOperationException("DSADigestSigner not initialised for signature generation.");
+
+            var hash = new byte[digest.GetDigestSize()];
+            digest.DoFinal(hash, 0);
+
+            var sig = dsaSigner.GenerateSignature(hash);
+
+            return DerEncode(sig[0], sig[1]);
+
+        }
+
+        /// <summary>
+        /// True if the internal state represents the signature described in the passed in array.
+        /// </summary>
+        public Boolean VerifySignature(Byte[] signature)
+        {
+
+            if (forSigning)
+                throw new InvalidOperationException("DSADigestSigner not initialised for verification");
+
+            byte[] hash = new byte[digest.GetDigestSize()];
+            digest.DoFinal(hash, 0);
+
+            try
+            {
+                var sig = DerDecode(signature);
+                return dsaSigner.VerifySignature(hash, sig[0], sig[1]);
+            }
+            catch (IOException e)
+            {
+                return false;
+            }
+
+        }
 
 
-        public bool VerifySignature(
-            BigInteger sig0,
-            BigInteger sig1)
-		{
+        public Boolean VerifySignature(BigInteger  sig0,
+                                       BigInteger  sig1)
+        {
 
-			if (forSigning)
-				throw new InvalidOperationException("DSADigestSigner not initialised for verification");
+            if (forSigning)
+                throw new InvalidOperationException("DSADigestSigner not initialised for verification");
 
-			byte[] hash = new byte[digest.GetDigestSize()];
-			digest.DoFinal(hash, 0);
+            var hash = new byte[digest.GetDigestSize()];
+            digest.DoFinal(hash, 0);
 
-			try
-			{
-				return dsaSigner.VerifySignature(hash, sig0, sig1);
-			}
-			catch (IOException e)
-			{
-				return false;
-			}
+            try
+            {
+                return dsaSigner.VerifySignature(hash, sig0, sig1);
+            }
+            catch (IOException e)
+            {
+                return false;
+            }
 
-		}
+        }
 
-		/// <summary>Reset the internal state</summary>
-		public void Reset()
-		{
-			digest.Reset();
-		}
+        /// <summary>
+        /// Reset the internal state.
+        /// </summary>
+        public void Reset()
+        {
+            digest.Reset();
+        }
 
-		private byte[] DerEncode(
-			BigInteger	r,
-			BigInteger	s)
-		{
-			return new DerSequence(new DerInteger(r), new DerInteger(s)).GetDerEncoded();
-		}
+        private Byte[] DerEncode(BigInteger  r,
+                                 BigInteger  s)
+        {
+            return new DerSequence(new DerInteger(r), new DerInteger(s)).GetDerEncoded();
+        }
 
-		private BigInteger[] DerDecode(
-			byte[] encoding)
-		{
-			Asn1Sequence s = (Asn1Sequence) Asn1Object.FromByteArray(encoding);
+        private BigInteger[] DerDecode(Byte[] encoding)
+        {
 
-			return new BigInteger[]
-			{
-				((DerInteger) s[0]).Value,
-				((DerInteger) s[1]).Value
-			};
-		}
-	}
+            var s = (Asn1Sequence) Asn1Object.FromByteArray(encoding);
+
+            return new BigInteger[]
+            {
+                ((DerInteger) s[0]).Value,
+                ((DerInteger) s[1]).Value
+            };
+
+        }
+
+    }
+
 }
