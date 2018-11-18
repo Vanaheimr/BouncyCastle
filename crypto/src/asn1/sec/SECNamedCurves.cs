@@ -1,19 +1,21 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
 
-using Org.BouncyCastle.Asn1;
 using Org.BouncyCastle.Asn1.X9;
 using Org.BouncyCastle.Math;
 using Org.BouncyCastle.Math.EC;
 using Org.BouncyCastle.Math.EC.Endo;
 using Org.BouncyCastle.Utilities;
-using Org.BouncyCastle.Utilities.Collections;
 using Org.BouncyCastle.Utilities.Encoders;
 
 namespace Org.BouncyCastle.Asn1.Sec
 {
+
     public sealed class SecNamedCurves
     {
+
         private SecNamedCurves()
         {
         }
@@ -36,8 +38,7 @@ namespace Org.BouncyCastle.Asn1.Sec
         /*
          * secp112r1
          */
-        internal class Secp112r1Holder
-            : X9ECParametersHolder
+        internal class Secp112r1Holder : X9ECParametersHolder
         {
             private Secp112r1Holder() {}
 
@@ -67,8 +68,7 @@ namespace Org.BouncyCastle.Asn1.Sec
         /*
          * secp112r2
          */
-        internal class Secp112r2Holder
-            : X9ECParametersHolder
+        internal class Secp112r2Holder : X9ECParametersHolder
         {
             private Secp112r2Holder() {}
 
@@ -98,8 +98,7 @@ namespace Org.BouncyCastle.Asn1.Sec
         /*
          * secp128r1
          */
-        internal class Secp128r1Holder
-            : X9ECParametersHolder
+        internal class Secp128r1Holder : X9ECParametersHolder
         {
             private Secp128r1Holder() {}
 
@@ -129,8 +128,7 @@ namespace Org.BouncyCastle.Asn1.Sec
         /*
          * secp128r2
          */
-        internal class Secp128r2Holder
-            : X9ECParametersHolder
+        internal class Secp128r2Holder : X9ECParametersHolder
         {
             private Secp128r2Holder() {}
 
@@ -160,8 +158,7 @@ namespace Org.BouncyCastle.Asn1.Sec
         /*
          * secp160k1
          */
-        internal class Secp160k1Holder
-            : X9ECParametersHolder
+        internal class Secp160k1Holder : X9ECParametersHolder
         {
             private Secp160k1Holder() {}
 
@@ -204,8 +201,7 @@ namespace Org.BouncyCastle.Asn1.Sec
         /*
          * secp160r1
          */
-        internal class Secp160r1Holder
-            : X9ECParametersHolder
+        internal class Secp160r1Holder : X9ECParametersHolder
         {
             private Secp160r1Holder() {}
 
@@ -235,8 +231,7 @@ namespace Org.BouncyCastle.Asn1.Sec
         /*
          * secp160r2
          */
-        internal class Secp160r2Holder
-            : X9ECParametersHolder
+        internal class Secp160r2Holder : X9ECParametersHolder
         {
             private Secp160r2Holder() {}
 
@@ -263,11 +258,11 @@ namespace Org.BouncyCastle.Asn1.Sec
             }
         }
 
+
         /*
          * secp192k1
          */
-        internal class Secp192k1Holder
-            : X9ECParametersHolder
+        internal class Secp192k1Holder : X9ECParametersHolder
         {
             private Secp192k1Holder() {}
 
@@ -310,8 +305,7 @@ namespace Org.BouncyCastle.Asn1.Sec
         /*
          * secp192r1
          */
-        internal class Secp192r1Holder
-            : X9ECParametersHolder
+        internal class Secp192r1Holder : X9ECParametersHolder
         {
             private Secp192r1Holder() {}
 
@@ -341,8 +335,7 @@ namespace Org.BouncyCastle.Asn1.Sec
         /*
          * secp224k1
          */
-        internal class Secp224k1Holder
-            : X9ECParametersHolder
+        internal class Secp224k1Holder : X9ECParametersHolder
         {
             private Secp224k1Holder() {}
 
@@ -385,8 +378,7 @@ namespace Org.BouncyCastle.Asn1.Sec
         /*
          * secp224r1
          */
-        internal class Secp224r1Holder
-            : X9ECParametersHolder
+        internal class Secp224r1Holder : X9ECParametersHolder
         {
             private Secp224r1Holder() {}
 
@@ -416,8 +408,7 @@ namespace Org.BouncyCastle.Asn1.Sec
         /*
          * secp256k1
          */
-        internal class Secp256k1Holder
-            : X9ECParametersHolder
+        internal class Secp256k1Holder : X9ECParametersHolder
         {
             private Secp256k1Holder() {}
 
@@ -460,8 +451,7 @@ namespace Org.BouncyCastle.Asn1.Sec
         /*
          * secp256r1
          */
-        internal class Secp256r1Holder
-            : X9ECParametersHolder
+        internal class Secp256r1Holder : X9ECParametersHolder
         {
             private Secp256r1Holder() {}
 
@@ -491,8 +481,7 @@ namespace Org.BouncyCastle.Asn1.Sec
         /*
          * secp384r1
          */
-        internal class Secp384r1Holder
-            : X9ECParametersHolder
+        internal class Secp384r1Holder : X9ECParametersHolder
         {
             private Secp384r1Holder() {}
 
@@ -522,8 +511,7 @@ namespace Org.BouncyCastle.Asn1.Sec
         /*
          * secp521r1
          */
-        internal class Secp521r1Holder
-            : X9ECParametersHolder
+        internal class Secp521r1Holder : X9ECParametersHolder
         {
             private Secp521r1Holder() {}
 
@@ -553,8 +541,7 @@ namespace Org.BouncyCastle.Asn1.Sec
         /*
          * sect113r1
          */
-        internal class Sect113r1Holder
-            : X9ECParametersHolder
+        internal class Sect113r1Holder : X9ECParametersHolder
         {
             private Sect113r1Holder() {}
 
@@ -585,8 +572,7 @@ namespace Org.BouncyCastle.Asn1.Sec
         /*
          * sect113r2
          */
-        internal class Sect113r2Holder
-            : X9ECParametersHolder
+        internal class Sect113r2Holder : X9ECParametersHolder
         {
             private Sect113r2Holder() {}
 
@@ -617,8 +603,7 @@ namespace Org.BouncyCastle.Asn1.Sec
         /*
          * sect131r1
          */
-        internal class Sect131r1Holder
-            : X9ECParametersHolder
+        internal class Sect131r1Holder : X9ECParametersHolder
         {
             private Sect131r1Holder() {}
 
@@ -651,8 +636,7 @@ namespace Org.BouncyCastle.Asn1.Sec
         /*
          * sect131r2
          */
-        internal class Sect131r2Holder
-            : X9ECParametersHolder
+        internal class Sect131r2Holder : X9ECParametersHolder
         {
             private Sect131r2Holder() {}
 
@@ -685,8 +669,7 @@ namespace Org.BouncyCastle.Asn1.Sec
         /*
          * sect163k1
          */
-        internal class Sect163k1Holder
-            : X9ECParametersHolder
+        internal class Sect163k1Holder : X9ECParametersHolder
         {
             private Sect163k1Holder() {}
 
@@ -719,8 +702,7 @@ namespace Org.BouncyCastle.Asn1.Sec
         /*
          * sect163r1
          */
-        internal class Sect163r1Holder
-            : X9ECParametersHolder
+        internal class Sect163r1Holder : X9ECParametersHolder
         {
             private Sect163r1Holder() {}
 
@@ -753,8 +735,7 @@ namespace Org.BouncyCastle.Asn1.Sec
         /*
          * sect163r2
          */
-        internal class Sect163r2Holder
-            : X9ECParametersHolder
+        internal class Sect163r2Holder : X9ECParametersHolder
         {
             private Sect163r2Holder() {}
 
@@ -787,8 +768,7 @@ namespace Org.BouncyCastle.Asn1.Sec
         /*
          * sect193r1
          */
-        internal class Sect193r1Holder
-            : X9ECParametersHolder
+        internal class Sect193r1Holder : X9ECParametersHolder
         {
             private Sect193r1Holder() {}
 
@@ -819,8 +799,7 @@ namespace Org.BouncyCastle.Asn1.Sec
         /*
          * sect193r2
          */
-        internal class Sect193r2Holder
-            : X9ECParametersHolder
+        internal class Sect193r2Holder : X9ECParametersHolder
         {
             private Sect193r2Holder() {}
 
@@ -851,8 +830,7 @@ namespace Org.BouncyCastle.Asn1.Sec
         /*
          * sect233k1
          */
-        internal class Sect233k1Holder
-            : X9ECParametersHolder
+        internal class Sect233k1Holder : X9ECParametersHolder
         {
             private Sect233k1Holder() {}
 
@@ -883,8 +861,7 @@ namespace Org.BouncyCastle.Asn1.Sec
         /*
          * sect233r1
          */
-        internal class Sect233r1Holder
-            : X9ECParametersHolder
+        internal class Sect233r1Holder : X9ECParametersHolder
         {
             private Sect233r1Holder() {}
 
@@ -915,8 +892,7 @@ namespace Org.BouncyCastle.Asn1.Sec
         /*
          * sect239k1
          */
-        internal class Sect239k1Holder
-            : X9ECParametersHolder
+        internal class Sect239k1Holder : X9ECParametersHolder
         {
             private Sect239k1Holder() {}
 
@@ -947,8 +923,7 @@ namespace Org.BouncyCastle.Asn1.Sec
         /*
          * sect283k1
          */
-        internal class Sect283k1Holder
-            : X9ECParametersHolder
+        internal class Sect283k1Holder : X9ECParametersHolder
         {
             private Sect283k1Holder() {}
 
@@ -981,8 +956,7 @@ namespace Org.BouncyCastle.Asn1.Sec
         /*
          * sect283r1
          */
-        internal class Sect283r1Holder
-            : X9ECParametersHolder
+        internal class Sect283r1Holder : X9ECParametersHolder
         {
             private Sect283r1Holder() {}
 
@@ -1015,8 +989,7 @@ namespace Org.BouncyCastle.Asn1.Sec
         /*
          * sect409k1
          */
-        internal class Sect409k1Holder
-            : X9ECParametersHolder
+        internal class Sect409k1Holder : X9ECParametersHolder
         {
             private Sect409k1Holder() {}
 
@@ -1047,8 +1020,7 @@ namespace Org.BouncyCastle.Asn1.Sec
         /*
          * sect409r1
          */
-        internal class Sect409r1Holder
-            : X9ECParametersHolder
+        internal class Sect409r1Holder : X9ECParametersHolder
         {
             private Sect409r1Holder() {}
 
@@ -1079,8 +1051,7 @@ namespace Org.BouncyCastle.Asn1.Sec
         /*
          * sect571k1
          */
-        internal class Sect571k1Holder
-            : X9ECParametersHolder
+        internal class Sect571k1Holder : X9ECParametersHolder
         {
             private Sect571k1Holder() {}
 
@@ -1113,8 +1084,7 @@ namespace Org.BouncyCastle.Asn1.Sec
         /*
          * sect571r1
          */
-        internal class Sect571r1Holder
-            : X9ECParametersHolder
+        internal class Sect571r1Holder : X9ECParametersHolder
         {
             private Sect571r1Holder() {}
 
@@ -1145,22 +1115,25 @@ namespace Org.BouncyCastle.Asn1.Sec
         }
 
 
-        private static readonly IDictionary objIds = Platform.CreateHashtable();
-        private static readonly IDictionary curves = Platform.CreateHashtable();
-        private static readonly IDictionary names = Platform.CreateHashtable();
+        private static readonly Dictionary<String,              DerObjectIdentifier>  objIds  = new Dictionary<String,              DerObjectIdentifier>();
+        private static readonly Dictionary<DerObjectIdentifier, String>               names   = new Dictionary<DerObjectIdentifier, String>();
+        private static readonly Dictionary<DerObjectIdentifier, X9ECParametersHolder> curves  = new Dictionary<DerObjectIdentifier, X9ECParametersHolder>();
 
-        private static void DefineCurve(
-            string					name,
-            DerObjectIdentifier		oid,
-            X9ECParametersHolder	holder)
+
+        private static void DefineCurve(String                name,
+                                        DerObjectIdentifier   oid,
+                                        X9ECParametersHolder  holder)
         {
+
             objIds.Add(name, oid);
-            names.Add(oid, name);
-            curves.Add(oid, holder);
+            names. Add(oid,  name);
+            curves.Add(oid,  holder);
+
         }
 
         static SecNamedCurves()
         {
+
             DefineCurve("secp112r1", SecObjectIdentifiers.SecP112r1, Secp112r1Holder.Instance);
             DefineCurve("secp112r2", SecObjectIdentifiers.SecP112r2, Secp112r2Holder.Instance);
             DefineCurve("secp128r1", SecObjectIdentifiers.SecP128r1, Secp128r1Holder.Instance);
@@ -1195,59 +1168,85 @@ namespace Org.BouncyCastle.Asn1.Sec
             DefineCurve("sect409r1", SecObjectIdentifiers.SecT409r1, Sect409r1Holder.Instance);
             DefineCurve("sect571k1", SecObjectIdentifiers.SecT571k1, Sect571k1Holder.Instance);
             DefineCurve("sect571r1", SecObjectIdentifiers.SecT571r1, Sect571r1Holder.Instance);
+
         }
 
-        public static X9ECParameters GetByName(
-            string name)
+
+        public static X9ECParameters GetByName(String name)
         {
-            DerObjectIdentifier oid = (DerObjectIdentifier)
-                objIds[Platform.ToLowerInvariant(name)];
 
-            return oid == null ? null : GetByOid(oid);
+            if (String.IsNullOrEmpty(name) || String.IsNullOrWhiteSpace(name))
+                return null;
+
+            if (objIds.TryGetValue(Platform.ToLowerInvariant(name), out DerObjectIdentifier oid))
+                return GetByOid(oid);
+
+            return null;
+
         }
 
-        /**
-         * return the X9ECParameters object for the named curve represented by
-         * the passed in object identifier. Null if the curve isn't present.
-         *
-         * @param oid an object identifier representing a named curve, if present.
-         */
-        public static X9ECParameters GetByOid(
-            DerObjectIdentifier oid)
+        /// <summary>
+        /// return the X9ECParameters object for the named curve represented by
+        /// the passed in object identifier. Null if the curve isn't present.
+        /// </summary>
+        /// <param name="oid"></param>
+        /// <returns>oid an object identifier representing a named curve, if present.</returns>
+        public static X9ECParameters GetByOid(DerObjectIdentifier oid)
         {
-            X9ECParametersHolder holder = (X9ECParametersHolder) curves[oid];
 
-            return holder == null ? null : holder.Parameters;
+            if (oid == null)
+                return null;
+
+            if (curves.TryGetValue(oid, out X9ECParametersHolder holder))
+                return holder.Parameters;
+
+            return null;
+
         }
 
-        /**
-         * return the object identifier signified by the passed in name. Null
-         * if there is no object identifier associated with name.
-         *
-         * @return the object identifier associated with name, if present.
-         */
-        public static DerObjectIdentifier GetOid(
-            string name)
+        /// <summary>
+        /// return the object identifier signified by the passed in name. Null
+        /// if there is no object identifier associated with name.
+        /// </summary>
+        /// <param name="name"></param>
+        /// <returns>the object identifier associated with name, if present.</returns>
+        public static DerObjectIdentifier GetOid(String name)
         {
-            return (DerObjectIdentifier)objIds[Platform.ToLowerInvariant(name)];
+
+            if (String.IsNullOrEmpty(name) || String.IsNullOrWhiteSpace(name))
+                return null;
+
+            if (objIds.TryGetValue(Platform.ToLowerInvariant(name), out DerObjectIdentifier oid))
+                return oid;
+
+            return null;
+
         }
 
-        /**
-         * return the named curve name represented by the given object identifier.
-         */
-        public static string GetName(
-            DerObjectIdentifier oid)
+        /// <summary>
+        /// Return the named curve name represented by the given object identifier.
+        /// </summary>
+        /// <param name="oid"></param>
+        public static String GetName(DerObjectIdentifier oid)
         {
-            return (string) names[oid];
+
+            if (oid == null)
+                return null;
+
+            if (names.TryGetValue(oid, out String name))
+                return name;
+
+            return null;
+
         }
 
-        /**
-         * returns an enumeration containing the name strings for curves
-         * contained in this structure.
-         */
+        /// <summary>
+        /// Returns an enumeration containing the name strings for curves
+        /// contained in this structure.
+        /// </summary>
         public static IEnumerable Names
-        {
-            get { return new EnumerableProxy(objIds.Keys); }
-        }
+            => objIds.Keys.ToArray();
+
     }
+
 }

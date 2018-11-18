@@ -287,8 +287,7 @@ namespace Org.BouncyCastle.Math
             }
         }
 
-        public BigInteger(
-            string value)
+        public BigInteger(String value)
             : this(value, 10)
         {
         }
