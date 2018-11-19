@@ -27,19 +27,10 @@ namespace Org.BouncyCastle.Asn1.X509
     public class TbsCertificateStructure : Asn1Encodable
     {
 
-        internal DerInteger version;
+        public Int32 Version
+            => VersionNumber.Value.IntValue + 1;
 
-        public int Version
-        {
-            get { return version.Value.IntValue + 1; }
-        }
-
-        public DerInteger VersionNumber
-        {
-            get { return version; }
-        }
-
-
+        public DerInteger              VersionNumber           { get; internal set; }
         public Asn1Sequence            Seq                     { get; internal set; }
         public DerInteger              SerialNumber            { get; internal set; }
         public AlgorithmIdentifier     Signature               { get; internal set; }
@@ -80,12 +71,12 @@ namespace Org.BouncyCastle.Asn1.X509
 
             // Some certficates don't include a version number - we assume v1
             if (seq[0] is DerTaggedObject)
-                version = DerInteger.GetInstance((Asn1TaggedObject)seq[0], true);
+                VersionNumber = DerInteger.GetInstance((Asn1TaggedObject)seq[0], true);
 
             else
             {
-                seqStart = -1;          // field 0 is missing!
-                version  = new DerInteger(0);
+                seqStart      = -1;          // field 0 is missing!
+                VersionNumber = new DerInteger(0);
             }
 
             SerialNumber = DerInteger.         GetInstance(seq[seqStart + 1]);

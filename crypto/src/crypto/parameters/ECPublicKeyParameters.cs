@@ -1,5 +1,4 @@
 using System;
-using System.Globalization;
 
 using Org.BouncyCastle.Asn1;
 using Org.BouncyCastle.Math.EC;
@@ -10,7 +9,8 @@ namespace Org.BouncyCastle.Crypto.Parameters
     public class ECPublicKeyParameters : ECKeyParameters
     {
 
-        private readonly ECPoint q;
+        public ECPoint  Q   { get; }
+
 
         public ECPublicKeyParameters(ECPoint             q,
                                      ECDomainParameters  parameters)
@@ -33,7 +33,7 @@ namespace Org.BouncyCastle.Crypto.Parameters
             if (q == null)
                 throw new ArgumentNullException("q");
 
-            this.q = q.Normalize();
+            this.Q = q.Normalize();
 
         }
 
@@ -50,7 +50,7 @@ namespace Org.BouncyCastle.Crypto.Parameters
             if (q == null)
                 throw new ArgumentNullException("q");
 
-            this.q = q.Normalize();
+            this.Q = q.Normalize();
 
         }
 
@@ -67,41 +67,31 @@ namespace Org.BouncyCastle.Crypto.Parameters
             if (q == null)
                 throw new ArgumentNullException("q");
 
-            this.q = q.Normalize();
+            this.Q = q.Normalize();
 
         }
 
-        public ECPoint Q
-        {
-            get {
-                return q;
-            }
-        }
 
-        public override bool Equals(object obj)
+
+        public override Boolean Equals(object obj)
         {
 
             if (obj == this)
                 return true;
 
-            var other = obj as ECPublicKeyParameters;
-
-            if (other == null)
+            if (!(obj is ECPublicKeyParameters other))
                 return false;
 
             return Equals(other);
 
         }
 
-        protected bool Equals(ECPublicKeyParameters other)
-        {
-            return q.Equals(other.q) && base.Equals(other);
-        }
+        protected Boolean Equals(ECPublicKeyParameters other)
+            => Q.Equals(other.Q) && base.Equals(other);
 
-        public override int GetHashCode()
-        {
-            return q.GetHashCode() ^ base.GetHashCode();
-        }
+        public override Int32 GetHashCode()
+            => Q.GetHashCode() ^ base.GetHashCode();
+
 
     }
 

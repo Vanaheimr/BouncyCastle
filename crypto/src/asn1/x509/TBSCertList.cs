@@ -114,18 +114,10 @@ namespace Org.BouncyCastle.Asn1.X509
         }
 
 
-        internal DerInteger version;
+        public Int32 Version
+            => VersionNumber.Value.IntValue + 1;
 
-        public int Version
-        {
-            get { return version.Value.IntValue + 1; }
-        }
-
-        public DerInteger VersionNumber
-        {
-            get { return version; }
-        }
-
+        public DerInteger           VersionNumber          { get; internal set; }
         public Asn1Sequence         Seq                    { get; internal set; }
         public AlgorithmIdentifier  Signature              { get; internal set; }
         public X509Name             Issuer                 { get; internal set; }
@@ -168,10 +160,10 @@ namespace Org.BouncyCastle.Asn1.X509
             this.Seq = seq;
 
             if (seq[seqPos] is DerInteger)
-                version = DerInteger.GetInstance(seq[seqPos++]);
+                VersionNumber = DerInteger.GetInstance(seq[seqPos++]);
 
             else
-                version = new DerInteger(0);
+                VersionNumber = new DerInteger(0);
 
             Signature   = AlgorithmIdentifier.GetInstance(seq[seqPos++]);
             Issuer      = X509Name.           GetInstance(seq[seqPos++]);

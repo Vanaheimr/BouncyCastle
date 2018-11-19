@@ -6,111 +6,82 @@ using Org.BouncyCastle.Utilities;
 
 namespace Org.BouncyCastle.Crypto.Parameters
 {
+
     public class ECDomainParameters
     {
-        internal ECCurve     curve;
-        internal byte[]      seed;
-        internal ECPoint     g;
-        internal BigInteger  n;
-        internal BigInteger  h;
 
-        public ECDomainParameters(
-            ECCurve     curve,
-            ECPoint     g,
-            BigInteger  n)
+        public ECCurve     Curve    { get; internal set; }
+        public byte[]      Seed     { get; internal set; }
+        public ECPoint     G        { get; internal set; }
+        public BigInteger  N        { get; internal set; }
+        public BigInteger  H        { get; internal set; }
+
+        public ECDomainParameters(ECCurve     curve,
+                                  ECPoint     g,
+                                  BigInteger  n)
+
             : this(curve, g, n, BigInteger.One)
-        {
-        }
 
-        public ECDomainParameters(
-            ECCurve     curve,
-            ECPoint     g,
-            BigInteger  n,
-            BigInteger  h)
+        { }
+
+        public ECDomainParameters(ECCurve     curve,
+                                  ECPoint     g,
+                                  BigInteger  n,
+                                  BigInteger  h)
+
             : this(curve, g, n, h, null)
+
+        { }
+
+        public ECDomainParameters(ECCurve     curve,
+                                  ECPoint     g,
+                                  BigInteger  n,
+                                  BigInteger  h,
+                                  Byte[]      seed)
         {
+
+            this.Curve  = curve          ?? throw new ArgumentNullException("curve");
+            this.G      = g?.Normalize() ?? throw new ArgumentNullException("g");
+            this.N      = n              ?? throw new ArgumentNullException("n");
+            this.H      = h              ?? throw new ArgumentNullException("h");
+            this.Seed   = Arrays.Clone(seed);
+
         }
 
-        public ECDomainParameters(
-            ECCurve     curve,
-            ECPoint     g,
-            BigInteger  n,
-            BigInteger  h,
-            byte[]      seed)
-        {
-            if (curve == null)
-                throw new ArgumentNullException("curve");
-            if (g == null)
-                throw new ArgumentNullException("g");
-            if (n == null)
-                throw new ArgumentNullException("n");
-            if (h == null)
-                throw new ArgumentNullException("h");
 
-            this.curve = curve;
-            this.g = g.Normalize();
-            this.n = n;
-            this.h = h;
-            this.seed = Arrays.Clone(seed);
-        }
+        public Byte[] GetSeed()
+            => Arrays.Clone(Seed);
 
-        public ECCurve Curve
+        public override Boolean Equals(Object obj)
         {
-            get { return curve; }
-        }
 
-        public ECPoint G
-        {
-            get { return g; }
-        }
-
-        public BigInteger N
-        {
-            get { return n; }
-        }
-
-        public BigInteger H
-        {
-            get { return h; }
-        }
-
-        public byte[] GetSeed()
-        {
-            return Arrays.Clone(seed);
-        }
-
-        public override bool Equals(
-            object obj)
-        {
             if (obj == this)
                 return true;
 
-            ECDomainParameters other = obj as ECDomainParameters;
-
-            if (other == null)
+            if (!(obj is ECDomainParameters other))
                 return false;
 
             return Equals(other);
+
         }
 
-        protected bool Equals(
-            ECDomainParameters other)
-        {
-            return curve.Equals(other.curve)
-                &&	g.Equals(other.g)
-                &&	n.Equals(other.n)
-                &&	h.Equals(other.h)
-                &&	Arrays.AreEqual(seed, other.seed);
-        }
+        protected Boolean Equals(ECDomainParameters other)
+
+            => Curve.Equals(other.Curve) &&
+                   G.Equals(other.G)     &&
+                   N.Equals(other.N)     &&
+                   H.Equals(other.H)     &&
+                   Arrays.AreEqual(Seed, other.Seed);
+
 
         public override int GetHashCode()
-        {
-            return curve.GetHashCode()
-                ^	g.GetHashCode()
-                ^	n.GetHashCode()
-                ^	h.GetHashCode()
-                ^	Arrays.GetHashCode(seed);
-        }
+
+            => Curve.GetHashCode() ^
+                   G.GetHashCode() ^
+                   N.GetHashCode() ^
+                   H.GetHashCode() ^
+                   Arrays.GetHashCode(Seed);
+
     }
 
 }

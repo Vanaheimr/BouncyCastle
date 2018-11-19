@@ -1,5 +1,4 @@
 using System;
-using System.Globalization;
 
 using Org.BouncyCastle.Asn1;
 using Org.BouncyCastle.Math;
@@ -9,6 +8,9 @@ namespace Org.BouncyCastle.Crypto.Parameters
 
     public class ECPrivateKeyParameters : ECKeyParameters
     {
+
+        public BigInteger  D   { get; }
+
 
         public ECPrivateKeyParameters(BigInteger          d,
                                       ECDomainParameters  parameters)
@@ -53,9 +55,9 @@ namespace Org.BouncyCastle.Crypto.Parameters
 
         }
 
-        public BigInteger D { get; }
 
-        public override bool Equals(object obj)
+
+        public override Boolean Equals(object obj)
         {
 
             if (obj == this)
@@ -68,15 +70,11 @@ namespace Org.BouncyCastle.Crypto.Parameters
 
         }
 
-        protected bool Equals(ECPrivateKeyParameters other)
-        {
-            return D.Equals(other.D) && base.Equals(other);
-        }
+        protected Boolean Equals(ECPrivateKeyParameters other)
+            => D.Equals(other.D) && base.Equals(other);
 
-        public override int GetHashCode()
-        {
-            return D.GetHashCode() ^ base.GetHashCode();
-        }
+        public override Int32 GetHashCode()
+            => D.GetHashCode() ^ base.GetHashCode();
 
     }
 
