@@ -5,41 +5,39 @@ using Org.BouncyCastle.Math.EC;
 
 namespace Org.BouncyCastle.Asn1.X9
 {
-    /**
-     * Class for processing an ECFieldElement as a DER object.
-     */
-    public class X9FieldElement
-        : Asn1Encodable
+
+    /// <summary>
+    /// Class for processing an ECFieldElement as a DER object.
+    /// </summary>
+    public class X9FieldElement : Asn1Encodable
     {
-        private ECFieldElement f;
 
-        public X9FieldElement(
-            ECFieldElement f)
+        public ECFieldElement  Value   { get; }
+
+
+        public X9FieldElement(ECFieldElement f)
         {
-            this.f = f;
+            this.Value = f;
         }
 
-        public X9FieldElement(
-            BigInteger		p,
-            Asn1OctetString	s)
+        public X9FieldElement(BigInteger       p,
+                              Asn1OctetString  s)
+
             : this(new FpFieldElement(p, new BigInteger(1, s.GetOctets())))
-        {
-        }
 
-        public X9FieldElement(
-            int				m,
-            int				k1,
-            int				k2,
-            int				k3,
-            Asn1OctetString	s)
+        { }
+
+        public X9FieldElement(Int32            m,
+                              Int32            k1,
+                              Int32            k2,
+                              Int32            k3,
+                              Asn1OctetString  s)
+
             : this(new F2mFieldElement(m, k1, k2, k3, new BigInteger(1, s.GetOctets())))
-        {
-        }
 
-        public ECFieldElement Value
-        {
-            get { return f; }
-        }
+        { }
+
+
 
         /**
          * Produce an object suitable for an Asn1OutputStream.
@@ -60,10 +58,14 @@ namespace Org.BouncyCastle.Asn1.X9
          */
         public override Asn1Object ToAsn1Object()
         {
-            int byteCount = X9IntegerConverter.GetByteLength(f);
-            byte[] paddedBigInteger = X9IntegerConverter.IntegerToBytes(f.ToBigInteger(), byteCount);
+
+            var byteCount        = X9IntegerConverter.GetByteLength(Value);
+            var paddedBigInteger = X9IntegerConverter.IntegerToBytes(Value.ToBigInteger(), byteCount);
 
             return new DerOctetString(paddedBigInteger);
+
         }
+
     }
+
 }

@@ -2,87 +2,80 @@ using System.Collections;
 
 namespace Org.BouncyCastle.Asn1.X9
 {
-    /**
-     * ANS.1 def for Diffie-Hellman key exchange OtherInfo structure. See
-     * RFC 2631, or X9.42, for further details.
-     */
-    public class OtherInfo
-        : Asn1Encodable
+
+    /// <summary>
+    /// ANS.1 def for Diffie-Hellman key exchange OtherInfo structure. See
+    /// RFC 2631, or X9.42, for further details.
+    /// </summary>
+    public class OtherInfo : Asn1Encodable
     {
-        private KeySpecificInfo	keyInfo;
-        private Asn1OctetString	partyAInfo;
-        private Asn1OctetString	suppPubInfo;
 
-		public OtherInfo(
-            KeySpecificInfo	keyInfo,
-            Asn1OctetString	partyAInfo,
-            Asn1OctetString	suppPubInfo)
+        public KeySpecificInfo  KeyInfo        { get; }
+
+        public Asn1OctetString  PartyAInfo     { get; }
+
+        public Asn1OctetString  SuppPubInfo    { get; }
+
+
+        public OtherInfo(KeySpecificInfo  keyInfo,
+                         Asn1OctetString  partyAInfo,
+                         Asn1OctetString  suppPubInfo)
         {
-            this.keyInfo = keyInfo;
-            this.partyAInfo = partyAInfo;
-            this.suppPubInfo = suppPubInfo;
+
+            this.KeyInfo      = keyInfo;
+            this.PartyAInfo   = partyAInfo;
+            this.SuppPubInfo  = suppPubInfo;
+
         }
 
-		public OtherInfo(
-            Asn1Sequence seq)
+        public OtherInfo(Asn1Sequence seq)
         {
-            IEnumerator e = seq.GetEnumerator();
 
-			e.MoveNext();
-            keyInfo = new KeySpecificInfo((Asn1Sequence) e.Current);
+            var e = seq.GetEnumerator();
 
-			while (e.MoveNext())
+            e.MoveNext();
+            KeyInfo = new KeySpecificInfo((Asn1Sequence) e.Current);
+
+            while (e.MoveNext())
             {
-                DerTaggedObject o = (DerTaggedObject) e.Current;
 
-				if (o.TagNo == 0)
-                {
-                    partyAInfo = (Asn1OctetString) o.GetObject();
-                }
+                var o = (DerTaggedObject) e.Current;
+
+                if (o.TagNo == 0)
+                    PartyAInfo = (Asn1OctetString) o.GetObject();
+
                 else if ((int) o.TagNo == 2)
-                {
-                    suppPubInfo = (Asn1OctetString) o.GetObject();
-                }
+                    SuppPubInfo = (Asn1OctetString) o.GetObject();
+
             }
+
         }
 
-		public KeySpecificInfo KeyInfo
-        {
-			get { return keyInfo; }
-        }
 
-		public Asn1OctetString PartyAInfo
-        {
-			get { return partyAInfo; }
-        }
-
-		public Asn1OctetString SuppPubInfo
-        {
-            get { return suppPubInfo; }
-        }
-
-		/**
-         * Produce an object suitable for an Asn1OutputStream.
-         * <pre>
-         *  OtherInfo ::= Sequence {
-         *      keyInfo KeySpecificInfo,
-         *      partyAInfo [0] OCTET STRING OPTIONAL,
-         *      suppPubInfo [2] OCTET STRING
-         *  }
-         * </pre>
-         */
+        /// <summary>
+        /// Produce an object suitable for an Asn1OutputStream.
+        /// </summary>
+        /// <remarks>
+        /// OtherInfo ::= Sequence {
+        ///     keyInfo KeySpecificInfo,
+        ///     partyAInfo [0] OCTET STRING OPTIONAL,
+        ///     suppPubInfo [2] OCTET STRING
+        /// }
+        /// </remarks>
         public override Asn1Object ToAsn1Object()
         {
-            Asn1EncodableVector v = new Asn1EncodableVector(keyInfo);
 
-			if (partyAInfo != null)
-            {
-                v.Add(new DerTaggedObject(0, partyAInfo));
-            }
+            var v = new Asn1EncodableVector(KeyInfo);
 
-			v.Add(new DerTaggedObject(2, suppPubInfo));
+            if (PartyAInfo != null)
+                v.Add(new DerTaggedObject(0, PartyAInfo));
 
-			return new DerSequence(v);
+            v.Add(new DerTaggedObject(2, SuppPubInfo));
+
+            return new DerSequence(v);
+
         }
+
     }
+
 }

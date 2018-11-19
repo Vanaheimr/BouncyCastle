@@ -2,61 +2,55 @@ using System;
 
 namespace Org.BouncyCastle.Asn1.X9
 {
-	public class DHValidationParms
-		: Asn1Encodable
-	{
-		private readonly DerBitString seed;
-		private readonly DerInteger pgenCounter;
 
-		public static DHValidationParms GetInstance(Asn1TaggedObject obj, bool isExplicit)
-		{
-			return GetInstance(Asn1Sequence.GetInstance(obj, isExplicit));
-		}
+    public class DHValidationParms : Asn1Encodable
+    {
 
-		public static DHValidationParms GetInstance(object obj)
-		{
-			if (obj == null || obj is DHDomainParameters)
-				return (DHValidationParms)obj;
+        public DerBitString  Seed           { get; }
 
-			if (obj is Asn1Sequence)
-				return new DHValidationParms((Asn1Sequence)obj);
+        public DerInteger    PgenCounter    { get; }
 
-			throw new ArgumentException("Invalid DHValidationParms: " + obj.GetType().FullName, "obj");
-		}
-		
-		public DHValidationParms(DerBitString seed, DerInteger pgenCounter)
-		{
-			if (seed == null)
-				throw new ArgumentNullException("seed");
-			if (pgenCounter == null)
-				throw new ArgumentNullException("pgenCounter");
 
-			this.seed = seed;
-			this.pgenCounter = pgenCounter;
-		}
+        public static DHValidationParms GetInstance(Asn1TaggedObject obj, Boolean IsExplicit)
 
-		private DHValidationParms(Asn1Sequence seq)
-		{
-			if (seq.Count != 2)
-				throw new ArgumentException("Bad sequence size: " + seq.Count, "seq");
+            => GetInstance(Asn1Sequence.GetInstance(obj, IsExplicit));
 
-			this.seed = DerBitString.GetInstance(seq[0]);
-			this.pgenCounter = DerInteger.GetInstance(seq[1]);
-		}
+        public static DHValidationParms GetInstance(object obj)
+        {
 
-		public DerBitString Seed
-		{
-			get { return this.seed; }
-		}
+            if (obj == null || obj is DHDomainParameters)
+                return (DHValidationParms)obj;
 
-		public DerInteger PgenCounter
-		{
-			get { return this.pgenCounter; }
-		}
+            if (obj is Asn1Sequence)
+                return new DHValidationParms((Asn1Sequence)obj);
 
-		public override Asn1Object ToAsn1Object()
-		{
-			return new DerSequence(seed, pgenCounter);
-		}
-	}
+            throw new ArgumentException("Invalid DHValidationParms: " + obj.GetType().FullName, "obj");
+
+        }
+
+        public DHValidationParms(DerBitString seed, DerInteger pgenCounter)
+        {
+
+            this.Seed         = seed        ?? throw new ArgumentNullException("seed");
+            this.PgenCounter  = pgenCounter ?? throw new ArgumentNullException("pgenCounter");
+
+        }
+
+        private DHValidationParms(Asn1Sequence seq)
+        {
+
+            if (seq.Count != 2)
+                throw new ArgumentException("Bad sequence size: " + seq.Count, "seq");
+
+            this.Seed         = DerBitString.GetInstance(seq[0]);
+            this.PgenCounter  = DerInteger.GetInstance(seq[1]);
+
+        }
+
+
+        public override Asn1Object ToAsn1Object()
+            => new DerSequence(Seed, PgenCounter);
+
+    }
+
 }

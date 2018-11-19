@@ -1,53 +1,47 @@
-using Org.BouncyCastle.Asn1;
+using System;
 
 namespace Org.BouncyCastle.Asn1.X9
 {
-    public class X962Parameters
-        : Asn1Encodable, IAsn1Choice
+
+    public class X962Parameters : Asn1Encodable, IAsn1Choice
     {
-        private readonly Asn1Object _params;
 
-		public X962Parameters(
-            X9ECParameters ecParameters)
+        public Asn1Object  Parameters    { get; }
+
+
+        public X962Parameters(X9ECParameters ecParameters)
         {
-            this._params = ecParameters.ToAsn1Object();
+            this.Parameters = ecParameters.ToAsn1Object();
         }
 
-		public X962Parameters(
-            DerObjectIdentifier namedCurve)
+        public X962Parameters(DerObjectIdentifier namedCurve)
         {
-            this._params = namedCurve;
+            this.Parameters = namedCurve;
         }
 
-		public X962Parameters(
-            Asn1Object obj)
+        public X962Parameters(Asn1Object obj)
         {
-            this._params = obj;
+            this.Parameters = obj;
         }
 
-		public bool IsNamedCurve
-        {
-			get { return (_params is DerObjectIdentifier); }
-        }
 
-		public Asn1Object Parameters
-        {
-            get { return _params; }
-        }
+        public Boolean IsNamedCurve
+            => Parameters is DerObjectIdentifier;
 
-		/**
-         * Produce an object suitable for an Asn1OutputStream.
-         * <pre>
-         * Parameters ::= CHOICE {
-         *    ecParameters ECParameters,
-         *    namedCurve   CURVES.&amp;id({CurveNames}),
-         *    implicitlyCA Null
-         * }
-         * </pre>
-         */
+
+        /// <summary>
+        /// Produce an object suitable for an Asn1OutputStream.
+        /// </summary>
+        /// <remarks>
+        /// Parameters ::= CHOICE {
+        ///    ecParameters ECParameters,
+        ///    namedCurve   CURVES.&amp;id({CurveNames}),
+        ///    implicitlyCA Null
+        /// }
+        /// </remarks>
         public override Asn1Object ToAsn1Object()
-        {
-            return _params;
-        }
+            => Parameters;
+
     }
+
 }

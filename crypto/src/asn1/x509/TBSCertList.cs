@@ -5,58 +5,47 @@ using Org.BouncyCastle.Utilities.Collections;
 
 namespace Org.BouncyCastle.Asn1.X509
 {
-	public class CrlEntry
-		: Asn1Encodable
-	{
-		internal Asn1Sequence	seq;
-		internal DerInteger		userCertificate;
-		internal Time			revocationDate;
-		internal X509Extensions	crlEntryExtensions;
 
-		public CrlEntry(
-			Asn1Sequence seq)
-		{
-			if (seq.Count < 2 || seq.Count > 3)
-			{
-				throw new ArgumentException("Bad sequence size: " + seq.Count);
-			}
+    public class CrlEntry : Asn1Encodable
+    {
 
-			this.seq = seq;
+        public Asn1Sequence    Seq                   { get; internal set; }
+        public DerInteger      UserCertificate       { get; internal set; }
+        public Time            RevocationDate        { get; internal set; }
+        public X509Extensions  CrlEntryExtensions    { get; internal set; }
 
-			userCertificate = DerInteger.GetInstance(seq[0]);
-			revocationDate = Time.GetInstance(seq[1]);
-		}
+        public CrlEntry(Asn1Sequence seq)
+        {
 
-		public DerInteger UserCertificate
-		{
-			get { return userCertificate; }
-		}
+            if (seq.Count < 2 || seq.Count > 3)
+                throw new ArgumentException("Bad sequence size: " + seq.Count);
 
-		public Time RevocationDate
-		{
-			get { return revocationDate; }
-		}
+            this.Seq = seq;
 
-		public X509Extensions Extensions
-		{
-			get
-			{
-				if (crlEntryExtensions == null && seq.Count == 3)
-				{
-					crlEntryExtensions = X509Extensions.GetInstance(seq[2]);
-				}
+            UserCertificate  = DerInteger.GetInstance(seq[0]);
+            RevocationDate   = Time.      GetInstance(seq[1]);
 
-				return crlEntryExtensions;
-			}
-		}
+        }
 
-		public override Asn1Object ToAsn1Object()
-		{
-			return seq;
-		}
-	}
+        public X509Extensions Extensions
+        {
+            get
+            {
 
-	/**
+                if (CrlEntryExtensions == null && Seq.Count == 3)
+                    CrlEntryExtensions = X509Extensions.GetInstance(Seq[2]);
+
+                return CrlEntryExtensions;
+
+            }
+        }
+
+        public override Asn1Object ToAsn1Object()
+            => Seq;
+
+    }
+
+    /**
      * PKIX RFC-2459 - TbsCertList object.
      * <pre>
      * TbsCertList  ::=  Sequence  {
@@ -77,198 +66,169 @@ namespace Org.BouncyCastle.Asn1.X509
      *                                }
      * </pre>
      */
-    public class TbsCertificateList
-        : Asn1Encodable
+    public class TbsCertificateList : Asn1Encodable
     {
-		private class RevokedCertificatesEnumeration
-			: IEnumerable
-		{
-			private readonly IEnumerable en;
 
-			internal RevokedCertificatesEnumeration(
-				IEnumerable en)
-			{
-				this.en = en;
-			}
-
-			public IEnumerator GetEnumerator()
-			{
-				return new RevokedCertificatesEnumerator(en.GetEnumerator());
-			}
-
-			private class RevokedCertificatesEnumerator
-				: IEnumerator
-			{
-				private readonly IEnumerator e;
-
-				internal RevokedCertificatesEnumerator(
-					IEnumerator e)
-				{
-					this.e = e;
-				}
-
-				public bool MoveNext()
-				{
-					return e.MoveNext();
-				}
-
-				public void Reset()
-				{
-					e.Reset();
-				}
-
-				public object Current
-				{
-					get { return new CrlEntry(Asn1Sequence.GetInstance(e.Current)); }
-				}
-			}
-		}
-
-		internal Asn1Sequence			seq;
-		internal DerInteger				version;
-        internal AlgorithmIdentifier	signature;
-        internal X509Name				issuer;
-        internal Time					thisUpdate;
-        internal Time					nextUpdate;
-		internal Asn1Sequence			revokedCertificates;
-		internal X509Extensions			crlExtensions;
-
-		public static TbsCertificateList GetInstance(
-            Asn1TaggedObject	obj,
-            bool				explicitly)
+        private class RevokedCertificatesEnumeration
+            : IEnumerable
         {
-            return GetInstance(Asn1Sequence.GetInstance(obj, explicitly));
+            private readonly IEnumerable en;
+
+            internal RevokedCertificatesEnumeration(
+                IEnumerable en)
+            {
+                this.en = en;
+            }
+
+            public IEnumerator GetEnumerator()
+            {
+                return new RevokedCertificatesEnumerator(en.GetEnumerator());
+            }
+
+            private class RevokedCertificatesEnumerator
+                : IEnumerator
+            {
+                private readonly IEnumerator e;
+
+                internal RevokedCertificatesEnumerator(
+                    IEnumerator e)
+                {
+                    this.e = e;
+                }
+
+                public bool MoveNext()
+                {
+                    return e.MoveNext();
+                }
+
+                public void Reset()
+                {
+                    e.Reset();
+                }
+
+                public object Current
+                {
+                    get { return new CrlEntry(Asn1Sequence.GetInstance(e.Current)); }
+                }
+            }
         }
 
-		public static TbsCertificateList GetInstance(
-            object obj)
-        {
-            TbsCertificateList list = obj as TbsCertificateList;
 
-			if (obj == null || list != null)
-            {
-                return list;
-            }
+        internal DerInteger version;
 
-			if (obj is Asn1Sequence)
-            {
-                return new TbsCertificateList((Asn1Sequence) obj);
-            }
-
-			throw new ArgumentException("unknown object in factory: " + obj.GetType().Name, "obj");
-        }
-
-		internal TbsCertificateList(
-            Asn1Sequence seq)
-        {
-			if (seq.Count < 3 || seq.Count > 7)
-			{
-				throw new ArgumentException("Bad sequence size: " + seq.Count);
-			}
-
-			int seqPos = 0;
-
-			this.seq = seq;
-
-			if (seq[seqPos] is DerInteger)
-            {
-				version = DerInteger.GetInstance(seq[seqPos++]);
-			}
-            else
-            {
-                version = new DerInteger(0);
-            }
-
-			signature = AlgorithmIdentifier.GetInstance(seq[seqPos++]);
-            issuer = X509Name.GetInstance(seq[seqPos++]);
-            thisUpdate = Time.GetInstance(seq[seqPos++]);
-
-			if (seqPos < seq.Count
-                && (seq[seqPos] is DerUtcTime
-                   || seq[seqPos] is DerGeneralizedTime
-                   || seq[seqPos] is Time))
-            {
-                nextUpdate = Time.GetInstance(seq[seqPos++]);
-            }
-
-			if (seqPos < seq.Count
-                && !(seq[seqPos] is DerTaggedObject))
-            {
-				revokedCertificates = Asn1Sequence.GetInstance(seq[seqPos++]);
-			}
-
-			if (seqPos < seq.Count
-                && seq[seqPos] is DerTaggedObject)
-            {
-				crlExtensions = X509Extensions.GetInstance(seq[seqPos]);
-			}
-        }
-
-		public int Version
+        public int Version
         {
             get { return version.Value.IntValue + 1; }
         }
 
-		public DerInteger VersionNumber
+        public DerInteger VersionNumber
         {
             get { return version; }
         }
 
-		public AlgorithmIdentifier Signature
+        public Asn1Sequence         Seq                    { get; internal set; }
+        public AlgorithmIdentifier  Signature              { get; internal set; }
+        public X509Name             Issuer                 { get; internal set; }
+        public Time                 ThisUpdate             { get; internal set; }
+        public Time                 NextUpdate             { get; internal set; }
+        public Asn1Sequence         RevokedCertificates    { get; internal set; }
+        public X509Extensions       Extensions             { get; internal set; }
+
+
+
+        public static TbsCertificateList GetInstance(Asn1TaggedObject  obj,
+                                                     Boolean           explicitly)
+
+            => GetInstance(Asn1Sequence.GetInstance(obj, explicitly));
+
+
+        public static TbsCertificateList GetInstance(Object obj)
         {
-            get { return signature; }
+
+            var list = obj as TbsCertificateList;
+
+            if (obj == null || list != null)
+                return list;
+
+            if (obj is Asn1Sequence)
+                return new TbsCertificateList((Asn1Sequence) obj);
+
+            throw new ArgumentException("unknown object in factory: " + obj.GetType().Name, "obj");
+
         }
 
-		public X509Name Issuer
+        internal TbsCertificateList(Asn1Sequence seq)
         {
-            get { return issuer; }
+
+            if (seq.Count < 3 || seq.Count > 7)
+                throw new ArgumentException("Bad sequence size: " + seq.Count);
+
+            int seqPos = 0;
+
+            this.Seq = seq;
+
+            if (seq[seqPos] is DerInteger)
+                version = DerInteger.GetInstance(seq[seqPos++]);
+
+            else
+                version = new DerInteger(0);
+
+            Signature   = AlgorithmIdentifier.GetInstance(seq[seqPos++]);
+            Issuer      = X509Name.           GetInstance(seq[seqPos++]);
+            ThisUpdate  = Time.               GetInstance(seq[seqPos++]);
+
+            if (seqPos < seq.Count
+                && (seq[seqPos] is DerUtcTime
+                   || seq[seqPos] is DerGeneralizedTime
+                   || seq[seqPos] is Time))
+            {
+                NextUpdate = Time.GetInstance(seq[seqPos++]);
+            }
+
+            if (seqPos < seq.Count
+                && !(seq[seqPos] is DerTaggedObject))
+            {
+                RevokedCertificates = Asn1Sequence.GetInstance(seq[seqPos++]);
+            }
+
+            if (seqPos < seq.Count
+                && seq[seqPos] is DerTaggedObject)
+            {
+                Extensions = X509Extensions.GetInstance(seq[seqPos]);
+            }
+
         }
 
-		public Time ThisUpdate
+
+        public CrlEntry[] GetRevokedCertificates()
         {
-            get { return thisUpdate; }
+
+            if (RevokedCertificates == null)
+                return new CrlEntry[0];
+
+            var entries = new CrlEntry[RevokedCertificates.Count];
+
+            for (int i = 0; i < entries.Length; i++)
+                entries[i] = new CrlEntry(Asn1Sequence.GetInstance(RevokedCertificates[i]));
+
+            return entries;
+
         }
 
-		public Time NextUpdate
+        public IEnumerable GetRevokedCertificateEnumeration()
         {
-            get { return nextUpdate; }
+
+            if (RevokedCertificates == null)
+                return EmptyEnumerable.Instance;
+
+            return new RevokedCertificatesEnumeration(RevokedCertificates);
+
         }
 
-		public CrlEntry[] GetRevokedCertificates()
-        {
-			if (revokedCertificates == null)
-			{
-				return new CrlEntry[0];
-			}
 
-			CrlEntry[] entries = new CrlEntry[revokedCertificates.Count];
+        public override Asn1Object ToAsn1Object()
+            => Seq;
 
-			for (int i = 0; i < entries.Length; i++)
-			{
-				entries[i] = new CrlEntry(Asn1Sequence.GetInstance(revokedCertificates[i]));
-			}
-
-			return entries;
-		}
-
-		public IEnumerable GetRevokedCertificateEnumeration()
-		{
-			if (revokedCertificates == null)
-			{
-				return EmptyEnumerable.Instance;
-			}
-
-			return new RevokedCertificatesEnumeration(revokedCertificates);
-		}
-
-		public X509Extensions Extensions
-        {
-            get { return crlExtensions; }
-        }
-
-		public override Asn1Object ToAsn1Object()
-        {
-            return seq;
-        }
     }
+
 }

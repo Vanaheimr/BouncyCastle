@@ -1186,11 +1186,11 @@ namespace Org.BouncyCastle.Asn1.Sec
         }
 
         /// <summary>
-        /// return the X9ECParameters object for the named curve represented by
+        /// Return the X9ECParameters object for the named curve represented by
         /// the passed in object identifier. Null if the curve isn't present.
         /// </summary>
         /// <param name="oid"></param>
-        /// <returns>oid an object identifier representing a named curve, if present.</returns>
+        /// <returns>Oid an object identifier representing a named curve, if present.</returns>
         public static X9ECParameters GetByOid(DerObjectIdentifier oid)
         {
 
@@ -1205,11 +1205,11 @@ namespace Org.BouncyCastle.Asn1.Sec
         }
 
         /// <summary>
-        /// return the object identifier signified by the passed in name. Null
+        /// Return the object identifier signified by the passed in name. Null
         /// if there is no object identifier associated with name.
         /// </summary>
         /// <param name="name"></param>
-        /// <returns>the object identifier associated with name, if present.</returns>
+        /// <returns>The object identifier associated with name, if present.</returns>
         public static DerObjectIdentifier GetOid(String name)
         {
 
@@ -1240,11 +1240,12 @@ namespace Org.BouncyCastle.Asn1.Sec
 
         }
 
+
         /// <summary>
         /// Returns an enumeration containing the name strings for curves
         /// contained in this structure.
         /// </summary>
-        public static IEnumerable Names
+        public static IEnumerable<String> Names
             => objIds.Keys.ToArray();
 
     }

@@ -15,6 +15,7 @@ namespace Org.BouncyCastle.Asn1.Nist
     /// </summary>
     public sealed class NistNamedCurves
     {
+
         private NistNamedCurves()
         { }
 
@@ -122,7 +123,7 @@ namespace Org.BouncyCastle.Asn1.Nist
         /// Returns an enumeration containing the name strings for curves
         /// contained in this structure.
         /// </summary>
-        public static IEnumerable Names
+        public static IEnumerable<String> Names
             => objIds.Keys.ToArray();
 
     }

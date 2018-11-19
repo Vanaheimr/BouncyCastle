@@ -1,27 +1,29 @@
-using System.Collections;
+using System;
+using System.Linq;
+using System.Collections.Generic;
 
 using Org.BouncyCastle.Asn1.X9;
 using Org.BouncyCastle.Math;
 using Org.BouncyCastle.Math.EC;
 using Org.BouncyCastle.Utilities;
-using Org.BouncyCastle.Utilities.Collections;
 using Org.BouncyCastle.Utilities.Encoders;
 
 namespace Org.BouncyCastle.Asn1.TeleTrust
 {
-    /**
-    * elliptic curves defined in "ECC Brainpool Standard Curves and Curve Generation"
-    * http://www.ecc-brainpool.org/download/draft_pkix_additional_ecc_dp.txt
-    */
+
+    /// <summary>
+    /// Elliptic curves defined in "ECC Brainpool Standard Curves and Curve Generation"
+    /// http://www.ecc-brainpool.org/download/draft_pkix_additional_ecc_dp.txt
+    /// </summary>
     public class TeleTrusTNamedCurves
     {
+
         private static ECCurve ConfigureCurve(ECCurve curve)
         {
             return curve;
         }
 
-        internal class BrainpoolP160r1Holder
-            : X9ECParametersHolder
+        internal class BrainpoolP160r1Holder : X9ECParametersHolder
         {
             private BrainpoolP160r1Holder() {}
 
@@ -45,8 +47,7 @@ namespace Org.BouncyCastle.Asn1.TeleTrust
             }
         }
 
-        internal class BrainpoolP160t1Holder
-            : X9ECParametersHolder
+        internal class BrainpoolP160t1Holder : X9ECParametersHolder
         {
             private BrainpoolP160t1Holder() {}
 
@@ -71,8 +72,7 @@ namespace Org.BouncyCastle.Asn1.TeleTrust
             }
         }
 
-        internal class BrainpoolP192r1Holder
-            : X9ECParametersHolder
+        internal class BrainpoolP192r1Holder : X9ECParametersHolder
         {
             private BrainpoolP192r1Holder() {}
 
@@ -96,8 +96,7 @@ namespace Org.BouncyCastle.Asn1.TeleTrust
             }
         }
 
-        internal class BrainpoolP192t1Holder
-            : X9ECParametersHolder
+        internal class BrainpoolP192t1Holder : X9ECParametersHolder
         {
             private BrainpoolP192t1Holder() {}
 
@@ -122,8 +121,7 @@ namespace Org.BouncyCastle.Asn1.TeleTrust
             }
         }
 
-        internal class BrainpoolP224r1Holder
-            : X9ECParametersHolder
+        internal class BrainpoolP224r1Holder : X9ECParametersHolder
         {
             private BrainpoolP224r1Holder() {}
 
@@ -147,8 +145,7 @@ namespace Org.BouncyCastle.Asn1.TeleTrust
             }
         }
 
-        internal class BrainpoolP224t1Holder
-            : X9ECParametersHolder
+        internal class BrainpoolP224t1Holder : X9ECParametersHolder
         {
             private BrainpoolP224t1Holder() {}
 
@@ -173,8 +170,7 @@ namespace Org.BouncyCastle.Asn1.TeleTrust
             }
         }
 
-        internal class BrainpoolP256r1Holder
-            : X9ECParametersHolder
+        internal class BrainpoolP256r1Holder : X9ECParametersHolder
         {
             private BrainpoolP256r1Holder() {}
 
@@ -198,8 +194,7 @@ namespace Org.BouncyCastle.Asn1.TeleTrust
             }
         }
 
-        internal class BrainpoolP256t1Holder
-            : X9ECParametersHolder
+        internal class BrainpoolP256t1Holder : X9ECParametersHolder
         {
             private BrainpoolP256t1Holder() {}
 
@@ -224,8 +219,7 @@ namespace Org.BouncyCastle.Asn1.TeleTrust
             }
         }
 
-        internal class BrainpoolP320r1Holder
-            : X9ECParametersHolder
+        internal class BrainpoolP320r1Holder : X9ECParametersHolder
         {
             private BrainpoolP320r1Holder() {}
 
@@ -249,8 +243,7 @@ namespace Org.BouncyCastle.Asn1.TeleTrust
             }
         }
 
-        internal class BrainpoolP320t1Holder
-            : X9ECParametersHolder
+        internal class BrainpoolP320t1Holder : X9ECParametersHolder
         {
             private BrainpoolP320t1Holder() {}
 
@@ -275,8 +268,7 @@ namespace Org.BouncyCastle.Asn1.TeleTrust
             }
         }
 
-        internal class BrainpoolP384r1Holder
-            : X9ECParametersHolder
+        internal class BrainpoolP384r1Holder : X9ECParametersHolder
         {
             private BrainpoolP384r1Holder() {}
 
@@ -300,8 +292,7 @@ namespace Org.BouncyCastle.Asn1.TeleTrust
             }
         }
 
-        internal class BrainpoolP384t1Holder
-            : X9ECParametersHolder
+        internal class BrainpoolP384t1Holder : X9ECParametersHolder
         {
             private BrainpoolP384t1Holder() {}
 
@@ -326,8 +317,7 @@ namespace Org.BouncyCastle.Asn1.TeleTrust
             }
         }
 
-        internal class BrainpoolP512r1Holder
-            : X9ECParametersHolder
+        internal class BrainpoolP512r1Holder : X9ECParametersHolder
         {
             private BrainpoolP512r1Holder() {}
 
@@ -351,8 +341,7 @@ namespace Org.BouncyCastle.Asn1.TeleTrust
             }
         }
 
-        internal class BrainpoolP512t1Holder
-            : X9ECParametersHolder
+        internal class BrainpoolP512t1Holder : X9ECParametersHolder
         {
             private BrainpoolP512t1Holder() {}
 
@@ -378,22 +367,24 @@ namespace Org.BouncyCastle.Asn1.TeleTrust
         }
 
 
-        private static readonly IDictionary objIds = Platform.CreateHashtable();
-        private static readonly IDictionary curves = Platform.CreateHashtable();
-        private static readonly IDictionary names = Platform.CreateHashtable();
+        private static readonly Dictionary<String,              DerObjectIdentifier>  objIds  = new Dictionary<String,              DerObjectIdentifier>();
+        private static readonly Dictionary<DerObjectIdentifier, String>               names   = new Dictionary<DerObjectIdentifier, String>();
+        private static readonly Dictionary<DerObjectIdentifier, X9ECParametersHolder> curves  = new Dictionary<DerObjectIdentifier, X9ECParametersHolder>();
 
-        private static void DefineCurve(
-            string					name,
-            DerObjectIdentifier		oid,
-            X9ECParametersHolder	holder)
+        private static void DefineCurve(String                name,
+                                        DerObjectIdentifier   oid,
+                                        X9ECParametersHolder  holder)
         {
+
             objIds.Add(name, oid);
-            names.Add(oid, name);
-            curves.Add(oid, holder);
+            names. Add(oid,  name);
+            curves.Add(oid,  holder);
+
         }
 
         static TeleTrusTNamedCurves()
         {
+
             DefineCurve("brainpoolp160r1", TeleTrusTObjectIdentifiers.BrainpoolP160R1, BrainpoolP160r1Holder.Instance);
             DefineCurve("brainpoolp160t1", TeleTrusTObjectIdentifiers.BrainpoolP160T1, BrainpoolP160t1Holder.Instance);
             DefineCurve("brainpoolp192r1", TeleTrusTObjectIdentifiers.BrainpoolP192R1, BrainpoolP192r1Holder.Instance);
@@ -408,67 +399,92 @@ namespace Org.BouncyCastle.Asn1.TeleTrust
             DefineCurve("brainpoolp384t1", TeleTrusTObjectIdentifiers.BrainpoolP384T1, BrainpoolP384t1Holder.Instance);
             DefineCurve("brainpoolp512r1", TeleTrusTObjectIdentifiers.BrainpoolP512R1, BrainpoolP512r1Holder.Instance);
             DefineCurve("brainpoolp512t1", TeleTrusTObjectIdentifiers.BrainpoolP512T1, BrainpoolP512t1Holder.Instance);
+
         }
 
-        public static X9ECParameters GetByName(
-            string name)
+        public static X9ECParameters GetByName(String name)
         {
-            DerObjectIdentifier oid = (DerObjectIdentifier)
-                objIds[Platform.ToLowerInvariant(name)];
 
-            return oid == null ? null : GetByOid(oid);
+            if (String.IsNullOrEmpty(name) || String.IsNullOrWhiteSpace(name))
+                return null;
+
+            if (objIds.TryGetValue(Platform.ToLowerInvariant(name), out DerObjectIdentifier oid))
+                return GetByOid(oid);
+
+            return null;
+
         }
 
-        /**
-        * return the X9ECParameters object for the named curve represented by
-        * the passed in object identifier. Null if the curve isn't present.
-        *
-        * @param oid an object identifier representing a named curve, if present.
-        */
-        public static X9ECParameters GetByOid(
-            DerObjectIdentifier oid)
+        /// <summary>
+        /// Return the X9ECParameters object for the named curve represented by
+        /// the passed in object identifier. Null if the curve isn't present.
+        /// </summary>
+        /// <param name="oid"></param>
+        /// <returns>Oid an object identifier representing a named curve, if present.</returns>
+        public static X9ECParameters GetByOid(DerObjectIdentifier oid)
         {
-            X9ECParametersHolder holder = (X9ECParametersHolder) curves[oid];
 
-            return holder == null ? null : holder.Parameters;
+            if (oid == null)
+                return null;
+
+            if (curves.TryGetValue(oid, out X9ECParametersHolder holder))
+                return holder.Parameters;
+
+            return null;
+
         }
 
-        /**
-        * return the object identifier signified by the passed in name. Null
-        * if there is no object identifier associated with name.
-        *
-        * @return the object identifier associated with name, if present.
-        */
-        public static DerObjectIdentifier GetOid(
-            string name)
+        /// <summary>
+        /// Return the object identifier signified by the passed in name. Null
+        /// if there is no object identifier associated with name.
+        /// </summary>
+        /// <param name="name"></param>
+        /// <returns>The object identifier associated with name, if present.</returns>
+        public static DerObjectIdentifier GetOid(String name)
         {
-            return (DerObjectIdentifier)objIds[Platform.ToLowerInvariant(name)];
+
+            if (String.IsNullOrEmpty(name) || String.IsNullOrWhiteSpace(name))
+                return null;
+
+            if (objIds.TryGetValue(Platform.ToLowerInvariant(name), out DerObjectIdentifier oid))
+                return oid;
+
+            return null;
+
         }
 
-        /**
-        * return the named curve name represented by the given object identifier.
-        */
-        public static string GetName(
-            DerObjectIdentifier oid)
+        /// <summary>
+        /// Return the named curve name represented by the given object identifier.
+        /// </summary>
+        /// <param name="oid"></param>
+        public static String GetName(DerObjectIdentifier oid)
         {
-            return (string) names[oid];
+
+            if (oid == null)
+                return null;
+
+            if (names.TryGetValue(oid, out String name))
+                return name;
+
+            return null;
+
         }
 
 
-        /**
-         * returns an enumeration containing the name strings for curves
-         * contained in this structure.
-         */
-        public static IEnumerable Names
-        {
-            get { return new EnumerableProxy(objIds.Keys); }
-        }
+        /// <summary>
+        /// Returns an enumeration containing the name strings for curves
+        /// contained in this structure.
+        /// </summary>
+        public static IEnumerable<String> Names
+            => objIds.Keys.ToArray();
 
-        public static DerObjectIdentifier GetOid(
-            short	curvesize,
-            bool	twisted)
-        {
-            return GetOid("brainpoolP" + curvesize + (twisted ? "t" : "r") + "1");
-        }
+
+        public static DerObjectIdentifier GetOid(Int16    curvesize,
+                                                 Boolean  twisted)
+
+            => GetOid("brainpoolP" + curvesize + (twisted ? "t" : "r") + "1");
+
+
     }
+
 }

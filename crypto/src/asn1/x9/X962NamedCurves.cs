@@ -1,10 +1,10 @@
 using System;
-using System.Collections;
+using System.Linq;
+using System.Collections.Generic;
 
 using Org.BouncyCastle.Math;
 using Org.BouncyCastle.Math.EC;
 using Org.BouncyCastle.Utilities;
-using Org.BouncyCastle.Utilities.Collections;
 using Org.BouncyCastle.Utilities.Encoders;
 
 namespace Org.BouncyCastle.Asn1.X9
@@ -14,12 +14,12 @@ namespace Org.BouncyCastle.Asn1.X9
      */
     public sealed class X962NamedCurves
     {
+
         private X962NamedCurves()
         {
         }
 
-        internal class Prime192v1Holder
-            : X9ECParametersHolder
+        internal class Prime192v1Holder : X9ECParametersHolder
         {
             private Prime192v1Holder() {}
 
@@ -45,8 +45,7 @@ namespace Org.BouncyCastle.Asn1.X9
             }
         }
 
-        internal class Prime192v2Holder
-            : X9ECParametersHolder
+        internal class Prime192v2Holder : X9ECParametersHolder
         {
             private Prime192v2Holder() {}
 
@@ -72,8 +71,7 @@ namespace Org.BouncyCastle.Asn1.X9
             }
         }
 
-        internal class Prime192v3Holder
-            : X9ECParametersHolder
+        internal class Prime192v3Holder : X9ECParametersHolder
         {
             private Prime192v3Holder() {}
 
@@ -99,8 +97,7 @@ namespace Org.BouncyCastle.Asn1.X9
             }
         }
 
-        internal class Prime239v1Holder
-            : X9ECParametersHolder
+        internal class Prime239v1Holder : X9ECParametersHolder
         {
             private Prime239v1Holder() {}
 
@@ -126,8 +123,7 @@ namespace Org.BouncyCastle.Asn1.X9
             }
         }
 
-        internal class Prime239v2Holder
-            : X9ECParametersHolder
+        internal class Prime239v2Holder : X9ECParametersHolder
         {
             private Prime239v2Holder() {}
 
@@ -153,8 +149,7 @@ namespace Org.BouncyCastle.Asn1.X9
             }
         }
 
-        internal class Prime239v3Holder
-            : X9ECParametersHolder
+        internal class Prime239v3Holder : X9ECParametersHolder
         {
             private Prime239v3Holder() {}
 
@@ -180,8 +175,7 @@ namespace Org.BouncyCastle.Asn1.X9
             }
         }
 
-        internal class Prime256v1Holder
-            : X9ECParametersHolder
+        internal class Prime256v1Holder : X9ECParametersHolder
         {
             private Prime256v1Holder() {}
 
@@ -210,8 +204,7 @@ namespace Org.BouncyCastle.Asn1.X9
         /*
          * F2m Curves
          */
-        internal class C2pnb163v1Holder
-            : X9ECParametersHolder
+        internal class C2pnb163v1Holder : X9ECParametersHolder
         {
             private C2pnb163v1Holder() {}
 
@@ -238,8 +231,7 @@ namespace Org.BouncyCastle.Asn1.X9
             }
         }
 
-        internal class C2pnb163v2Holder
-            : X9ECParametersHolder
+        internal class C2pnb163v2Holder : X9ECParametersHolder
         {
             private C2pnb163v2Holder() {}
 
@@ -266,8 +258,7 @@ namespace Org.BouncyCastle.Asn1.X9
             }
         }
 
-        internal class C2pnb163v3Holder
-            : X9ECParametersHolder
+        internal class C2pnb163v3Holder : X9ECParametersHolder
         {
             private C2pnb163v3Holder() {}
 
@@ -293,8 +284,7 @@ namespace Org.BouncyCastle.Asn1.X9
             }
         }
 
-        internal class C2pnb176w1Holder
-            : X9ECParametersHolder
+        internal class C2pnb176w1Holder : X9ECParametersHolder
         {
             private C2pnb176w1Holder() {}
 
@@ -321,8 +311,7 @@ namespace Org.BouncyCastle.Asn1.X9
             }
         }
 
-        internal class C2tnb191v1Holder
-            : X9ECParametersHolder
+        internal class C2tnb191v1Holder : X9ECParametersHolder
         {
             private C2tnb191v1Holder() {}
 
@@ -349,8 +338,7 @@ namespace Org.BouncyCastle.Asn1.X9
             }
         }
 
-        internal class C2tnb191v2Holder
-            : X9ECParametersHolder
+        internal class C2tnb191v2Holder : X9ECParametersHolder
         {
             private C2tnb191v2Holder() {}
 
@@ -377,8 +365,7 @@ namespace Org.BouncyCastle.Asn1.X9
             }
         }
 
-        internal class C2tnb191v3Holder
-            : X9ECParametersHolder
+        internal class C2tnb191v3Holder : X9ECParametersHolder
         {
             private C2tnb191v3Holder() {}
 
@@ -405,8 +392,7 @@ namespace Org.BouncyCastle.Asn1.X9
             }
         }
 
-        internal class C2pnb208w1Holder
-            : X9ECParametersHolder
+        internal class C2pnb208w1Holder : X9ECParametersHolder
         {
             private C2pnb208w1Holder() {}
 
@@ -433,8 +419,7 @@ namespace Org.BouncyCastle.Asn1.X9
             }
         }
 
-        internal class C2tnb239v1Holder
-            : X9ECParametersHolder
+        internal class C2tnb239v1Holder : X9ECParametersHolder
         {
             private C2tnb239v1Holder() {}
 
@@ -461,8 +446,7 @@ namespace Org.BouncyCastle.Asn1.X9
             }
         }
 
-        internal class C2tnb239v2Holder
-            : X9ECParametersHolder
+        internal class C2tnb239v2Holder : X9ECParametersHolder
         {
             private C2tnb239v2Holder() {}
 
@@ -489,8 +473,7 @@ namespace Org.BouncyCastle.Asn1.X9
             }
         }
 
-        internal class C2tnb239v3Holder
-            : X9ECParametersHolder
+        internal class C2tnb239v3Holder : X9ECParametersHolder
         {
             private C2tnb239v3Holder() {}
 
@@ -517,8 +500,7 @@ namespace Org.BouncyCastle.Asn1.X9
             }
         }
 
-        internal class C2pnb272w1Holder
-            : X9ECParametersHolder
+        internal class C2pnb272w1Holder : X9ECParametersHolder
         {
             private C2pnb272w1Holder() {}
 
@@ -545,8 +527,7 @@ namespace Org.BouncyCastle.Asn1.X9
             }
         }
 
-        internal class C2pnb304w1Holder
-            : X9ECParametersHolder
+        internal class C2pnb304w1Holder : X9ECParametersHolder
         {
             private C2pnb304w1Holder() {}
 
@@ -573,8 +554,7 @@ namespace Org.BouncyCastle.Asn1.X9
             }
         }
 
-        internal class C2tnb359v1Holder
-            : X9ECParametersHolder
+        internal class C2tnb359v1Holder : X9ECParametersHolder
         {
             private C2tnb359v1Holder() {}
 
@@ -601,8 +581,7 @@ namespace Org.BouncyCastle.Asn1.X9
             }
         }
 
-        internal class C2pnb368w1Holder
-            : X9ECParametersHolder
+        internal class C2pnb368w1Holder : X9ECParametersHolder
         {
             private C2pnb368w1Holder() {}
 
@@ -629,8 +608,7 @@ namespace Org.BouncyCastle.Asn1.X9
             }
         }
 
-        internal class C2tnb431r1Holder
-            : X9ECParametersHolder
+        internal class C2tnb431r1Holder : X9ECParametersHolder
         {
             private C2tnb431r1Holder() {}
 
@@ -657,22 +635,27 @@ namespace Org.BouncyCastle.Asn1.X9
             }
         }
 
-        private static readonly IDictionary objIds = Platform.CreateHashtable();
-        private static readonly IDictionary curves = Platform.CreateHashtable();
-        private static readonly IDictionary names = Platform.CreateHashtable();
 
-        private static void DefineCurve(
-            string					name,
-            DerObjectIdentifier		oid,
-            X9ECParametersHolder	holder)
+
+        private static readonly Dictionary<String,              DerObjectIdentifier>  objIds  = new Dictionary<String,              DerObjectIdentifier>();
+        private static readonly Dictionary<DerObjectIdentifier, String>               names   = new Dictionary<DerObjectIdentifier, String>();
+        private static readonly Dictionary<DerObjectIdentifier, X9ECParametersHolder> curves  = new Dictionary<DerObjectIdentifier, X9ECParametersHolder>();
+
+
+        private static void DefineCurve(String                name,
+                                        DerObjectIdentifier   oid,
+                                        X9ECParametersHolder  holder)
         {
+
             objIds.Add(name, oid);
-            names.Add(oid, name);
-            curves.Add(oid, holder);
+            names. Add(oid,  name);
+            curves.Add(oid,  holder);
+
         }
 
         static X962NamedCurves()
         {
+
             DefineCurve("prime192v1", X9ObjectIdentifiers.Prime192v1, Prime192v1Holder.Instance);
             DefineCurve("prime192v2", X9ObjectIdentifiers.Prime192v2, Prime192v2Holder.Instance);
             DefineCurve("prime192v3", X9ObjectIdentifiers.Prime192v3, Prime192v3Holder.Instance);
@@ -680,6 +663,7 @@ namespace Org.BouncyCastle.Asn1.X9
             DefineCurve("prime239v2", X9ObjectIdentifiers.Prime239v2, Prime239v2Holder.Instance);
             DefineCurve("prime239v3", X9ObjectIdentifiers.Prime239v3, Prime239v3Holder.Instance);
             DefineCurve("prime256v1", X9ObjectIdentifiers.Prime256v1, Prime256v1Holder.Instance);
+
             DefineCurve("c2pnb163v1", X9ObjectIdentifiers.C2Pnb163v1, C2pnb163v1Holder.Instance);
             DefineCurve("c2pnb163v2", X9ObjectIdentifiers.C2Pnb163v2, C2pnb163v2Holder.Instance);
             DefineCurve("c2pnb163v3", X9ObjectIdentifiers.C2Pnb163v3, C2pnb163v3Holder.Instance);
@@ -696,58 +680,85 @@ namespace Org.BouncyCastle.Asn1.X9
             DefineCurve("c2tnb359v1", X9ObjectIdentifiers.C2Tnb359v1, C2tnb359v1Holder.Instance);
             DefineCurve("c2pnb368w1", X9ObjectIdentifiers.C2Pnb368w1, C2pnb368w1Holder.Instance);
             DefineCurve("c2tnb431r1", X9ObjectIdentifiers.C2Tnb431r1, C2tnb431r1Holder.Instance);
+
         }
 
-        public static X9ECParameters GetByName(
-            string name)
+        public static X9ECParameters GetByName(String name)
         {
-            DerObjectIdentifier oid = (DerObjectIdentifier)objIds[Platform.ToLowerInvariant(name)];
 
-            return oid == null ? null : GetByOid(oid);
+            if (String.IsNullOrEmpty(name) || String.IsNullOrWhiteSpace(name))
+                return null;
+
+            if (objIds.TryGetValue(Platform.ToLowerInvariant(name), out DerObjectIdentifier oid))
+                return GetByOid(oid);
+
+            return null;
+
         }
 
-        /**
-         * return the X9ECParameters object for the named curve represented by
-         * the passed in object identifier. Null if the curve isn't present.
-         *
-         * @param oid an object identifier representing a named curve, if present.
-         */
-        public static X9ECParameters GetByOid(
-            DerObjectIdentifier oid)
+        /// <summary>
+        /// Return the X9ECParameters object for the named curve represented by
+        /// the passed in object identifier. Null if the curve isn't present.
+        /// </summary>
+        /// <param name="oid"></param>
+        /// <returns>Oid an object identifier representing a named curve, if present.</returns>
+        public static X9ECParameters GetByOid(DerObjectIdentifier oid)
         {
-            X9ECParametersHolder holder = (X9ECParametersHolder) curves[oid];
 
-            return holder == null ? null : holder.Parameters;
+            if (oid == null)
+                return null;
+
+            if (curves.TryGetValue(oid, out X9ECParametersHolder holder))
+                return holder.Parameters;
+
+            return null;
+
         }
 
-        /**
-         * return the object identifier signified by the passed in name. Null
-         * if there is no object identifier associated with name.
-         *
-         * @return the object identifier associated with name, if present.
-         */
-        public static DerObjectIdentifier GetOid(
-            string name)
+        /// <summary>
+        /// Return the object identifier signified by the passed in name. Null
+        /// if there is no object identifier associated with name.
+        /// </summary>
+        /// <param name="name"></param>
+        /// <returns>The object identifier associated with name, if present.</returns>
+        public static DerObjectIdentifier GetOid(String name)
         {
-            return (DerObjectIdentifier)objIds[Platform.ToLowerInvariant(name)];
+
+            if (String.IsNullOrEmpty(name) || String.IsNullOrWhiteSpace(name))
+                return null;
+
+            if (objIds.TryGetValue(Platform.ToLowerInvariant(name), out DerObjectIdentifier oid))
+                return oid;
+
+            return null;
+
         }
 
-        /**
-         * return the named curve name represented by the given object identifier.
-         */
-        public static string GetName(
-            DerObjectIdentifier oid)
+        /// <summary>
+        /// Return the named curve name represented by the given object identifier.
+        /// </summary>
+        /// <param name="oid"></param>
+        public static String GetName(DerObjectIdentifier oid)
         {
-            return (string) names[oid];
+
+            if (oid == null)
+                return null;
+
+            if (names.TryGetValue(oid, out String name))
+                return name;
+
+            return null;
+
         }
 
-        /**
-         * returns an enumeration containing the name strings for curves
-         * contained in this structure.
-         */
-        public static IEnumerable Names
-        {
-            get { return new EnumerableProxy(objIds.Keys); }
-        }
+
+        /// <summary>
+        /// Returns an enumeration containing the name strings for curves
+        /// contained in this structure.
+        /// </summary>
+        public static IEnumerable<String> Names
+            => objIds.Keys.ToArray();
+
     }
+
 }

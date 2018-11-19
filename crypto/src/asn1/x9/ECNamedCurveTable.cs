@@ -1,118 +1,68 @@
 ﻿using System;
+using System.Linq;
 using System.Collections;
 
 using Org.BouncyCastle.Asn1.Nist;
 using Org.BouncyCastle.Asn1.Sec;
 using Org.BouncyCastle.Asn1.TeleTrust;
-using Org.BouncyCastle.Utilities;
-using Org.BouncyCastle.Utilities.Collections;
 
 namespace Org.BouncyCastle.Asn1.X9
 {
-    /**
-     * A general class that reads all X9.62 style EC curve tables.
-     */
+
+    /// <summary>
+    /// A general class that reads all X9.62 style EC curve tables.
+    /// </summary>
     public class ECNamedCurveTable
     {
-        /**
-         * return a X9ECParameters object representing the passed in named
-         * curve. The routine returns null if the curve is not present.
-         *
-         * @param name the name of the curve requested
-         * @return an X9ECParameters object or null if the curve is not available.
-         */
-        public static X9ECParameters GetByName(string name)
-        {
-            X9ECParameters ecP = X962NamedCurves.GetByName(name);
 
-            if (ecP == null)
-            {
-                ecP = SecNamedCurves.GetByName(name);
-            }
+        /// <summary>
+        /// Return a X9ECParameters object representing the passed in named
+        /// curve. The routine returns null if the curve is not present.
+        /// </summary>
+        /// <param name="CurveName">The name of the curve requested.</param>
+        /// <returns>An X9ECParameters object or null if the curve is not available.</returns>
+        public static X9ECParameters GetByName(String CurveName)
 
-            if (ecP == null)
-            {
-                ecP = TeleTrusTNamedCurves.GetByName(name);
-            }
+            => X962NamedCurves.GetByName(CurveName)      ??
+               SecNamedCurves.GetByName(CurveName)       ??
+               TeleTrusTNamedCurves.GetByName(CurveName) ??
+               NistNamedCurves.GetByName(CurveName);
 
-            if (ecP == null)
-            {
-                ecP = NistNamedCurves.GetByName(name);
-            }
+        /// <summary>
+        /// Return the object identifier signified by the passed in name, or null when there is no object identifier associated with name.
+        /// </summary>
+        /// <param name="CurveOID">An object identifier.</param>
+        /// <returns>The object identifier associated with name, if present.</returns>
+        public static DerObjectIdentifier GetOid(String CurveOID)
 
-            return ecP;
-        }
+            => X962NamedCurves.GetOid(CurveOID)      ??
+               SecNamedCurves.GetOid(CurveOID)       ??
+               TeleTrusTNamedCurves.GetOid(CurveOID) ??
+               NistNamedCurves.GetOid(CurveOID);
 
-        /**
-         * return the object identifier signified by the passed in name. Null
-         * if there is no object identifier associated with name.
-         *
-         * @return the object identifier associated with name, if present.
-         */
-        public static DerObjectIdentifier GetOid(string name)
-        {
-            DerObjectIdentifier oid = X962NamedCurves.GetOid(name);
+        /// <summary>
+        /// Return a X9ECParameters object representing the passed in named
+        /// </summary>
+        /// <param name="CurveOID">Oid the object id of the curve requested</param>
+        /// <returns>An X9ECParameters object or null if the curve is not available.</returns>
+        public static X9ECParameters GetByOid(DerObjectIdentifier CurveOID)
 
-            if (oid == null)
-            {
-                oid = SecNamedCurves.GetOid(name);
-            }
+               // NOTE: All the NIST curves are currently from SEC, so no point in redundant OID lookup
+            => X962NamedCurves.GetByOid(CurveOID) ??
+               SecNamedCurves.GetByOid(CurveOID)  ??
+               TeleTrusTNamedCurves.GetByOid(CurveOID);
 
-            if (oid == null)
-            {
-                oid = TeleTrusTNamedCurves.GetOid(name);
-            }
-
-            if (oid == null)
-            {
-                oid = NistNamedCurves.GetOid(name);
-            }
-
-            return oid;
-        }
-
-        /**
-         * return a X9ECParameters object representing the passed in named
-         * curve.
-         *
-         * @param oid the object id of the curve requested
-         * @return an X9ECParameters object or null if the curve is not available.
-         */
-        public static X9ECParameters GetByOid(DerObjectIdentifier oid)
-        {
-            X9ECParameters ecP = X962NamedCurves.GetByOid(oid);
-
-            if (ecP == null)
-            {
-                ecP = SecNamedCurves.GetByOid(oid);
-            }
-
-            if (ecP == null)
-            {
-                ecP = TeleTrusTNamedCurves.GetByOid(oid);
-            }
-
-            // NOTE: All the NIST curves are currently from SEC, so no point in redundant OID lookup
-
-            return ecP;
-        }
-
-        /**
-         * return an enumeration of the names of the available curves.
-         *
-         * @return an enumeration of the names of the available curves.
-         */
+        /// <summary>
+        /// Return an enumeration of the names of the available curves.
+        /// </summary>
         public static IEnumerable Names
-        {
-            get
-            {
-                IList v = Platform.CreateArrayList();
-                CollectionUtilities.AddRange(v, X962NamedCurves.Names);
-                CollectionUtilities.AddRange(v, SecNamedCurves.Names);
-                CollectionUtilities.AddRange(v, NistNamedCurves.Names);
-                CollectionUtilities.AddRange(v, TeleTrusTNamedCurves.Names);
-                return v;
-            }
-        }
+
+            => X962NamedCurves.Names.
+                   Concat(SecNamedCurves.Names).
+                   Concat(NistNamedCurves.Names).
+                   Concat(TeleTrusTNamedCurves.Names);
+
+
     }
+
 }

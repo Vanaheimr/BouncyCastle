@@ -3,114 +3,101 @@ using System.Collections;
 
 namespace Org.BouncyCastle.Asn1.X9
 {
-	public class DHDomainParameters
-		: Asn1Encodable
-	{
-		private readonly DerInteger p, g, q, j;
-		private readonly DHValidationParms validationParms;
 
-		public static DHDomainParameters GetInstance(Asn1TaggedObject obj, bool isExplicit)
-		{
-			return GetInstance(Asn1Sequence.GetInstance(obj, isExplicit));
-		}
+    public class DHDomainParameters : Asn1Encodable
+    {
 
-		public static DHDomainParameters GetInstance(object obj)
-		{
-			if (obj == null || obj is DHDomainParameters)
-				return (DHDomainParameters)obj;
+        public DerInteger         P                  { get; }
 
-			if (obj is Asn1Sequence)
-				return new DHDomainParameters((Asn1Sequence)obj);
+        public DerInteger         G                  { get; }
 
-			throw new ArgumentException("Invalid DHDomainParameters: " + obj.GetType().FullName, "obj");
-		}
+        public DerInteger         Q                  { get; }
 
-		public DHDomainParameters(DerInteger p, DerInteger g, DerInteger q, DerInteger j,
-			DHValidationParms validationParms)
-		{
-			if (p == null)
-				throw new ArgumentNullException("p");
-			if (g == null)
-				throw new ArgumentNullException("g");
-			if (q == null)
-				throw new ArgumentNullException("q");
+        public DerInteger         J                  { get; }
 
-			this.p = p;
-			this.g = g;
-			this.q = q;
-			this.j = j;
-			this.validationParms = validationParms;
-		}
+        public DHValidationParms  ValidationParms    { get; }
 
-		private DHDomainParameters(Asn1Sequence seq)
-		{
-			if (seq.Count < 3 || seq.Count > 5)
-				throw new ArgumentException("Bad sequence size: " + seq.Count, "seq");
 
-			IEnumerator e = seq.GetEnumerator();
-			this.p = DerInteger.GetInstance(GetNext(e));
-			this.g = DerInteger.GetInstance(GetNext(e));
-			this.q = DerInteger.GetInstance(GetNext(e));
+        public DHDomainParameters(DerInteger         p,
+                                  DerInteger         g,
+                                  DerInteger         q,
+                                  DerInteger         j,
+                                  DHValidationParms  validationParms)
+        {
 
-			Asn1Encodable next = GetNext(e);
+            this.P = p ?? throw new ArgumentNullException("p");
+            this.G = g ?? throw new ArgumentNullException("g");
+            this.Q = q ?? throw new ArgumentNullException("q");
+            this.J = j;
 
-			if (next != null && next is DerInteger)
-			{
-				this.j = DerInteger.GetInstance(next);
-				next = GetNext(e);
-			}
+            this.ValidationParms = validationParms;
 
-			if (next != null)
-			{
-				this.validationParms = DHValidationParms.GetInstance(next.ToAsn1Object());
-			}
-		}
+        }
 
-		private static Asn1Encodable GetNext(IEnumerator e)
-		{
-			return e.MoveNext() ? (Asn1Encodable)e.Current : null;
-		}
+        private DHDomainParameters(Asn1Sequence seq)
+        {
 
-		public DerInteger P
-		{
-			get { return this.p; }
-		}
+            if (seq.Count < 3 || seq.Count > 5)
+                throw new ArgumentException("Bad sequence size: " + seq.Count, "seq");
 
-		public DerInteger G
-		{
-			get { return this.g; }
-		}
+            IEnumerator e = seq.GetEnumerator();
+            this.P = DerInteger.GetInstance(GetNext(e));
+            this.G = DerInteger.GetInstance(GetNext(e));
+            this.Q = DerInteger.GetInstance(GetNext(e));
 
-		public DerInteger Q
-		{
-			get { return this.q; }
-		}
+            var next = GetNext(e);
 
-		public DerInteger J
-		{
-			get { return this.j; }
-		}
+            if (next != null && next is DerInteger)
+            {
+                this.J = DerInteger.GetInstance(next);
+                next = GetNext(e);
+            }
 
-		public DHValidationParms ValidationParms
-		{
-			get { return this.validationParms; }
-		}
+            if (next != null)
+                this.ValidationParms = DHValidationParms.GetInstance(next.ToAsn1Object());
 
-		public override Asn1Object ToAsn1Object()
-		{
-			Asn1EncodableVector v = new Asn1EncodableVector(p, g, q);
+        }
 
-			if (this.j != null)
-			{
-				v.Add(this.j);
-			}
 
-			if (this.validationParms != null)
-			{
-				v.Add(this.validationParms);
-			}
 
-			return new DerSequence(v);
-		}
-	}
+        public static DHDomainParameters GetInstance(Asn1TaggedObject obj, Boolean IsExplicit)
+
+            => GetInstance(Asn1Sequence.GetInstance(obj, IsExplicit));
+
+        public static DHDomainParameters GetInstance(object obj)
+        {
+
+            if (obj == null || obj is DHDomainParameters)
+                return (DHDomainParameters)obj;
+
+            if (obj is Asn1Sequence)
+                return new DHDomainParameters((Asn1Sequence)obj);
+
+            throw new ArgumentException("Invalid DHDomainParameters: " + obj.GetType().FullName, "obj");
+
+        }
+
+        private static Asn1Encodable GetNext(IEnumerator e)
+
+            => e.MoveNext() ? (Asn1Encodable)e.Current : null;
+
+
+
+        public override Asn1Object ToAsn1Object()
+        {
+
+            var v = new Asn1EncodableVector(P, G, Q);
+
+            if (this.J != null)
+                v.Add(this.J);
+
+            if (this.ValidationParms != null)
+                v.Add(this.ValidationParms);
+
+            return new DerSequence(v);
+
+        }
+
+    }
+
 }

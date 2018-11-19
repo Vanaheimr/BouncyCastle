@@ -6,53 +6,51 @@ using Org.BouncyCastle.Utilities;
 
 namespace Org.BouncyCastle.Asn1.X9
 {
-    /**
-     * ASN.1 def for Elliptic-Curve Curve structure. See
-     * X9.62, for further details.
-     */
-    public class X9Curve
-        : Asn1Encodable
+
+    /// <summary>
+    /// ASN.1 def for Elliptic-Curve Curve structure. See
+    /// X9.62, for further details.
+    /// </summary>
+    public class X9Curve : Asn1Encodable
     {
-        private readonly ECCurve curve;
-        private readonly byte[] seed;
-        private readonly DerObjectIdentifier fieldIdentifier;
 
-        public X9Curve(
-            ECCurve curve)
+        private readonly Byte[]               seed;
+        private readonly DerObjectIdentifier  fieldIdentifier;
+
+        public ECCurve Curve { get; }
+
+
+        public X9Curve(ECCurve curve)
+
             : this(curve, null)
-        {
-        }
 
-        public X9Curve(
-            ECCurve	curve,
-            byte[]	seed)
-        {
-            if (curve == null)
-                throw new ArgumentNullException("curve");
+        { }
 
-            this.curve = curve;
-            this.seed = Arrays.Clone(seed);
+        public X9Curve(ECCurve  curve,
+                       Byte[]   seed)
+        {
+
+            this.Curve = curve ?? throw new ArgumentNullException("curve");
+            this.seed  = Arrays.Clone(seed);
 
             if (ECAlgorithms.IsFpCurve(curve))
-            {
                 this.fieldIdentifier = X9ObjectIdentifiers.PrimeField;
-            }
+
             else if (ECAlgorithms.IsF2mCurve(curve))
-            {
                 this.fieldIdentifier = X9ObjectIdentifiers.CharacteristicTwoField;
-            }
+
             else
-            {
                 throw new ArgumentException("This type of ECCurve is not implemented");
-            }
+
         }
 
-        public X9Curve(
-            X9FieldID		fieldID,
-            Asn1Sequence	seq)
+        public X9Curve(X9FieldID     fieldID,
+                       Asn1Sequence  seq)
         {
+
             if (fieldID == null)
                 throw new ArgumentNullException("fieldID");
+
             if (seq == null)
                 throw new ArgumentNullException("seq");
 
@@ -60,20 +58,20 @@ namespace Org.BouncyCastle.Asn1.X9
 
             if (fieldIdentifier.Equals(X9ObjectIdentifiers.PrimeField))
             {
-                BigInteger q = ((DerInteger) fieldID.Parameters).Value;
-                X9FieldElement x9A = new X9FieldElement(q, (Asn1OctetString) seq[0]);
-                X9FieldElement x9B = new X9FieldElement(q, (Asn1OctetString) seq[1]);
-                curve = new FpCurve(q, x9A.Value.ToBigInteger(), x9B.Value.ToBigInteger());
+                var q   = ((DerInteger) fieldID.Parameters).Value;
+                var x9A = new X9FieldElement(q, (Asn1OctetString) seq[0]);
+                var x9B = new X9FieldElement(q, (Asn1OctetString) seq[1]);
+                Curve = new FpCurve(q, x9A.Value.ToBigInteger(), x9B.Value.ToBigInteger());
             }
+
             else
             {
                 if (fieldIdentifier.Equals(X9ObjectIdentifiers.CharacteristicTwoField)) 
                 {
                     // Characteristic two field
-                    DerSequence parameters = (DerSequence)fieldID.Parameters;
-                    int m = ((DerInteger)parameters[0]).Value.IntValue;
-                    DerObjectIdentifier representation
-                        = (DerObjectIdentifier)parameters[1];
+                    var parameters     = (DerSequence) fieldID.Parameters;
+                    int m              = ((DerInteger) parameters[0]).Value.IntValue;
+                    var representation = (DerObjectIdentifier) parameters[1];
 
                     int k1 = 0;
                     int k2 = 0;
@@ -94,7 +92,7 @@ namespace Org.BouncyCastle.Asn1.X9
                     X9FieldElement x9A = new X9FieldElement(m, k1, k2, k3, (Asn1OctetString)seq[0]);
                     X9FieldElement x9B = new X9FieldElement(m, k1, k2, k3, (Asn1OctetString)seq[1]);
                     // TODO Is it possible to get the order (n) and cofactor(h) too?
-                    curve = new F2mCurve(m, k1, k2, k3, x9A.Value.ToBigInteger(), x9B.Value.ToBigInteger());
+                    Curve = new F2mCurve(m, k1, k2, k3, x9A.Value.ToBigInteger(), x9B.Value.ToBigInteger());
                 }
             }
 
@@ -104,35 +102,32 @@ namespace Org.BouncyCastle.Asn1.X9
             }
         }
 
-        public ECCurve Curve
-        {
-            get { return curve; }
-        }
 
-        public byte[] GetSeed()
-        {
-            return Arrays.Clone(seed);
-        }
 
-        /**
-         * Produce an object suitable for an Asn1OutputStream.
-         * <pre>
-         *  Curve ::= Sequence {
-         *      a               FieldElement,
-         *      b               FieldElement,
-         *      seed            BIT STRING      OPTIONAL
-         *  }
-         * </pre>
-         */
+        public Byte[] GetSeed()
+            => Arrays.Clone(seed);
+
+
+        /// <summary>
+        /// Produce an object suitable for an Asn1OutputStream.
+        /// </summary>
+        /// <remarks>
+        /// Curve ::= Sequence {
+        ///     a               FieldElement,
+        ///     b               FieldElement,
+        ///     seed            BIT STRING      OPTIONAL
+        /// }
+        /// </remarks>
         public override Asn1Object ToAsn1Object()
         {
-            Asn1EncodableVector v = new Asn1EncodableVector();
+
+            var v = new Asn1EncodableVector();
 
             if (fieldIdentifier.Equals(X9ObjectIdentifiers.PrimeField)
                 || fieldIdentifier.Equals(X9ObjectIdentifiers.CharacteristicTwoField)) 
             { 
-                v.Add(new X9FieldElement(curve.A).ToAsn1Object());
-                v.Add(new X9FieldElement(curve.B).ToAsn1Object());
+                v.Add(new X9FieldElement(Curve.A).ToAsn1Object());
+                v.Add(new X9FieldElement(Curve.B).ToAsn1Object());
             } 
 
             if (seed != null)
@@ -141,6 +136,9 @@ namespace Org.BouncyCastle.Asn1.X9
             }
 
             return new DerSequence(v);
+
         }
+
     }
+
 }

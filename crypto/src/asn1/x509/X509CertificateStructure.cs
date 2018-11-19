@@ -4,124 +4,104 @@ using Org.BouncyCastle.Asn1.Pkcs;
 
 namespace Org.BouncyCastle.Asn1.X509
 {
-    /**
-     * an X509Certificate structure.
-     * <pre>
-     *  Certificate ::= Sequence {
-     *      tbsCertificate          TbsCertificate,
-     *      signatureAlgorithm      AlgorithmIdentifier,
-     *      signature               BIT STRING
-     *  }
-     * </pre>
-     */
-    public class X509CertificateStructure
-        : Asn1Encodable
+
+    /// <summary>
+    /// An X509Certificate structure.
+    /// </summary>
+    /// <remarks>
+    /// Certificate ::= Sequence {
+    ///     tbsCertificate          TbsCertificate,
+    ///     signatureAlgorithm      AlgorithmIdentifier,
+    ///     signature               BIT STRING
+    /// }
+    /// </remarks>
+    public class X509CertificateStructure : Asn1Encodable
     {
-        private readonly TbsCertificateStructure	tbsCert;
-        private readonly AlgorithmIdentifier		sigAlgID;
-        private readonly DerBitString				sig;
 
-        public static X509CertificateStructure GetInstance(
-            Asn1TaggedObject	obj,
-            bool				explicitly)
-        {
-            return GetInstance(Asn1Sequence.GetInstance(obj, explicitly));
-        }
+        public TbsCertificateStructure  TbsCertificate        { get; }
 
-        public static X509CertificateStructure GetInstance(
-            object obj)
-        {
-            if (obj is X509CertificateStructure)
-                return (X509CertificateStructure)obj;
-            if (obj == null)
-                return null;
-            return new X509CertificateStructure(Asn1Sequence.GetInstance(obj));
-        }
+        public AlgorithmIdentifier      SignatureAlgorithm    { get; }
 
-        public X509CertificateStructure(
-            TbsCertificateStructure	tbsCert,
-            AlgorithmIdentifier		sigAlgID,
-            DerBitString			sig)
-        {
-            if (tbsCert == null)
-                throw new ArgumentNullException("tbsCert");
-            if (sigAlgID == null)
-                throw new ArgumentNullException("sigAlgID");
-            if (sig == null)
-                throw new ArgumentNullException("sig");
+        public DerBitString             Signature             { get; }
 
-            this.tbsCert = tbsCert;
-            this.sigAlgID = sigAlgID;
-            this.sig = sig;
-        }
 
-        private X509CertificateStructure(
-            Asn1Sequence seq)
-        {
-            if (seq.Count != 3)
-                throw new ArgumentException("sequence wrong size for a certificate", "seq");
-
-            //
-            // correct x509 certficate
-            //
-            tbsCert = TbsCertificateStructure.GetInstance(seq[0]);
-            sigAlgID = AlgorithmIdentifier.GetInstance(seq[1]);
-            sig = DerBitString.GetInstance(seq[2]);
-        }
-
-        public TbsCertificateStructure TbsCertificate
-        {
-            get { return tbsCert; }
-        }
 
         public int Version
-        {
-            get { return tbsCert.Version; }
-        }
+            => TbsCertificate.Version;
 
         public DerInteger SerialNumber
-        {
-            get { return tbsCert.SerialNumber; }
-        }
+            => TbsCertificate?.SerialNumber;
 
         public X509Name Issuer
-        {
-            get { return tbsCert.Issuer; }
-        }
+            => TbsCertificate?.Issuer;
 
         public Time StartDate
-        {
-            get { return tbsCert.StartDate; }
-        }
+            => TbsCertificate?.StartDate;
 
         public Time EndDate
-        {
-            get { return tbsCert.EndDate; }
-        }
+            => TbsCertificate?.EndDate;
 
         public X509Name Subject
-        {
-            get { return tbsCert.Subject; }
-        }
+            => TbsCertificate?.Subject;
 
         public SubjectPublicKeyInfo SubjectPublicKeyInfo
+            => TbsCertificate?.SubjectPublicKeyInfo;
+
+
+
+        public static X509CertificateStructure GetInstance(Asn1TaggedObject  obj,
+                                                           Boolean           explicitly)
+
+            => GetInstance(Asn1Sequence.GetInstance(obj, explicitly));
+
+
+        public static X509CertificateStructure GetInstance(Object obj)
         {
-            get { return tbsCert.SubjectPublicKeyInfo; }
+
+            if (obj == null)
+                return null;
+
+            if (obj is X509CertificateStructure x509CertificateStructure)
+                return x509CertificateStructure;
+
+            return new X509CertificateStructure(Asn1Sequence.GetInstance(obj));
+
         }
 
-        public AlgorithmIdentifier SignatureAlgorithm
+        public X509CertificateStructure(TbsCertificateStructure  tbsCert,
+                                        AlgorithmIdentifier      sigAlgID,
+                                        DerBitString             sig)
         {
-            get { return sigAlgID; }
+
+            this.TbsCertificate      = tbsCert  ?? throw new ArgumentNullException(nameof(tbsCert),  "The given certificate must not be null!");
+            this.SignatureAlgorithm  = sigAlgID ?? throw new ArgumentNullException(nameof(sigAlgID), "The given signature algorithm identifier must not be null!");
+            this.Signature           = sig      ?? throw new ArgumentNullException(nameof(sig),      "The given signature must not be null!");
+
         }
 
-        public DerBitString Signature
+        private X509CertificateStructure(Asn1Sequence seq)
         {
-            get { return sig; }
+
+            if (seq == null)
+                throw new ArgumentNullException(nameof(seq), "The given Asn1 sequence must not be null!");
+
+            if (seq.Count != 3)
+                throw new ArgumentException("The Asn1 sequence has a wrong size for a certificate!", nameof(seq));
+
+            // Correct x509 certficate
+            TbsCertificate      = TbsCertificateStructure.GetInstance(seq[0]);
+            SignatureAlgorithm  = AlgorithmIdentifier.GetInstance(seq[1]);
+            Signature           = DerBitString.GetInstance(seq[2]);
+
         }
+
 
         public override Asn1Object ToAsn1Object()
-        {
-            return new DerSequence(tbsCert, sigAlgID, sig);
-        }
+
+            => new DerSequence(TbsCertificate,
+                               SignatureAlgorithm,
+                               Signature);
+
     }
+
 }

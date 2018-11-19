@@ -2,43 +2,39 @@ using System;
 
 namespace Org.BouncyCastle.Asn1.X9
 {
-	public class DHPublicKey
-		: Asn1Encodable
-	{
-		private readonly DerInteger y;
 
-		public static DHPublicKey GetInstance(Asn1TaggedObject obj, bool isExplicit)
-		{
-			return GetInstance(DerInteger.GetInstance(obj, isExplicit));
-		}
+    public class DHPublicKey : Asn1Encodable
+    {
 
-		public static DHPublicKey GetInstance(object obj)
-		{
-			if (obj == null || obj is DHPublicKey)
-				return (DHPublicKey)obj;
+        public DerInteger Y   { get; }
 
-			if (obj is DerInteger)
-				return new DHPublicKey((DerInteger)obj);
+        public DHPublicKey(DerInteger y)
+        {
+            this.Y = y ?? throw new ArgumentNullException(nameof(y), "The given parameter 'y' must not be null!");
+        }
 
-			throw new ArgumentException("Invalid DHPublicKey: " + obj.GetType().FullName, "obj");
-		}
 
-		public DHPublicKey(DerInteger y)
-		{
-			if (y == null)
-				throw new ArgumentNullException("y");
+        public static DHPublicKey GetInstance(Asn1TaggedObject obj, Boolean IsExplicit)
+        {
+            return GetInstance(DerInteger.GetInstance(obj, IsExplicit));
+        }
 
-			this.y = y;
-		}
+        public static DHPublicKey GetInstance(object obj)
+        {
 
-		public DerInteger Y
-		{
-			get { return this.y; }
-		}
+            if (obj == null || obj is DHPublicKey)
+                return (DHPublicKey) obj;
 
-		public override Asn1Object ToAsn1Object()
-		{
-			return this.y;
-		}
-	}
+            if (obj is DerInteger)
+                return new DHPublicKey((DerInteger)obj);
+
+            throw new ArgumentException("Invalid DHPublicKey: " + obj.GetType().FullName, "obj");
+
+        }
+
+        public override Asn1Object ToAsn1Object()
+            => Y;
+
+    }
+
 }
